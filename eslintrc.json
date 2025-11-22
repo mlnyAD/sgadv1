@@ -1,0 +1,15 @@
+
+{
+	"rules": {
+		"@typescript-eslint/no-explicit-any": "off",
+		"@typescript-eslint/no-unused-vars": "off",
+		"react-hooks/rules-of-hooks": "off", 
+		"react-hooks/exhaustive-deps": "off",
+		"react/no-unescaped-entities": "off",
+		"no-unused-expressions": "warn",
+		"@next/next/no-img-element" : "off",
+		"no-script-component-in-head": "off",
+		"no-async-client-component": "off"
+	},
+	"extends": ["next/core-web-vitals", "next/typescript"]
+}
