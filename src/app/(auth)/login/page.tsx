@@ -1,25 +1,24 @@
+// src/app/(auth)/login/page.tsx
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { getSupabaseBrowserClient } from '@/utils/supabase/client';
+import { Suspense, useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { getSupabaseBrowserClient } from "@/utils/supabase/client";
 
-export default function LoginContent() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = getSupabaseBrowserClient();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        router.replace('/dashboard');
-      }
+      if (data.session) router.replace("/dashboard");
     };
     void checkSession();
   }, [router, supabase]);
@@ -36,7 +35,7 @@ export default function LoginContent() {
       return;
     }
 
-    const redirect = searchParams.get('redirectedFrom') ?? '/dashboard';
+    const redirect = searchParams.get("redirectedFrom") ?? "/dashboard";
     router.replace(redirect);
   };
 
@@ -49,14 +48,14 @@ export default function LoginContent() {
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
           className="w-full mb-4 p-2 border rounded"
         />
         <input
           type="password"
           placeholder="Mot de passe"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={e => setPassword(e.target.value)}
           className="w-full mb-4 p-2 border rounded"
         />
         <button
@@ -64,9 +63,17 @@ export default function LoginContent() {
           disabled={loading}
           className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition"
         >
-          {loading ? 'Connexion...' : 'Se connecter'}
-        </button>
+          {loading ? "Connexion..." : "Se connecter"}
+</button>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Chargement…</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }
