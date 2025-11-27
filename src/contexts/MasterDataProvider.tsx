@@ -11,7 +11,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 export type MasterData = {
 	societe: SocieteType[];
-	config: ConfigType[];
+//	config: ConfigType[];
 	reunion: ReunionType[];
 	contact: UserProfileType[];
 };
@@ -35,7 +35,7 @@ export const MasterDataProvider = ({ children }: { children: ReactNode }) => {
 
 	const [data, setData] = useState<MasterData>({
 		societe: [],
-		config: [],
+	//	config: [],
 		reunion: [],
 		contact: [],
 	});

@@ -1,18 +1,13 @@
+// src/components/Header/HeaderInfo.tsx
 
-// src/components/Header/headerInfo.tsx
+"use client";
 
-import React from 'react';
+const HeaderInfo = () => {
+  return (
+    <div className="hidden md:flex flex-1 items-center text-sm text-muted-foreground">
+      Information
+    </div>
+  );
+};
 
-const HeaderInfo = React.memo(() => {
-
-	return (
-
-		<div className="flex w-1/2 justify-start items-center bg-inherit space-x-6 border-0">
-			<p>Information</p>
-		</div>
-
-	)		
-})
-
-HeaderInfo.displayName = "HeaderInfo"
-export default HeaderInfo
+export default HeaderInfo;

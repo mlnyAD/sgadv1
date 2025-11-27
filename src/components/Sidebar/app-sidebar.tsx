@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+
 import {
   Activity,
   BookOpen,
@@ -24,6 +25,7 @@ import { NavMain } from "@/components/Sidebar/nav-main";
 import { NavSoutien } from "@/components/Sidebar/nav-soutien";
 import NavUser from "@/components/Sidebar/nav-user";
 import { NavTop } from "@/components/Sidebar/nav-top";
+
 import {
   Sidebar,
   SidebarContent,
@@ -32,107 +34,32 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 
-// Données de navigation
-const data = {
-  user: {
-    name: "Untel",
-    email: "untel@axcio-data.com",
-    avatar: "#",
-  },
-  navMain: [
-    {
-      title: "Tableau de bord général",
-      url: "/system/dashboardSociete",
-      icon: LayoutDashboard,
-    },
-    {
-      title: "Projets en cours",
-      url: "/projects/projectList/run",
-      icon: SquareTerminal,
-    },
-    {
-      title: "Projets en attente",
-      url: "/projects/projectList/wait",
-      icon: Hourglass,
-    },
-    {
-      title: "Projets terminés",
-      url: "/projects/projectList/finish",
-      icon: CircleX,
-    },
-    {
-      title: "Equipes",
-      url: "/equipes/equipeList",
-      icon: UsersRound,
-    },
-    {
-      title: "Configurations",
-      url: "/configs/configList",
-      icon: Cog,
-    },
-    {
-      title: "Sociétés",
-      url: "/societes/societeList",
-      icon: Building2,
-    },
-    {
-      title: "Contacts",
-      url: "/contacts/contactsList",
-      icon: Users,
-    },
-    {
-      title: "Critères de GED",
-      url: "/critGed/critGedList",
-      icon: BookText,
-    },
-    {
-      title: "TODO Liste",
-      url: "/todoList/todoList",
-      icon: ListChecks,
-    },
-    {
-      title: "Risques",
-      url: "",
-      icon: TriangleAlert,
-    },
-  ],
-  supports: [
-    {
-      title: "Aide en ligne",
-      url: "/settings",
-      icon: FileQuestion,
-    },
-    {
-      title: "Support",
-      url: "/settings",
-      icon: HandHelping,
-    },
-    {
-      title: "Activité chat",
-      url: "/dailyChat",
-      icon: SquareTerminal,
-    },
-    {
-      title: "Activités",
-      url: "/activites/activiteList",
-      icon: Activity,
-    },
-    {
-      title: "Bibliothèque technique",
-      url: "#",
-      icon: BookOpen,
-    },
-    {
-      title: "Documentation Projet",
-      url: "#",
-      icon: BookOpen,
-    },
-  ],
-};
+import type { NavItem, SupportItem } from "./types";
 
-export function AppSidebar(
-  props: React.ComponentProps<typeof Sidebar>
-) {
+const navMain: NavItem[] = [
+  { title: "Tableau de bord général", url: "/system/dashboardSociete", icon: LayoutDashboard },
+  { title: "Projets en cours", url: "/projects/projectList/run", icon: SquareTerminal },
+  { title: "Projets en attente", url: "/projects/projectList/wait", icon: Hourglass },
+  { title: "Projets terminés", url: "/projects/projectList/finish", icon: CircleX },
+  { title: "Equipes", url: "/equipes/equipeList", icon: UsersRound },
+  { title: "Configurations", url: "/configs", icon: Cog },
+  { title: "Sociétés", url: "/societes/societeList", icon: Building2 },
+  { title: "Contacts", url: "/contacts/contactsList", icon: Users },
+  { title: "Critères de GED", url: "/critGed/critGedList", icon: BookText },
+  { title: "TODO Liste", url: "/todoList/todoList", icon: ListChecks },
+  { title: "Risques", url: "#", icon: TriangleAlert },
+];
+
+const supports: SupportItem[] = [
+  { title: "Aide en ligne", url: "/settings", icon: FileQuestion },
+  { title: "Support", url: "/settings", icon: HandHelping },
+  { title: "Activité chat", url: "/dailyChat", icon: SquareTerminal },
+  { title: "Activités", url: "/activites/activiteList", icon: Activity },
+  { title: "Bibliothèque technique", url: "#", icon: BookOpen },
+  { title: "Documentation Projet", url: "#", icon: BookOpen },
+];
+
+export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
       className="border-r bg-card text-foreground dark:bg-black"
@@ -144,8 +71,8 @@ export function AppSidebar(
       </SidebarHeader>
 
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavSoutien supports={data.supports} />
+        <NavMain items={navMain} />
+        <NavSoutien supports={supports} />
       </SidebarContent>
 
       <SidebarFooter>

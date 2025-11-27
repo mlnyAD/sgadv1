@@ -1,23 +1,15 @@
-// src/app/layout.tsx
 import "./globals.css";
-import type { Metadata } from "next";
-import { ThemeProvider } from "@/theme/theme-provider";
+import type { ReactNode } from "react";
 
-export const metadata: Metadata = {
-  title: "Easy Project",
-  description: "Gestion de projets",
+export const metadata = {
+  title: "EasyProject",
+  description: "Application Axcio",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr" suppressHydrationWarning>
-      <body className="min-h-screen bg-background text-foreground">
-        <ThemeProvider>{children}</ThemeProvider>
-      </body>
+    <html lang="fr">
+      <body>{children}</body>
     </html>
   );
 }

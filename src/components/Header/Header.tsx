@@ -1,26 +1,33 @@
-
 // src/components/Header/Header.tsx
-
 "use client";
 
 import React from "react";
-import HeaderProjet from "@/components/Header/HeaderProjet";
-import HeaderInfo from "@/components/Header/HeaderInfo";
-import HeaderSearch from "@/components/Header/HeaderSearch";
-import HeaderChat from "@/components/Header/HeaderChat";
-import HeaderTheme from "@/components/Header/HeaderTheme";
+import HeaderProjet from "./HeaderProject";
+import HeaderSearch from "./HeaderSearch";
+import HeaderTheme from "./HeaderTheme";
 
-const Header = React.memo(() => {
+export default function Header() {
   return (
-    <header className="flex bg-inherit dark:bg-black items-center px-2 h-full md:px-6 justify-between w-[calc(100%-42px)] rounded-md">
-      <HeaderProjet />
-      <HeaderInfo />
-      <HeaderSearch />
-      <HeaderChat />
-      <HeaderTheme />
-    </header>
-  );
-});
+    <div className="flex h-16 w-full items-center gap-4 border-b bg-muted/40 px-4 backdrop-blur-sm supports-backdrop-filter:bg-muted/60">
+      
+      {/* Projet (gauche) */}
+      <div className="flex flex-none items-center">
+        <HeaderProjet />
+      </div>
 
-Header.displayName = "Header";
-export default Header;
+      {/* Search (centre) */}
+      <div className="flex flex-1 justify-center">
+        <HeaderSearch />
+      </div>
+
+      {/* Actions (droite) */}
+      <div className="flex flex-none items-center gap-4">
+        {/* Placeholder chat simple */}
+        <span className="hidden md:block text-sm text-muted-foreground">Chat</span>
+
+        <HeaderTheme />
+      </div>
+
+    </div>
+  );
+}

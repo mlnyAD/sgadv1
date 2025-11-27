@@ -2,21 +2,10 @@
 "use client";
 
 import Link from "next/link";
-import { type LucideIcon } from "lucide-react";
+import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } 
+  from "@/components/ui/sidebar";
 
-import {
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
-
-type NavItem = {
-  title: string;
-  url: string;
-  icon?: LucideIcon;
-};
+import type { NavItem } from "./types";
 
 export function NavMain({ items }: { items: NavItem[] }) {
   return (
@@ -24,13 +13,11 @@ export function NavMain({ items }: { items: NavItem[] }) {
       <SidebarGroupLabel>
         <span className="text-center font-bold">Opérations</span>
       </SidebarGroupLabel>
+
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton
-              className="rounded-md hover:bg-ad-light"
-              asChild
-            >
+            <SidebarMenuButton className="rounded-md hover:bg-ad-light" asChild>
               <Link href={item.url}>
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>

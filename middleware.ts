@@ -1,10 +1,15 @@
-// middleware.ts
-
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
+export const config = {
+  matcher: ['/((?!_next|favicon.ico|.*\\..*).*)'],
+};
+
 export async function middleware(req: NextRequest) {
+
+ 
+
   const res = NextResponse.next();
 
   const supabase = createServerClient(
@@ -12,44 +17,35 @@ export async function middleware(req: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return req.cookies.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          res.cookies.set(name, value, options);
-        },
-        remove(name: string, options: CookieOptions) {
-          res.cookies.set(name, '', { ...options, maxAge: 0 });
-        }
-      }
+        get: (name: string) => req.cookies.get(name)?.value,
+        set: () => {},
+        remove: () => {},
+      },
     }
   );
 
+   console.log("MIDDLEWARE RUNNING :", req.nextUrl.pathname);
+   
   const {
-    data: { user }
+    data: { user },
   } = await supabase.auth.getUser();
 
   const pathname = req.nextUrl.pathname;
 
+  // 🔥 1. Gestion stricte de la racine
   if (pathname === '/') {
     return NextResponse.redirect(new URL(user ? '/dashboard' : '/login', req.url));
   }
 
-  const protectedPaths = ['/dashboard'];
-  const isProtected = protectedPaths.some((path) => pathname.startsWith(path));
-
-  if (isProtected && !user) {
+  // 🔥 2. Pages protégées
+  if (pathname.startsWith('/dashboard') && !user) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
+  // 🔥 3. Page login quand déjà connecté
   if (pathname === '/login' && user) {
     return NextResponse.redirect(new URL('/dashboard', req.url));
   }
 
   return res;
 }
-
-export const config = {
-  matcher: ['/(.*)'],
-  runtime: 'nodejs',
-};

@@ -26,6 +26,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+
 import UserIdentity from "@/components/Sidebar/userIdentity";
 
 export default function NavUser() {
@@ -44,8 +45,9 @@ export default function NavUser() {
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
+
           <DropdownMenuContent
-            className="min-w-56 w-[--radix-dropdown-menu-trigger-width] rounded-lg"
+            className="min-w-56 w-(--radix-dropdown-menu-trigger-width) rounded-lg"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
@@ -55,7 +57,10 @@ export default function NavUser() {
                 <UserIdentity />
               </div>
             </DropdownMenuLabel>
+
             <DropdownMenuSeparator />
+
+            {/* Groupe : liens utilisateurs */}
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
                 <Link href="/account">
@@ -63,24 +68,29 @@ export default function NavUser() {
                   <span className="ml-2">Mon compte</span>
                 </Link>
               </DropdownMenuItem>
+
               <DropdownMenuItem asChild>
                 <Link href="/orderLicence/orderLicenceAdd">
                   <CreditCard />
                   <span className="ml-2">Commandes licences</span>
                 </Link>
               </DropdownMenuItem>
+
               <DropdownMenuItem asChild>
                 <Link href="/about">
                   <SearchX />
                   <span className="ml-2">À propos…</span>
                 </Link>
               </DropdownMenuItem>
+
               <DropdownMenuItem>
                 <Bell />
-                <span className="ml-2">À définir…</span>
+                <span className="ml-2">Notifications à venir…</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
+
             <DropdownMenuSeparator />
+
             <DropdownMenuItem asChild>
               <Link href="/logout">
                 <LogOut />
