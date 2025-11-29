@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { CloseButton } from "@/components/Buttons/CloseButton";
+import { SaveButton } from "@/components/Buttons/SaveButton";
+
 
 export default function ConfigFormButtons({
   onValidate,
@@ -12,17 +14,8 @@ export default function ConfigFormButtons({
 
   return (
     <div className="flex gap-2">
-      <Button
-        type="button"
-        variant="secondary"
-        onClick={() => router.push("/configs")}
-      >
-        Annuler
-      </Button>
-
-      <Button type="button" variant="destructive" onClick={onValidate}>
-        Valider
-      </Button>
+      <CloseButton onClick={() => router.push("/configs")} />
+      <SaveButton label="Valider la configuration" onClick={onValidate} />
     </div>
   );
 }

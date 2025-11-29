@@ -18,17 +18,19 @@ import {
 
 import { ScrollArea } from "@/components/ui/scroll-area"; // plus propre que Radix direct
 import { TableTitle } from "@/components/IHM/TableTitle";
-import { CloseWindow } from "@/components/IHM/CloseWindow";
+import { CloseButton } from "@/components/Buttons/CloseButton";
+import { useRouter } from "next/navigation";
+import { APP_VERSION, APP_VERSION_DATE, APP_PROJECTNAME, APP_PROJECTDESCRIPTION } from "@/version";
 
 export default function AboutListForm() {
   // Lecture des variables du .env
-  const version = process.env.NEXT_PUBLIC_VERSION ?? "N/C";
-  const date = process.env.NEXT_PUBLIC_DATE ?? "N/C";
+  const version = APP_VERSION ?? "N/C";
+  const date = APP_VERSION_DATE ?? "N/C";
 
-  const projectName = process.env.NEXT_PUBLIC_PROJECTNAME ?? "Application";
-  const description =
-    process.env.NEXT_PUBLIC_PROJECTDESCRIPTION ?? "Description";
+  const projectName = APP_PROJECTNAME ?? "Application";
+  const description = APP_PROJECTDESCRIPTION ?? "Description";
 
+  const router = useRouter();
   return (
     <div className="flex size-full flex-col items-center justify-center bg-inherit">
       {/* Titre de la page */}
@@ -54,11 +56,17 @@ export default function AboutListForm() {
               <AccordionItem value="version">
                 <AccordionTrigger>Version en cours</AccordionTrigger>
                 <AccordionContent>
-                  <p className="text-2xl text-red-500">
-                    Version {version} — {date}
-                  </p>
-                  <p className="text-xs">1 - Reprise de la transaction configuration</p>
-                  <p className="text-xs">2 - Reprise look and feel + sidebar menu</p>
+                  <div className="mt-2 rounded-lg border bg-white dark:bg-black p-4 shadow-sm">
+                    <div className="text-xl font-semibold text-blue-600 dark:text-blue-400">
+                      Version {version}
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
+                      Build du {date}
+                    </div>
+                  </div>
+
+                  <p className="mt-2 text-xs">1 - Finalisation de la transaction configuration</p>
+                  <p className="text-xs">2 - Boutons génériques</p>
                 </AccordionContent>
               </AccordionItem>
 
@@ -66,8 +74,12 @@ export default function AboutListForm() {
               <AccordionItem value="history">
                 <AccordionTrigger>Historique</AccordionTrigger>
                 <AccordionContent>
+                  <p className="text-2xl text-red-500">Version 1.01 du 26/11/2025</p>
+                  <p className="mt-2 text-xs">1 - Reprise de la transaction configuration</p>
+                  <p className="text-xs">2 - Reprise look and feel + sidebar menu</p>
+   
                   <p className="text-2xl text-red-500">Version 1.00 du 18/11/2025</p>
-									<p className="text-xs">1 - Reprise de l&apos;application</p>
+                  <p className="text-xs">1 - Reprise de l&apos;application</p>
                   <p className="text-xs">2 - Reprise du login avec cookies</p>
                 </AccordionContent>
               </AccordionItem>
@@ -75,7 +87,7 @@ export default function AboutListForm() {
           </CardContent>
 
           <CardFooter>
-            <CloseWindow />
+            <CloseButton onClick={() => router.push("/dashboard")} />
           </CardFooter>
         </Card>
       </ScrollArea>

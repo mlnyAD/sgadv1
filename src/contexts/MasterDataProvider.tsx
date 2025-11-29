@@ -5,13 +5,16 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { ConfigType, SocieteType, ReunionType, UserProfileType } from '@/utils/types';
+import { ConfigType } from '@/domain/config/config.types';
+import { SocieteType } from '@/domain/societe/societe.types';
+import { ReunionType } from '@/domain/reunion/reunion.types';
+import { UserProfileType } from '@/utils/types';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 
 export type MasterData = {
 	societe: SocieteType[];
-//	config: ConfigType[];
+	config: ConfigType[];
 	reunion: ReunionType[];
 	contact: UserProfileType[];
 };
@@ -35,7 +38,7 @@ export const MasterDataProvider = ({ children }: { children: ReactNode }) => {
 
 	const [data, setData] = useState<MasterData>({
 		societe: [],
-	//	config: [],
+		config: [],
 		reunion: [],
 		contact: [],
 	});
@@ -93,7 +96,7 @@ export const MasterDataProvider = ({ children }: { children: ReactNode }) => {
 								}
 								case 'config': {
 									const c = newItem as ConfigType;
-									return { ...prev, config: [...prev.config.filter(x => x.configid !== c.configid), c] };
+									return { ...prev, config: [...prev.config.filter(x => x.configId !== c.configId), c] };
 								}
 								case 'reunion': {
 									const r = newItem as ReunionType;

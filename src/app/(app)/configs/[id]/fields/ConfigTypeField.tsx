@@ -1,9 +1,8 @@
 "use client";
 
-import { etatsConfigStr } from "@/utils/constantes";
+import { CONFIG_TYPES } from "@/domain/config/config.constants";
 
 export default function ConfigTypeField({
-  value,
   typeId,
   onChange,
   error,
@@ -22,14 +21,14 @@ export default function ConfigTypeField({
         value={typeId}
         onChange={(e) => {
           const id = Number(e.target.value);
-          const obj = etatsConfigStr.find((x) => x.id === id);
-          onChange(obj?.nom ?? "", id);
+          const obj = CONFIG_TYPES.find((x) => x.id === id);
+          onChange(obj?.label ?? "", id);
         }}
       >
         <option value="">Choisir un type</option>
-        {etatsConfigStr.map((t) => (
+        {CONFIG_TYPES.map((t) => (
           <option key={t.id} value={t.id}>
-            {t.nom}
+            {t.label}
           </option>
         ))}
       </select>

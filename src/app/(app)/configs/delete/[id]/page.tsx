@@ -1,23 +1,34 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { getConfigById } from "@/lib/config/config.service";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
 import { deleteConfigAction } from "./server-actions";
 
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 
-export default async function DeleteConfigPage({
-  params,
+import { CancelButton } from "@/components/Buttons/CancelButton";
+import { DeleteButton } from "@/components/Buttons/DeleteButton";
+
+export default function DeleteConfigPage({
+  data,
 }: {
-  params: Promise<{ id: string }>;
+  data: { configId: number; configNom: string };
 }) {
-  const { id } = await params;
-  const configId = Number(id);
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  if (isNaN(configId) || configId <= 0) notFound();
-
-  const { data, error } = await getConfigById(configId);
-  if (error || !data) notFound();
+  async function handleDelete() {
+    setLoading(true);
+    await deleteConfigAction(data.configId);
+    router.push("/configs"); // Retour vers la liste
+  }
 
   return (
     <Card className="max-w-lg mx-auto p-6 mt-10">
@@ -29,22 +40,22 @@ export default async function DeleteConfigPage({
         <p>
           Confirmez-vous la suppression de :
           <br />
-          <strong className="text-red-600">{data.confignom}</strong> ?
+          <strong className="text-red-600">{data.configNom}</strong> ?
         </p>
       </CardContent>
 
       <CardFooter className="flex justify-end gap-2">
-        <Link href="/configs">
-          <Button variant="outline" type="button">
-            Annuler
-          </Button>
-        </Link>
+        <CancelButton
+          label="Annuler"
+          onClick={() => router.push("/configs")}
+          disabled={loading}
+        />
 
-        <form action={deleteConfigAction.bind(null, configId)}>
-          <Button variant="destructive" type="submit">
-            Confirmer la suppression
-          </Button>
-        </form>
+        <DeleteButton
+          label="Confirmer"
+          loading={loading}
+          onClick={handleDelete}
+        />
       </CardFooter>
     </Card>
   );

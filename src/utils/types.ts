@@ -20,105 +20,9 @@ export type AuthenticatedUser = {
   supabaseUser: any;
 };
 
-export type BiblTechType = {
-	biblId: number;
-	biblNom: string;
-	biblTypeDoc: number;
-	biblDateCreation: Date;
-	biblCrit1: number;
-	docCrit1: string;
-	biblCrit2: number;
-	docCrit2: string;
-	biblCrit3: number;
-	docCrit3: string;
-	biblPath: string;
-	docType: string;
-}; //Vue
 
-export type ConfigType = {
-	configid: number;
-	confignom: string;
-	configtype: number;
-	configtypenom: string;
-};
 
-export type CritGedType = {
-	critGedId: number;
-	critGedNom: string;
-	critGedType: number;
-	critGedTypeNom: string;
-};
 
-export type DocumentType = {
-	docId: number;
-	docTypeId: number;
-	doctype: string;
-	docNom: string;
-	docRedacteur: number;
-	docreadacteurnom: string;
-	docDateCreation: Date;
-	docEtatId: number;
-	docetat: string;
-	docStockage: string;
-	dossierId: number;
-	dossierident: string;
-}; //Vue
-
-export type DossierType = {
-	id: number;
-	dossierId: number;
-	dossierIdent: string;
-	dossierNom: string;
-	dossierDescript: string;
-	dossierAdresse: string;
-	dossierCodePostal: string;
-	dossierVille: string;
-	dossierCreation: Date;
-	dossierStatusId: number;
-	dossieretat: string;
-	dossierResponsable: string;
-	dossierMOAId: number;
-	dossiermoanom: string;
-	dossierPilote: string;
-	dossierCommentaires: string;
-	dossierBudgetId: number;
-	dossierBudgetNom: string;
-	dossierOuvrageId: number;
-	dossierOuvrageNom: string;
-	dossierMotifId: number;
-	dossiermotifnom: string;
-	dossierDureeVie: number;
-	dossierStart: Date;
-	dossierEnd: Date;
-	dossierReceptionInit: Date;
-	dossierReceptionActu: Date;
-	dossierLivraisonInit: Date;
-	dossierLivraisonActu: Date;
-	dossierValidEtude: boolean;
-	dossierValidEtudeComments: string;
-	dossierChoixST: boolean;
-	dossierChoixSTComments: string;
-	dossierValidTravauxSuppl: boolean;
-	dossierValidTravauxSupplComments: string;
-	dossierDecompteDepenses: boolean;
-	dossierDecompteDepensesComments: string;
-	projetDevisHT: number;
-	projetCommandeHT: number;
-	dossierUUID: string;
-	dossierPhoto: string;
-}; //Vue
-
-export type EltFinancierType = {
-	ef_id : number;
-	ef_ltid : number;
-	ef_date : Date;
-	ef_achat : boolean;
-	ef_libelle : string;
-	ef_valeurHT : number;
-	ef_valeurTTC : number;
-	ef_regle_le : Date;
-	ef_reference : string;
-};
 
 export type EquipeType = {
   id: number;
@@ -204,30 +108,7 @@ export class ImageBucket {
 	ib_URL: string = "";
 };
 
-export type LotBudgetType = {
-	lbId: number;
-	lbNom: string;
-	achat_total_ht: number;
-	achat_total_ttc: number;
-	vente_total_ht: number;
-	vente_total_ttc: number;
-	lbObservations: string;
-	lbBudgetHT: number;
-	lbDossierId: number;
-	dossierident: string
-	dossierid: number;
-}; //Vue
 
-export type LotTravType = {
-	lottravId: number;
-	lottravNom: string;
-	lottravRespId: number;
-	lottravStart: Date;
-	lottravEnd: Date;
-	projectId: number;
-	persemail: string;
-	dossierIdent: string;
-}; //Vue
 
 export type Message = {
 	id: string;
@@ -267,25 +148,6 @@ export type ProfileType = {
 	pers_avec_cpte: boolean;
 }; //Table
 
-export type ReunionType = {
-	reunionId: number;
-	reunionObjet: string;
-	reunionDateHeure: Date;
-	reunionDuree: number;
-	reunionAdresse: string;
-	reunionPiloteId: number;
-	reunionpilotenom: string;
-	reunionTypeId: number;
-	reuniontype: string;
-	reunionEtatId: number;
-	reunionetat: string;
-	reunionCR: boolean;
-	reunionCommentaires: string;
-	projectId: number;
-	dossierIdent: string;
-	lottravId: number;
-	lottravNom: string;
-}; //Vue
 
 export type RiskType = {
 	risk_id: number;
@@ -330,32 +192,8 @@ export type Session = {
 	persprenom: string;
 }; //Vue
 
-export type SocieteType = {
-	societeId: number;
-	societeNom: string;
-	societeAdresse1: string;
-	societeAdresse2: string;
-	societeAdresse3: string;
-	societeVille: string;
-	societeCodePostal: string;
-};
 
-export type TaskType = {
-	taskId: number;
-	taskNom: string;
-	taskResponsableId: number;
-	persEmail: string;
-	taskStart: Date;
-	taskEnd: Date;
-	taskDuree: number;
-	taskAvancement: number;
-	taskEtatId: number;
-	nom: string;
-	lottravId: number;
-	lottravNom: string;
-	projectId: number;
-	dossierIdent: string;
-}; //Vue
+
 
 export type TimeSheetType = {
 	tsId: number;
@@ -373,18 +211,6 @@ export type TimeSheetType = {
 	tsD7nbh: number;
 };//Vue
 
-export type TodoType = {
-	todo_id: number;
-	todo_creation: Date;
-	todo_cloture: Date;
-	todo_titre: string;
-	todo_text: string;
-	todo_important: boolean;
-	todo_urgent: boolean;
-	todo_etatId: number;
-	todo_etatNom: string;
-	todo_useremail: string;
-};
 
 export type UserProfileType = {
 	id: UUID;

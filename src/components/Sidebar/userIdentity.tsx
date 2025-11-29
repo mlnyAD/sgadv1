@@ -75,8 +75,12 @@ export default function UserIdentity({ compact = false }: { compact?: boolean })
           initials,
           avatarURL,
         });
-      } catch (e: any) {
-        setError(e.message ?? "Erreur inattendue");
+      }catch (e: unknown) {
+  if (e instanceof Error) {
+    setError(e.message);
+  } else {
+    setError("Erreur inattendue");
+  }
       } finally {
         setLoading(false);
       }
@@ -84,7 +88,7 @@ export default function UserIdentity({ compact = false }: { compact?: boolean })
 
     fetchUser();
   }, []);
-  console.log("UserIdentity", identity)
+  //console.log("UserIdentity", identity)
 
   if (loading) return <Spinner size={12} height={40} />;
   if (error)

@@ -1,16 +1,18 @@
 "use client";
 
-import { ConfigType } from "@/utils/types";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { ConfigType } from "@/domain/config/config.types";
 import { TableTitle } from "@/components/IHM/TableTitle";
 import { TableSubTitle } from "@/components/IHM/TableSubTitle";
-import { CloseWindow } from "@/components/IHM/CloseWindow";
-
+import { CloseButton } from "@/components/Buttons/CloseButton";
+import { useRouter } from "next/navigation";
 import { ConfigDataTable } from "./ConfigDataTable";
 import { columns } from "./columns";
+import { NewButton } from "@/components/Buttons/NewButton";
 
 export default function ConfigList({ initialData }: { initialData: ConfigType[] }) {
+
+  const router = useRouter();
+
   return (
     <div className="flex flex-col w-full bg-inherit rounded-md">
       <div className="flex justify-between items-center">
@@ -23,11 +25,8 @@ export default function ConfigList({ initialData }: { initialData: ConfigType[] 
 
         {/* ACTIONS */}
         <div className="flex items-center gap-2">
-          <Button variant="axcio" asChild>
-            <Link href="/configs/0">Nouvelle configuration</Link>
-          </Button>
-
-          <CloseWindow />
+          <NewButton label="Nouvelle configuration" onClick={() => router.push("/configs/0")} />
+          <CloseButton onClick={() => router.push("/dashboard")} />
         </div>
 
       </div>

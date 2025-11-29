@@ -1,10 +1,11 @@
+// @noReactCompiler
 "use client";
 
 import { useState } from "react";
 import { z } from "zod";
-import { ConfigType } from "@/utils/types";
+import { ConfigType } from "@/domain/config/config.types";
 import { toast } from "sonner";
-import { redirect, useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import {
   Card,
@@ -39,78 +40,78 @@ export default function ConfigForm({
   mode: "create" | "edit";
   initialData: ConfigType | null;
 }) {
-  const router = useRouter();
 
-  const [name, setName] = useState(initialData?.confignom ?? "");
-  const [typeNom, setTypeNom] = useState(initialData?.configtypenom ?? "");
-  const [typeId, setTypeId] = useState(initialData?.configtype ?? 0);
+
+  const [name, setName] = useState(initialData?.configNom ?? "");
+  const [typeNom, setTypeNom] = useState(initialData?.configTypeNom ?? "");
+  const [typeId, setTypeId] = useState(initialData?.configType ?? 0);
   const [errors, setErrors] = useState<{ name?: string; type?: string }>({});
 
-async function handleSubmit() {
-  const validation = schema.safeParse({ name, typeNom, typeId });
+  async function handleSubmit() {
+    const validation = schema.safeParse({ name, typeNom, typeId });
 
-  if (!validation.success) {
-    const issue = validation.error.issues[0];
+    if (!validation.success) {
+      const issue = validation.error.issues[0];
 
-    if (issue.path[0] === "name") {
-      setErrors({ name: issue.message });
+      if (issue.path[0] === "name") {
+        setErrors({ name: issue.message });
+      }
+
+      if (issue.path[0] === "typeId") {
+        setErrors({ type: issue.message });
+      }
+
+      return;
     }
 
-    if (issue.path[0] === "typeId") {
-      setErrors({ type: issue.message });
+    setErrors({}); // reset errors
+
+    const result = await saveConfigAction({
+      id: initialData?.configId ?? 0,
+      name,
+      typeId,
+      typeNom,
+    });
+
+    if (!result.success) {
+      toast.error(result.error ?? "Erreur lors de l’enregistrement");
+      return;
     }
 
-    return;
+    toast.success(mode === "create" ? "Configuration créée" : "Configuration mise à jour");
+
+    redirect("/configs");
   }
-
-  setErrors({}); // reset errors
-
-  const result = await saveConfigAction({
-    id: initialData?.configid ?? 0,
-    name,
-    typeId,
-    typeNom,
-  });
-
-  if (!result.success) {
-    toast.error(result.error ?? "Erreur lors de l’enregistrement");
-    return;
-  }
-
-  toast.success(mode === "create" ? "Configuration créée" : "Configuration mise à jour");
-
-  redirect("/configs");
-}
   return (
     <Card className="bg-inherit dark:bg-inherit max-w-3xl mx-auto">
       <CardHeader>
         <CardTitle className="text-ad-dark text-2xl">
           {mode === "create"
             ? "Création d’une configuration"
-            : `Modification : ${initialData?.confignom}`}
+            : `Modification : ${initialData?.configNom}`}
         </CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-4">
-<ConfigNameField
-  value={name}
-  onChange={(v) => {
-    setName(v);
-    setErrors((e) => ({ ...e, name: undefined }));
-  }}
-  error={errors.name}
-/>
+        <ConfigNameField
+          value={name}
+          onChange={(v) => {
+            setName(v);
+            setErrors((e) => ({ ...e, name: undefined }));
+          }}
+          error={errors.name}
+        />
 
-<ConfigTypeField
-  typeId={typeId}
-  value={typeNom}
-  onChange={(nom, id) => {
-    setTypeNom(nom);
-    setTypeId(id);
-    setErrors((e) => ({ ...e, type: undefined }));
-  }}
-  error={errors.type}
-/>
+        <ConfigTypeField
+          typeId={typeId}
+          value={typeNom}
+          onChange={(nom, id) => {
+            setTypeNom(nom);
+            setTypeId(id);
+            setErrors((e) => ({ ...e, type: undefined }));
+          }}
+          error={errors.type}
+        />
       </CardContent>
 
       <CardFooter className="flex justify-end gap-2">
