@@ -2,9 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
 import { deleteConfigAction } from "./server-actions";
-
 import {
   Card,
   CardHeader,
@@ -12,7 +10,6 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-
 import { CancelButton } from "@/components/Buttons/CancelButton";
 import { DeleteButton } from "@/components/Buttons/DeleteButton";
 

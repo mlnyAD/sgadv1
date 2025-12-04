@@ -6,7 +6,6 @@ export async function saveConfigAction(data: {
   id: number;
   name: string;
   typeId: number;
-  typeNom: string;
 }) {
   const isCreate = data.id === 0;
 
@@ -14,7 +13,6 @@ export async function saveConfigAction(data: {
     id: data.id,
     name: data.name,
     typeId: data.typeId,
-    typeNom: data.typeNom,
   });
 
   if (error) {

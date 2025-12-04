@@ -1,21 +1,21 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ConfigType } from "@/domain/config/config.types";
+import { DbConfig } from "@/domain/config/config.interface";
 import { ArrowUpDown, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import DeleteConfigDialog from "./DeleteConfigDialog";
 import { Button } from "@/components/ui/button";
 
-export const columns: ColumnDef<ConfigType>[] = [
+export const columns: ColumnDef<DbConfig>[] = [
   {
-    accessorKey: "configId",
+    accessorKey: "config_id",
     header: "ID",
     meta: { label: "Identifiant" },
   },
 
   {
-    accessorKey: "configNom",
+    accessorKey: "config_nom",
     meta: { label: "Nom" },
     header: ({ column }) => (
       <button
@@ -42,7 +42,7 @@ export const columns: ColumnDef<ConfigType>[] = [
       const item = row.original;
 
       return (
-        <Link href={`/configs/${item.configId}`} className="text-blue-600">
+        <Link href={`/configs/${item.config_id}`} className="text-blue-600">
           <Pencil className="h-5 w-5" />
         </Link>
       );
@@ -59,8 +59,8 @@ export const columns: ColumnDef<ConfigType>[] = [
 
       return (
         <DeleteConfigDialog
-          id={item.configId}
-          label={item.configNom}
+          id={item.config_id}
+          label={item.config_nom}
           trigger={
             <Button variant="ghost" size="icon">
               <Trash2 className="w-4 h-4 text-red-500" />

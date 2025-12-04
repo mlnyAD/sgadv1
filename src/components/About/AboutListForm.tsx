@@ -64,9 +64,8 @@ export default function AboutListForm() {
                       Build du {date}
                     </div>
                   </div>
-
-                  <p className="mt-2 text-xs">1 - Finalisation de la transaction configuration</p>
-                  <p className="text-xs">2 - Boutons génériques</p>
+                  <p className="mt-2 text-xs">1 - Reprise de la Base de données</p>
+                  <p className="text-xs">2 - Interfaces, types et enums</p>
                 </AccordionContent>
               </AccordionItem>
 
@@ -74,6 +73,9 @@ export default function AboutListForm() {
               <AccordionItem value="history">
                 <AccordionTrigger>Historique</AccordionTrigger>
                 <AccordionContent>
+                  <p className="text-2xl text-red-500">Version 1.02 du 26/11/2025</p>
+                  <p className="mt-2 text-xs">1 - Finalisation de la transaction configuration</p>
+                  <p className="text-xs">2 - Boutons génériques</p>
                   <p className="text-2xl text-red-500">Version 1.01 du 26/11/2025</p>
                   <p className="mt-2 text-xs">1 - Reprise de la transaction configuration</p>
                   <p className="text-xs">2 - Reprise look and feel + sidebar menu</p>

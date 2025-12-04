@@ -1,5 +1,5 @@
-export const APP_VERSION = "1.01";
-export const APP_VERSION_DATE = "29/11/2025";
+export const APP_VERSION = "1.03";
+export const APP_VERSION_DATE = "04/12/2025";
 
 
 export const APP_PROJECTNAME = "Easy Projet";

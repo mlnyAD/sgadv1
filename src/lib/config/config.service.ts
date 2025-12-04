@@ -2,7 +2,7 @@ import { getSupabaseServerClient } from "@/utils/supabase/server";
 
 export async function getConfigsAll() {
   const supabase = await getSupabaseServerClient(); // ✔ MUST use await
-  return await supabase.from("config").select("*").order("configId");
+  return await supabase.from("config").select("*").order("config_id");
 }
 
 export async function getConfigById(id: number) {
@@ -10,37 +10,34 @@ export async function getConfigById(id: number) {
   return await supabase
     .from("config")
     .select("*")
-    .eq("configId", id)
+    .eq("config_id", id)
     .single();
 }
 
 export async function deleteConfig(id: number) {
   const supabase = await getSupabaseServerClient(); // ✔
-  return await supabase.from("config").delete().eq("configId", id);
+  return await supabase.from("config").delete().eq("config_id", id);
 }
 
 export async function upsertConfig(payload: {
   id: number;
   name: string;
   typeId: number;
-  typeNom: string;
 }) {
   const supabase = await getSupabaseServerClient(); // ✔
 
   if (payload.id === 0) {
     return await supabase.from("config").insert({
-      configNom: payload.name,
-      configType: payload.typeId,
-      configTypeNom: payload.typeNom,
+      config_nom: payload.name,
+      config_type: payload.typeId,
     });
   }
 
   return await supabase
     .from("config")
     .update({
-      configNom: payload.name,
-      configType: payload.typeId,
-      configTypeNom: payload.typeNom,
+      config_nom: payload.name,
+      config_type: payload.typeId,
     })
-    .eq("configId", payload.id);
+    .eq("config_id", payload.id);
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { ConfigType } from "@/domain/config/config.types";
+import { DbConfig } from "@/domain/config/config.interface";
 import { TableTitle } from "@/components/IHM/TableTitle";
 import { TableSubTitle } from "@/components/IHM/TableSubTitle";
 import { CloseButton } from "@/components/Buttons/CloseButton";
@@ -9,7 +9,7 @@ import { ConfigDataTable } from "./ConfigDataTable";
 import { columns } from "./columns";
 import { NewButton } from "@/components/Buttons/NewButton";
 
-export default function ConfigList({ initialData }: { initialData: ConfigType[] }) {
+export default function ConfigList({ initialData }: { initialData: DbConfig[] }) {
 
   const router = useRouter();
 

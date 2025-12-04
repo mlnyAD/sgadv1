@@ -3,7 +3,6 @@
 
 import { useState } from "react";
 import { z } from "zod";
-import { ConfigType } from "@/domain/config/config.types";
 import { toast } from "sonner";
 import { redirect } from "next/navigation";
 
@@ -20,35 +19,35 @@ import ConfigTypeField from "./fields/ConfigTypeField";
 import ConfigFormButtons from "./actions/ConfigFormButtons";
 
 import { saveConfigAction } from "./server-actions";
+import { DbConfig } from "@/domain/config/config.interface";
 
-// ---------------------------
-// Validation Zod
-// ---------------------------
+// -----------------------------------------------------
+// Validation Zod (corrigée)
+// -----------------------------------------------------
 const schema = z.object({
   name: z.string().min(2, "Nom invalide"),
-  typeNom: z.string(),
   typeId: z.number().min(1, "Sélection du type obligatoire"),
 });
 
-// ---------------------------
+// -----------------------------------------------------
 // Composant principal
-// ---------------------------
+// -----------------------------------------------------
 export default function ConfigForm({
   mode,
   initialData,
 }: {
   mode: "create" | "edit";
-  initialData: ConfigType | null;
+  initialData: DbConfig | null;
 }) {
-
-
-  const [name, setName] = useState(initialData?.configNom ?? "");
-  const [typeNom, setTypeNom] = useState(initialData?.configTypeNom ?? "");
-  const [typeId, setTypeId] = useState(initialData?.configType ?? 0);
+  const [name, setName] = useState(initialData?.config_nom ?? "");
+  const [typeId, setTypeId] = useState<number | "">(initialData?.config_type ?? "");
   const [errors, setErrors] = useState<{ name?: string; type?: string }>({});
 
   async function handleSubmit() {
-    const validation = schema.safeParse({ name, typeNom, typeId });
+    const validation = schema.safeParse({
+      name,
+      typeId: Number(typeId),
+    });
 
     if (!validation.success) {
       const issue = validation.error.issues[0];
@@ -64,13 +63,14 @@ export default function ConfigForm({
       return;
     }
 
-    setErrors({}); // reset errors
+    // Nettoyage des erreurs
+    setErrors({});
 
+    // Appel serveur
     const result = await saveConfigAction({
-      id: initialData?.configId ?? 0,
+      id: initialData?.config_id ?? 0,
       name,
-      typeId,
-      typeNom,
+      typeId: Number(typeId),
     });
 
     if (!result.success) {
@@ -78,21 +78,27 @@ export default function ConfigForm({
       return;
     }
 
-    toast.success(mode === "create" ? "Configuration créée" : "Configuration mise à jour");
+    toast.success(
+      mode === "create"
+        ? "Configuration créée"
+        : "Configuration mise à jour"
+    );
 
     redirect("/configs");
   }
+
   return (
     <Card className="bg-inherit dark:bg-inherit max-w-3xl mx-auto">
       <CardHeader>
         <CardTitle className="text-ad-dark text-2xl">
           {mode === "create"
             ? "Création d’une configuration"
-            : `Modification : ${initialData?.configNom}`}
+            : `Modification : ${initialData?.config_nom}`}
         </CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-4">
+        {/* Champ Nom */}
         <ConfigNameField
           value={name}
           onChange={(v) => {
@@ -102,11 +108,10 @@ export default function ConfigForm({
           error={errors.name}
         />
 
+        {/* Champ Type */}
         <ConfigTypeField
           typeId={typeId}
-          value={typeNom}
-          onChange={(nom, id) => {
-            setTypeNom(nom);
+          onChange={(label, id) => {
             setTypeId(id);
             setErrors((e) => ({ ...e, type: undefined }));
           }}

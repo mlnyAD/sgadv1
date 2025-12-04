@@ -1,7 +1,7 @@
 
 
 		/* Etats d'un lot de travaux */
-export const ETAT_LOT_TYPES = [
+export const LotTravEnum = [
 	{	id: 1,	label: "A valider",},
 	{	id: 2,	label: "Validé",},
 	{	id: 3,	label: "En cours",},

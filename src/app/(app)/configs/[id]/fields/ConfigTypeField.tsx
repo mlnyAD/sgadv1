@@ -1,17 +1,18 @@
 "use client";
 
-import { CONFIG_TYPES } from "@/domain/config/config.constants";
+import { ConfigEnum } from "@/domain/config/config.enum";
+
+interface ConfigTypeFieldProps {
+  typeId: number | "";                       // valeur actuelle ("" lors d'une création)
+  onChange: (label: string, id: number) => void;
+  error?: string;
+}
 
 export default function ConfigTypeField({
   typeId,
   onChange,
   error,
-}: {
-  value: string;
-  typeId: number;
-  onChange: (nom: string, id: number) => void;
-  error?: string;
-}) {
+}: ConfigTypeFieldProps) {
   return (
     <div className="flex flex-col gap-1">
       <label className="font-medium">Type</label>
@@ -21,12 +22,19 @@ export default function ConfigTypeField({
         value={typeId}
         onChange={(e) => {
           const id = Number(e.target.value);
-          const obj = CONFIG_TYPES.find((x) => x.id === id);
-          onChange(obj?.label ?? "", id);
+
+          // valeur vide → pas de type sélectionné
+          if (!id) {
+            onChange("", 0);
+            return;
+          }
+
+          const item = ConfigEnum.find((x) => x.id === id);
+          onChange(item?.label ?? "", id);
         }}
       >
         <option value="">Choisir un type</option>
-        {CONFIG_TYPES.map((t) => (
+        {ConfigEnum.map((t) => (
           <option key={t.id} value={t.id}>
             {t.label}
           </option>
