@@ -1,91 +1,52 @@
 // src/contexts/UserContext.tsx
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
-import { createClient } from "@supabase/supabase-js";
-import type { Session, User } from "@supabase/supabase-js";
+import { createContext, useContext, useEffect, useState } from "react";
+import type { AuthenticatedUser } from "@/domain/user/authenticated-user.interface";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
-type UserContextType = {
-  user: User | null;
-  session: Session | null;
+type UserContextValue = {
+  user: AuthenticatedUser | null;
   loading: boolean;
-  logout: () => Promise<void>;
 };
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
+const UserContext = createContext<UserContextValue | undefined>(undefined);
 
-export const UserContextProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+export function UserContextProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<AuthenticatedUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  //
-  // Chargement initial de la session
-  //
   useEffect(() => {
-    const load = async () => {
-      const { data } = await supabase.auth.getSession();
-      setUser(data.session?.user ?? null);
-      setSession(data.session ?? null);
-      setLoading(false);
-    };
-    load();
-
-    //
-    // Écoute des changements (login / logout)
-    //
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+    async function loadUser() {
+      try {
+        const res = await fetch("/api/auth/me", { cache: "no-store" });
+        if (!res.ok) {
+          setUser(null);
+          return;
+        }
+        const data = await res.json();
+        setUser(data.user ?? null);
+      } catch (error) {
+        console.error("Error loading user:", error);
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
-    );
+    }
 
-    return () => {
-      listener.subscription.unsubscribe();
-    };
+    loadUser();
   }, []);
 
-  //
-  // Déconnexion
-  //
-  const logout = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setSession(null);
-  };
-
   return (
-    <UserContext.Provider
-      value={{
-        user,
-        session,
-        loading,
-        logout,
-      }}
-    >
+    <UserContext.Provider value={{ user, loading }}>
       {children}
     </UserContext.Provider>
   );
-};
+}
 
-//
-// Hook pratique pour accéder au contexte
-//
-export const useUser = () => {
+export function useUser(): UserContextValue {
   const ctx = useContext(UserContext);
-  if (!ctx)
-    throw new Error("useUser must be used inside <UserContextProvider>");
+  if (!ctx) {
+    throw new Error("useUser must be used inside UserContextProvider");
+  }
   return ctx;
-};
+}

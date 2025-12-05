@@ -1,85 +1,197 @@
-// src/components/Sidebar/app-sidebar.tsx
 "use client";
 
-import * as React from "react";
-
-import {
-  Activity,
-  BookOpen,
-  BookText,
-  Building2,
-  CircleX,
-  Cog,
-  FileQuestion,
-  HandHelping,
-  Hourglass,
-  LayoutDashboard,
-  ListChecks,
-  SquareTerminal,
-  TriangleAlert,
-  Users,
-  UsersRound,
-} from "lucide-react";
-
-import { NavMain } from "@/components/Sidebar/nav-main";
-import { NavSoutien } from "@/components/Sidebar/nav-soutien";
-import NavUser from "@/components/Sidebar/nav-user";
-import { NavTop } from "@/components/Sidebar/nav-top";
-
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarRail,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarMenuItem
 } from "@/components/ui/sidebar";
 
-import type { NavItem, SupportItem } from "./types";
+import { useUser } from "@/contexts/UserContext";
 
-const navMain: NavItem[] = [
-  { title: "Tableau de bord général", url: "/system/dashboardSociete", icon: LayoutDashboard },
-  { title: "Projets en cours", url: "/projects/projectList/run", icon: SquareTerminal },
-  { title: "Projets en attente", url: "/projects/projectList/wait", icon: Hourglass },
-  { title: "Projets terminés", url: "/projects/projectList/finish", icon: CircleX },
-  { title: "Equipes", url: "/equipes/equipeList", icon: UsersRound },
-  { title: "Configurations", url: "/configs", icon: Cog },
-  { title: "Sociétés", url: "/societes/societeList", icon: Building2 },
-  { title: "Contacts", url: "/contacts/contactsList", icon: Users },
-  { title: "Critères de GED", url: "/critGed/critGedList", icon: BookText },
-  { title: "TODO Liste", url: "/todoList/todoList", icon: ListChecks },
-  { title: "Risques", url: "#", icon: TriangleAlert },
-];
+export function AppSidebar() {
+  const pathname = usePathname();
+  const { user, loading } = useUser();
 
-const supports: SupportItem[] = [
-  { title: "Aide en ligne", url: "/settings", icon: FileQuestion },
-  { title: "Support", url: "/settings", icon: HandHelping },
-  { title: "Activité chat", url: "/dailyChat", icon: SquareTerminal },
-  { title: "Activités", url: "/activites/activiteList", icon: Activity },
-  { title: "Bibliothèque technique", url: "#", icon: BookOpen },
-  { title: "Documentation Projet", url: "#", icon: BookOpen },
-];
+  function isActive(path: string): boolean {
+    return pathname.startsWith(path);
+  }
 
-export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
+  // Pend le suspense si user est en cours de chargement
+  if (loading || !user) {
+    return (
+      <Sidebar className="border-r bg-white dark:bg-neutral-900">
+        <SidebarContent>
+          <SidebarGroupLabel>Chargement…</SidebarGroupLabel>
+        </SidebarContent>
+      </Sidebar>
+    );
+  }
+
   return (
-    <Sidebar
-      className="border-r bg-card text-foreground dark:bg-black"
-      collapsible="icon"
-      {...props}
-    >
-      <SidebarHeader>
-        <NavTop />
-      </SidebarHeader>
-
+    <Sidebar className="border-r bg-white dark:bg-neutral-900">
       <SidebarContent>
-        <NavMain items={navMain} />
-        <NavSoutien supports={supports} />
+
+        {/* --- SECTION : Utilisateur connecté -------------------------------------------- */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Profil</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenuItem className="font-semibold px-3 py-2">
+              {user.displayName || user.email}
+            </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <Link href="/profile" className={isActive("/profile") ? "font-bold" : ""}>
+                Mon profil
+              </Link>
+            </SidebarMenuItem>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* --- MENU MINIMAL SI AUCUN PROJET ---------------------------------------------- */}
+        {user.projectIds.length === 0 && !user.isSystemAdmin && !user.isClientAdmin && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Options</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenuItem>
+                <form action="/(auth)/logout" method="POST">
+                  <button className="text-red-600 hover:underline">Déconnexion</button>
+                </form>
+              </SidebarMenuItem>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {/* --- ADMIN SYSTEME ------------------------------------------------------------- */}
+        {user.isSystemAdmin && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Administration système</SidebarGroupLabel>
+
+            <SidebarGroupContent>
+              <SidebarMenuItem>
+                <Link href="/clients" className={isActive("/clients") ? "font-bold" : ""}>
+                  Gestion des clients
+                </Link>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <Link href="/users" className={isActive("/users") ? "font-bold" : ""}>
+                  Gestion des utilisateurs
+                </Link>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <Link href="/configs" className={isActive("/configs") ? "font-bold" : ""}>
+                  Configurations
+                </Link>
+              </SidebarMenuItem>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {/* --- ADMIN CLIENT -------------------------------------------------------------- */}
+        {user.isClientAdmin && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Administration client</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenuItem>
+                <Link href="/projects" className={isActive("/projects") ? "font-bold" : ""}>
+                  Projets
+                </Link>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <Link href="/budget" className={isActive("/budget") ? "font-bold" : ""}>
+                  Budget
+                </Link>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <Link href="/documents" className={isActive("/documents") ? "font-bold" : ""}>
+                  Documentation
+                </Link>
+              </SidebarMenuItem>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {/* --- ADMIN PROJET -------------------------------------------------------------- */}
+        {user.isProjectAdmin && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Administration projet</SidebarGroupLabel>
+
+            <SidebarGroupContent>
+              <SidebarMenuItem>
+                <Link href="/projects" className={isActive("/projects") ? "font-bold" : ""}>
+                  Mes projets
+                </Link>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <Link href="/tasks" className={isActive("/tasks") ? "font-bold" : ""}>
+                  Tâches / Planning
+                </Link>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <Link href="/meetings" className={isActive("/meetings") ? "font-bold" : ""}>
+                  Réunions
+                </Link>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <Link href="/documents" className={isActive("/documents") ? "font-bold" : ""}>
+                  Documents
+                </Link>
+              </SidebarMenuItem>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {/* --- UTILISATEUR --------------------------------------------------------------- */}
+        {user.isUser && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Projet</SidebarGroupLabel>
+
+            <SidebarGroupContent>
+              <SidebarMenuItem>
+                <Link href="/projects" className={isActive("/projects") ? "font-bold" : ""}>
+                  Mes projets
+                </Link>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <Link href="/reporting" className={isActive("/reporting") ? "font-bold" : ""}>
+                  Reporting
+                </Link>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <Link href="/documents" className={isActive("/documents") ? "font-bold" : ""}>
+                  Documents
+                </Link>
+              </SidebarMenuItem>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {/* --- LOGOUT --------------------------------------------------------------------- */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Session</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenuItem>
+              <form action="/(auth)/logout" method="POST">
+                <button className="text-red-600 hover:underline">Déconnexion</button>
+              </form>
+            </SidebarMenuItem>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
       </SidebarContent>
-
-      <SidebarFooter>
-        <NavUser />
-      </SidebarFooter>
-
-      <SidebarRail />
     </Sidebar>
   );
 }

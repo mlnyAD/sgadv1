@@ -1,7 +1,7 @@
-// src/components/Sidebar/nav-user.tsx
 "use client";
 
 import Link from "next/link";
+import { useUser } from "@/contexts/UserContext";
 import {
   Bell,
   ChevronsUpDown,
@@ -31,6 +31,7 @@ import UserIdentity from "@/components/Sidebar/userIdentity";
 
 export default function NavUser() {
   const { isMobile } = useSidebar();
+  const user = useUser(); // ≈ AuthenticatedUser
 
   return (
     <SidebarMenu className="border-t border-gray-200">
@@ -41,26 +42,25 @@ export default function NavUser() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <UserIdentity />
+              <UserIdentity user={user} />
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent
-            className="min-w-56 w-(--radix-dropdown-menu-trigger-width) rounded-lg"
+            className="min-w-56"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <UserIdentity />
+                <UserIdentity user={user} />
               </div>
             </DropdownMenuLabel>
 
             <DropdownMenuSeparator />
 
-            {/* Groupe : liens utilisateurs */}
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
                 <Link href="/account">
@@ -69,12 +69,14 @@ export default function NavUser() {
                 </Link>
               </DropdownMenuItem>
 
-              <DropdownMenuItem asChild>
-                <Link href="/orderLicence/orderLicenceAdd">
-                  <CreditCard />
-                  <span className="ml-2">Commandes licences</span>
-                </Link>
-              </DropdownMenuItem>
+              {user.isClientAdmin && (
+                <DropdownMenuItem asChild>
+                  <Link href="/orderLicence/orderLicenceAdd">
+                    <CreditCard />
+                    <span className="ml-2">Commandes licences</span>
+                  </Link>
+                </DropdownMenuItem>
+              )}
 
               <DropdownMenuItem asChild>
                 <Link href="/about">
@@ -92,10 +94,12 @@ export default function NavUser() {
             <DropdownMenuSeparator />
 
             <DropdownMenuItem asChild>
-              <Link href="/logout">
-                <LogOut />
-                <span className="ml-2">Déconnexion</span>
-              </Link>
+              <form action="/(auth)/logout" method="POST">
+                <button className="flex items-center">
+                  <LogOut />
+                  <span className="ml-2">Déconnexion</span>
+                </button>
+              </form>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

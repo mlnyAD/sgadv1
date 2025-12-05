@@ -11,7 +11,7 @@ export type ActiviteType = {
 	activMessage: string;
 	activUser: string;
 };
-
+/*
 export type AuthenticatedUser = {
   id: string;
   email: string;
@@ -20,7 +20,7 @@ export type AuthenticatedUser = {
   supabaseUser: any;
 };
 
-
+*/
 
 
 
