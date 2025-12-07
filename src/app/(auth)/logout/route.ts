@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
-import { createServerClient } from "@supabase/ssr";
+// src/app/(auth)/logout/route.ts
 import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse } from "next/server";
 
 export async function POST() {
   const cookieStore = await cookies();
@@ -10,14 +11,21 @@ export async function POST() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get: (name) => cookieStore.get(name)?.value,
-        set: (name, value, options) => cookieStore.set(name, value, options),
-        remove: (name, options) =>
-          cookieStore.set(name, "", { ...options, maxAge: 0 }),
-      },
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options);
+          });
+        }
+      }
     }
   );
 
   await supabase.auth.signOut();
-  return NextResponse.redirect(new URL("/login", process.env.NEXT_PUBLIC_SITE_URL!));
+
+  return NextResponse.redirect("/login", {
+    status: 303,
+  });
 }

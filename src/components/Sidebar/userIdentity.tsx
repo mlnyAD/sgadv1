@@ -20,18 +20,17 @@ export default function UserIdentity({ compact = false }: { compact?: boolean })
     );
   }
 
-  const initials = user.displayName
-    ? user.displayName
-        .split(" ")
-        .map((part) => part[0]?.toUpperCase())
-        .join("")
-    : user.email[0]?.toUpperCase();
+  const initials =
+    user.displayName
+      ?.split(" ")
+      .map((p) => p[0]?.toUpperCase())
+      .join("") || user.email[0]?.toUpperCase();
 
   return (
     <div className="flex items-center gap-2">
       <Avatar className="h-8 w-8 rounded-lg">
         <AvatarImage
-          src=""
+          src="" // Avatar non encore géré
           alt={initials}
           className="rounded-full bg-gray-300 border"
         />

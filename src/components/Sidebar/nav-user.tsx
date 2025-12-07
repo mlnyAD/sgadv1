@@ -1,109 +1,67 @@
 "use client";
 
-import Link from "next/link";
 import { useUser } from "@/contexts/UserContext";
+import UserIdentity from "@/components/Sidebar/userIdentity";
 import {
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  SearchX,
-  UserIcon,
-} from "lucide-react";
-
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar";
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar";
+import { ChevronsUpDown, LogOut } from "lucide-react";
+import Link from "next/link";
 
-import UserIdentity from "@/components/Sidebar/userIdentity";
+export function NavUser() {
+  const { user, loading } = useUser();
 
-export default function NavUser() {
-  const { isMobile } = useSidebar();
-  const user = useUser(); // ≈ AuthenticatedUser
+  if (loading) {
+    return (
+      <SidebarMenuItem>
+        <SidebarMenuButton disabled className="opacity-60">
+          Chargement utilisateur…
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    );
+  }
+
+  if (!user) {
+    return (
+      <SidebarMenuItem>
+        <SidebarMenuButton disabled className="text-red-600">
+          Utilisateur non chargé
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    );
+  }
 
   return (
-    <SidebarMenu className="border-t border-gray-200">
-      <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <UserIdentity user={user} />
-              <ChevronsUpDown className="ml-auto size-4" />
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
+    <SidebarMenuItem>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+            <UserIdentity compact />
+            <ChevronsUpDown className="ml-auto size-4" />
+          </SidebarMenuButton>
+        </DropdownMenuTrigger>
 
-          <DropdownMenuContent
-            className="min-w-56"
-            side={isMobile ? "bottom" : "right"}
-            align="end"
-            sideOffset={4}
-          >
-            <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <UserIdentity user={user} />
-              </div>
-            </DropdownMenuLabel>
+        <DropdownMenuContent className="w-56" side="bottom" align="end">
+          <DropdownMenuItem asChild>
+            <Link href="/profile">Mon profil</Link>
+          </DropdownMenuItem>
 
-            <DropdownMenuSeparator />
-
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <Link href="/account">
-                  <UserIcon />
-                  <span className="ml-2">Mon compte</span>
-                </Link>
-              </DropdownMenuItem>
-
-              {user.isClientAdmin && (
-                <DropdownMenuItem asChild>
-                  <Link href="/orderLicence/orderLicenceAdd">
-                    <CreditCard />
-                    <span className="ml-2">Commandes licences</span>
-                  </Link>
-                </DropdownMenuItem>
-              )}
-
-              <DropdownMenuItem asChild>
-                <Link href="/about">
-                  <SearchX />
-                  <span className="ml-2">À propos…</span>
-                </Link>
-              </DropdownMenuItem>
-
-              <DropdownMenuItem>
-                <Bell />
-                <span className="ml-2">Notifications à venir…</span>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-
-            <DropdownMenuSeparator />
-
-            <DropdownMenuItem asChild>
-              <form action="/(auth)/logout" method="POST">
-                <button className="flex items-center">
-                  <LogOut />
-                  <span className="ml-2">Déconnexion</span>
-                </button>
-              </form>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarMenuItem>
-    </SidebarMenu>
+          <DropdownMenuItem asChild>
+            <form action="/(auth)/logout" method="POST">
+              <button className="flex w-full items-center gap-2 text-red-600">
+                <LogOut className="size-4" /> Déconnexion
+              </button>
+            </form>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </SidebarMenuItem>
   );
 }
