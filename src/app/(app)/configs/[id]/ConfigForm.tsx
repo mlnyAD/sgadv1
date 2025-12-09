@@ -19,10 +19,15 @@ import ConfigTypeField from "./fields/ConfigTypeField";
 import ConfigFormButtons from "./actions/ConfigFormButtons";
 
 import { saveConfigAction } from "./server-actions";
-import { DbConfig } from "@/domain/config/config.interface";
+import { ConfigEntity } from "@/domain/config/config.repository";
+
+interface ConfigFormProps {
+  initialData: ConfigEntity | null;
+  isNew: boolean;
+}
 
 // -----------------------------------------------------
-// Validation Zod (corrigée)
+// Validation Zod
 // -----------------------------------------------------
 const schema = z.object({
   name: z.string().min(2, "Nom invalide"),
@@ -32,15 +37,9 @@ const schema = z.object({
 // -----------------------------------------------------
 // Composant principal
 // -----------------------------------------------------
-export default function ConfigForm({
-  mode,
-  initialData,
-}: {
-  mode: "create" | "edit";
-  initialData: DbConfig | null;
-}) {
-  const [name, setName] = useState(initialData?.config_nom ?? "");
-  const [typeId, setTypeId] = useState<number | "">(initialData?.config_type ?? "");
+export default function ConfigForm({ initialData, isNew }: ConfigFormProps) {
+  const [name, setName] = useState(initialData?.name ?? "");
+  const [typeId, setTypeId] = useState<number | "">(initialData?.type ?? "");
   const [errors, setErrors] = useState<{ name?: string; type?: string }>({});
 
   async function handleSubmit() {
@@ -52,23 +51,20 @@ export default function ConfigForm({
     if (!validation.success) {
       const issue = validation.error.issues[0];
 
-      if (issue.path[0] === "name") {
-        setErrors({ name: issue.message });
-      }
-
-      if (issue.path[0] === "typeId") {
-        setErrors({ type: issue.message });
-      }
+      setErrors({
+        name: issue.path[0] === "name" ? issue.message : undefined,
+        type: issue.path[0] === "typeId" ? issue.message : undefined,
+      });
 
       return;
     }
 
-    // Nettoyage des erreurs
+    // Reset des erreurs
     setErrors({});
 
     // Appel serveur
     const result = await saveConfigAction({
-      id: initialData?.config_id ?? 0,
+      id: initialData?.id ?? 0,
       name,
       typeId: Number(typeId),
     });
@@ -78,11 +74,7 @@ export default function ConfigForm({
       return;
     }
 
-    toast.success(
-      mode === "create"
-        ? "Configuration créée"
-        : "Configuration mise à jour"
-    );
+    toast.success(isNew ? "Configuration créée" : "Configuration mise à jour");
 
     redirect("/configs");
   }
@@ -91,9 +83,9 @@ export default function ConfigForm({
     <Card className="bg-inherit dark:bg-inherit max-w-3xl mx-auto">
       <CardHeader>
         <CardTitle className="text-ad-dark text-2xl">
-          {mode === "create"
+          {isNew
             ? "Création d’une configuration"
-            : `Modification : ${initialData?.config_nom}`}
+            : `Modification : ${initialData?.name}`}
         </CardTitle>
       </CardHeader>
 

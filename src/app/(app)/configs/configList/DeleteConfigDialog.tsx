@@ -1,77 +1,83 @@
 "use client";
 
-import { useState } from "react";
-
-import { deleteFromListAction } from "./actions";
-
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
+  DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import { Button } from "@/components/ui/button";
+import { deleteConfigAction } from "./actions";
+import { useTransition } from "react";
 import { toast } from "sonner";
 
-import { CancelButton } from "@/components/Buttons/CancelButton";
-import { DeleteButton } from "@/components/Buttons/DeleteButton";
-
 export default function DeleteConfigDialog({
-  id,
-  label,
-  trigger,
+  open,
+  onOpenChange,
+  configId,
+  configName,
+  onDeleted,
 }: {
-  id: number;
-  label: string;
-  trigger: React.ReactNode;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  configId: number;
+  configName: string;
+  onDeleted: () => void;
 }) {
-  const [open, setOpen] = useState(false);
-  const [pending, setPending] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  async function handleDelete() {
-    try {
-      setPending(true);
-      const res = await deleteFromListAction(id);
+  function handleDelete() {
+    startTransition(async () => {
+      const result = await deleteConfigAction(configId);
 
-      if (!res.success) {
-        toast.error("Erreur lors de la suppression");
-      } else {
-        toast.success(`Configuration "${label}" supprimée`);
+      if (!result.success) {
+        toast.error("La suppression a échoué.");
+        return;
       }
-    } finally {
-      setPending(false);
-      setOpen(false);
-    }
+
+      toast.success("Configuration supprimée.");
+      onOpenChange(false);
+      onDeleted();
+    });
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      {/* Bouton déclencheur */}
-      <div onClick={() => setOpen(true)}>{trigger}</div>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+ <DialogContent
+  className="
+    bg-popover text-popover-foreground
+    fixed left-1/2 top-1/2
+    -translate-x-1/2 -translate-y-1/2
+    w-full max-w-md
+    rounded-lg p-6 shadow-lg
+    border border-border
+    animate-fadeIn
+  "
+>
 
-      <DialogContent>
         <DialogHeader>
           <DialogTitle>Supprimer cette configuration ?</DialogTitle>
         </DialogHeader>
 
-        <p className="text-sm text-muted-foreground">
+        <p className="mt-2">
           Voulez-vous vraiment supprimer{" "}
-          <strong className="text-red-600">{label}</strong> ?
+          <strong>{configName}</strong> ?
         </p>
 
-        <DialogFooter className="mt-4">
-          <CancelButton
-            label="Annuler"
-            onClick={() => setOpen(false)}
-            disabled={pending}
-          />
+        <DialogFooter className="mt-6">
+          <Button variant="secondary" onClick={() => onOpenChange(false)}>
+            Annuler
+          </Button>
 
-          <DeleteButton
-            label="Supprimer la configuration"
-            loading={pending}
+          <Button
+            variant="destructive"
             onClick={handleDelete}
-          />
+            disabled={isPending}
+          >
+            Supprimer
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

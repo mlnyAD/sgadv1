@@ -1,172 +1,62 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import { useUser } from "@/contexts/UserContext";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 import {
   Sidebar,
+  SidebarHeader,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarGroupContent,
-  SidebarMenuItem,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
 
-import { NavUser } from "./nav-user";
+import NavMain from "./nav-main";
+import NavSoutien from "./nav-soutien";
+import NavUser from "./nav-user";
 
-export function AppSidebar() {
-  const pathname = usePathname();
-  const { user, loading } = useUser();
+import { useUser } from "@/contexts/UserContext";
+import { getRoleIdFromUser } from "@/domain/user/roles/user-role.type";
 
-  function isActive(path: string): boolean {
-    return pathname.startsWith(path);
-  }
+export default function AppSidebar({ collapsed }: { collapsed: boolean }) {
+  const { user } = useUser();
+  const roleId = getRoleIdFromUser(user);
 
   return (
-    <Sidebar className="border-r bg-white dark:bg-neutral-900">
-      <SidebarContent>
+    <Sidebar
+      className={cn(
+        "border-r bg-sidebar text-sidebar-foreground flex flex-col transition-all duration-300 ease-in-out",
+        collapsed ? "w-[72px]" : "w-[260px]"
+      )}
+    >
+      {/* HEADER */}
+      <SidebarHeader className="border-b px-4 py-4 flex items-center gap-3">
 
-        {/* --- Utilisateur connecté ------------------------------------------------ */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Compte</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <NavUser />
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <Image
+          src="/logos/axcio-data.svg"
+          alt="Axcio Data"
+          width={collapsed ? 32 : 40}
+          height={collapsed ? 32 : 40}
+          className="rounded-md transition-all duration-300"
+        />
 
-        {/* Chargement en cours : stop menu */}
-        {loading && (
-          <SidebarGroup>
-            <SidebarGroupLabel>Chargement…</SidebarGroupLabel>
-          </SidebarGroup>
+        {!collapsed && (
+          <div className="flex flex-col leading-tight transition-opacity duration-300">
+            <span className="font-semibold text-base">Easy Project V2</span>
+            <span className="text-xs text-muted-foreground">par Axcio Data</span>
+          </div>
         )}
+      </SidebarHeader>
 
-        {/* Si pas de user : stop menu */}
-        {!loading && !user && (
-          <SidebarGroup>
-            <SidebarGroupLabel>Non connecté</SidebarGroupLabel>
-          </SidebarGroup>
-        )}
-
-        {/* Si user OK → menus */}
-        {user && (
-          <>
-            {/* --- ADMIN SYSTEME --------------------------------------------------- */}
-            {user.isSystemAdmin && (
-              <SidebarGroup>
-                <SidebarGroupLabel>Administration système</SidebarGroupLabel>
-                <SidebarGroupContent>
-                  <SidebarMenuItem>
-                    <Link href="/clients" className={isActive("/clients") ? "font-bold" : ""}>
-                      Gestion des clients
-                    </Link>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <Link href="/users" className={isActive("/users") ? "font-bold" : ""}>
-                      Gestion des utilisateurs
-                    </Link>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <Link href="/configs" className={isActive("/configs") ? "font-bold" : ""}>
-                      Configurations
-                    </Link>
-                  </SidebarMenuItem>
-                </SidebarGroupContent>
-              </SidebarGroup>
-            )}
-
-            {/* --- ADMIN CLIENT ---------------------------------------------------- */}
-            {user.isClientAdmin && (
-              <SidebarGroup>
-                <SidebarGroupLabel>Administration client</SidebarGroupLabel>
-                <SidebarGroupContent>
-                  <SidebarMenuItem>
-                    <Link href="/projects" className={isActive("/projects") ? "font-bold" : ""}>
-                      Projets
-                    </Link>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <Link href="/budget" className={isActive("/budget") ? "font-bold" : ""}>
-                      Budget
-                    </Link>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <Link href="/documents" className={isActive("/documents") ? "font-bold" : ""}>
-                      Documentation
-                    </Link>
-                  </SidebarMenuItem>
-                </SidebarGroupContent>
-              </SidebarGroup>
-            )}
-
-            {/* --- ADMIN PROJET ---------------------------------------------------- */}
-            {user.isProjectAdmin && (
-              <SidebarGroup>
-                <SidebarGroupLabel>Administration projet</SidebarGroupLabel>
-                <SidebarGroupContent>
-                  <SidebarMenuItem>
-                    <Link href="/projects" className={isActive("/projects") ? "font-bold" : ""}>
-                      Mes projets
-                    </Link>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <Link href="/tasks" className={isActive("/tasks") ? "font-bold" : ""}>
-                      Tâches / Planning
-                    </Link>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <Link href="/meetings" className={isActive("/meetings") ? "font-bold" : ""}>
-                      Réunions
-                    </Link>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <Link href="/documents" className={isActive("/documents") ? "font-bold" : ""}>
-                      Documents
-                    </Link>
-                  </SidebarMenuItem>
-                </SidebarGroupContent>
-              </SidebarGroup>
-            )}
-
-            {/* --- UTILISATEUR SIMPLE --------------------------------------------- */}
-            {user.isUser && (
-              <SidebarGroup>
-                <SidebarGroupLabel>Projet</SidebarGroupLabel>
-                <SidebarGroupContent>
-                  <SidebarMenuItem>
-                    <Link href="/projects" className={isActive("/projects") ? "font-bold" : ""}>
-                      Mes projets
-                    </Link>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <Link href="/reporting" className={isActive("/reporting") ? "font-bold" : ""}>
-                      Reporting
-                    </Link>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <Link href="/documents" className={isActive("/documents") ? "font-bold" : ""}>
-                      Documents
-                    </Link>
-                  </SidebarMenuItem>
-                </SidebarGroupContent>
-              </SidebarGroup>
-            )}
-
-            {/* --- LOGOUT ---------------------------------------------------------- */}
-            <SidebarGroup>
-              <SidebarGroupLabel>Session</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenuItem>
-                  <form action="/(auth)/logout" method="POST">
-                    <button className="text-red-600 hover:underline">Déconnexion</button>
-                  </form>
-                </SidebarMenuItem>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </>
-        )}
+      {/* NAV */}
+      <SidebarContent className="flex-1 overflow-y-auto px-2 pt-4 space-y-6">
+        <NavMain roleId={roleId} />
+        <NavSoutien />
       </SidebarContent>
+
+      {/* USER */}
+      <SidebarFooter className="border-t px-2 py-4">
+        <NavUser />
+      </SidebarFooter>
     </Sidebar>
   );
 }

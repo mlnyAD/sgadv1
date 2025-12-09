@@ -1,55 +1,36 @@
-// src/components/Sidebar/nav-soutien.tsx
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import type { LucideIcon } from "lucide-react";
+import {
+  HelpCircle,
+  LifeBuoy,
+  MessageCircle,
+  Activity,
+  LibraryBig,
+  BookOpenText,
+} from "lucide-react";
 
 import {
   SidebarGroup,
-  SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-export type SupportItem = {
-  title: string;
-  url: string;
-  icon: LucideIcon;
-};
+import SidebarMenuItems from "./SidebarMenuItems";
+import type { NavItem } from "./types";
 
-export function NavSoutien({ supports }: { supports: SupportItem[] }) {
-  const pathname = usePathname();
+const ITEMS: NavItem[] = [
+  { id: "help", title: "Aide en ligne", href: "/support/help", icon: HelpCircle },
+  { id: "support", title: "Support", href: "/support", icon: LifeBuoy },
+  { id: "chat", title: "Activité chat", href: "/support/chat", icon: MessageCircle },
+  { id: "activities", title: "Activités", href: "/support/activities", icon: Activity },
+  { id: "biblio", title: "Bibliothèque technique", href: "/support/library", icon: LibraryBig },
+  { id: "docs", title: "Documentation Projet", href: "/support/docs", icon: BookOpenText },
+];
 
+export default function NavSoutien() {
   return (
-    <SidebarGroup className="mt-auto">
+    <SidebarGroup>
       <SidebarGroupLabel>Soutien</SidebarGroupLabel>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {supports.map((item) => {
-            const isActive =
-              pathname === item.url ||
-              (item.url !== "/" && pathname.startsWith(item.url + "/"));
-
-            return (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isActive}
-                  className="rounded-md"
-                >
-                  <Link href={item.url} aria-current={isActive ? "page" : undefined}>
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            );
-          })}
-        </SidebarMenu>
-      </SidebarGroupContent>
+      <SidebarMenuItems items={ITEMS} />
     </SidebarGroup>
   );
 }

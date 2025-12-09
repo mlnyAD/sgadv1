@@ -1,73 +1,51 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { DbConfig } from "@/domain/config/config.interface";
-import { ArrowUpDown, Pencil, Trash2 } from "lucide-react";
-import Link from "next/link";
-import DeleteConfigDialog from "./DeleteConfigDialog";
-import { Button } from "@/components/ui/button";
+import type { ColumnDef } from "@tanstack/react-table";
+import type { ConfigListItem } from "@/domain/config/config.list.repository";
+import RowActions from "./actions-row";
 
-export const columns: ColumnDef<DbConfig>[] = [
+export const columns: ColumnDef<ConfigListItem>[] = [
   {
-    accessorKey: "config_id",
-    header: "ID",
-    meta: { label: "Identifiant" },
+  id: "label",
+  accessorKey: "label",
+  header: "Nom",
+  cell: ({ row }) => {
+    console.log("ROW ORIGINAL =", row.original);
+    return <span>{row.original.label}</span>;
   },
+},
 
   {
-    accessorKey: "config_nom",
-    meta: { label: "Nom" },
-    header: ({ column }) => (
-      <button
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="flex items-center gap-1"
-      >
-        Nom <ArrowUpDown className="h-4 w-4" />
-      </button>
-    ),
-  },
-
-  {
-    accessorKey: "configTypeNom",
+    accessorKey: "configType",
     header: "Type",
-    meta: { label: "Type de configuration" },
-  },
-
-  // Bouton Modifier
-  {
-    id: "edit",
-    header: "",
-    enableHiding: false,
     cell: ({ row }) => {
-      const item = row.original;
-
-      return (
-        <Link href={`/configs/${item.config_id}`} className="text-blue-600">
-          <Pencil className="h-5 w-5" />
-        </Link>
-      );
+      const typeId = row.original.configType;
+      // Optionnel : affichage texte lisible
+      return <span>{typeId}</span>;
     },
   },
-
-  // Bouton Supprimer
   {
-    id: "delete",
-    header: "",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const item = row.original;
+  header: "Type",
+  accessorKey: "typeName",
+  cell: ({ row }) => (
+    <span>{row.original.typeName}</span>
+  ),
+},
 
-      return (
-        <DeleteConfigDialog
-          id={item.config_id}
-          label={item.config_nom}
-          trigger={
-            <Button variant="ghost" size="icon">
-              <Trash2 className="w-4 h-4 text-red-500" />
-            </Button>
+  {
+    id: "actions",
+    header: "",
+    enableSorting: false,
+    cell: ({ row }) => (
+      <RowActions
+        row={row.original}
+        onDeleted={() => {
+          // Rafraîchissement simple (remplacé plus tard par un better refresh)
+          if (typeof window !== "undefined") {
+            window.location.reload();
           }
-        />
-      );
-    },
+        }}
+      />
+    ),
   },
 ];

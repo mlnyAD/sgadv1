@@ -1,15 +1,13 @@
-export const dynamic = "force-dynamic";
+// src/app/(app)/configs/page.tsx
 
-import { getConfigsAll } from "@/lib/config/config.service";
-import ConfigList from "./configList/ConfigList";
+import { loadConfigs } from "./configList/actions";
+import ConfigsPageClient from "./ConfigsPageClient";
 
 export default async function ConfigsPage() {
-  const { data, error } = await getConfigsAll();
+  const initialData = await loadConfigs({
+    page: 1,
+    pageSize: 10,
+  });
 
-  if (error) {
-    console.error("Erreur ConfigList :", error);
-    return <div>Erreur lors du chargement des configurations.</div>;
-  }
-
-  return <ConfigList initialData={data ?? []} />;
+  return <ConfigsPageClient initialData={initialData} />;
 }

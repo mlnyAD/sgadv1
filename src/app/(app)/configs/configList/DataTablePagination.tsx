@@ -1,97 +1,70 @@
 "use client";
 
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  DoubleArrowLeftIcon,
-  DoubleArrowRightIcon,
-} from "@radix-ui/react-icons";
-
-import { Table } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-interface DataTablePaginationProps<TData> {
-  table: Table<TData>;
+interface PaginationProps {
+  page: number;          // 1-based
+  pageSize: number;
+  total: number;
+  onChange: (page: number, pageSize: number) => void;
 }
 
-export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
+export default function DataTablePagination({
+  page,
+  pageSize,
+  total,
+  onChange,
+}: PaginationProps) {
+
+  const pageCount = Math.ceil(total / pageSize);
+
+  function goto(newPage: number) {
+    if (newPage < 1 || newPage > pageCount) return;
+    onChange(newPage, pageSize);
+  }
+
+  function changePageSize(newSize: number) {
+    onChange(1, newSize); // Retour page 1
+  }
+
   return (
-    <div className="flex items-center justify-between w-full bg-gray-200 dark:bg-black p-2 rounded-md">
+    <div className="flex items-center justify-between mt-4">
 
-      {/* Sélection du nombre de lignes */}
-      <div className="flex items-center gap-3">
-        <p className="text-sm font-medium text-black dark:text-white">
-          Lignes par page
-        </p>
-
-        <Select
-          value={`${table.getState().pagination.pageSize}`}
-          onValueChange={(value) => table.setPageSize(Number(value))}
+      {/* Page size */}
+      <div className="flex items-center gap-2">
+        <span>Afficher :</span>
+        <select
+          className="input"
+          value={pageSize}
+          onChange={(e) => changePageSize(Number(e.target.value))}
         >
-          <SelectTrigger className="h-8 w-20">
-            <SelectValue />
-          </SelectTrigger>
-
-          <SelectContent>
-            {[10, 20, 30, 40, 50].map((size) => (
-              <SelectItem key={size} value={`${size}`}>
-                {size}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          {[10, 20, 50, 100].map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
       </div>
 
-      {/* Navigation */}
+      {/* Pagination Buttons */}
       <div className="flex items-center gap-2">
-        <span className="text-sm text-black dark:text-white">
-          Page {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
+        <button
+          className="btn"
+          onClick={() => goto(page - 1)}
+          disabled={page <= 1}
+        >
+          Précédent
+        </button>
+
+        <span>
+          Page {page} / {pageCount}
         </span>
 
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <DoubleArrowLeftIcon />
-          </Button>
-
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <ChevronLeftIcon />
-          </Button>
-
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            <ChevronRightIcon />
-          </Button>
-
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-          >
-            <DoubleArrowRightIcon />
-          </Button>
-        </div>
+        <button
+          className="btn"
+          onClick={() => goto(page + 1)}
+          disabled={page >= pageCount}
+        >
+          Suivant
+        </button>
       </div>
     </div>
   );

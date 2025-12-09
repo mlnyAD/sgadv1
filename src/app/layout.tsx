@@ -1,17 +1,24 @@
-import "./globals.css";
-import type { ReactNode } from "react";
+import "@/app/globals.css";
+import { ThemeProvider } from "@/theme/theme-provider";
 
 export const metadata = {
-  title: "EasyProject",
-  description: "Application Axcio",
+  title: "Axcio App",
+  description: "Votre application Axcio",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="fr">
-       <body className="bg-gray-100 dark:bg-black">
-        {children}
+    <html lang="fr" suppressHydrationWarning>
+      <body>
+        <ThemeProvider attribute="class">
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
 }
+

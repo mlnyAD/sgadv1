@@ -26,3 +26,25 @@ export const isProjectAdminRoleId = (roleId: number): roleId is 3 =>
 
 export const isUserRoleId = (roleId: number): roleId is 4 =>
   roleId === USER_ROLES.USER.id;
+
+import type { AuthenticatedUser } from "../authenticated-user.interface";
+
+/**
+ * Détermine le rôle principal d'un utilisateur AuthenticatedUser
+ * en fonction des flags booléens.
+ * 
+ * Priorité :
+ * 1. Administrateur système
+ * 2. Administrateur client
+ * 3. Administrateur projet
+ * 4. Utilisateur
+ */
+export function getRoleIdFromUser(user: AuthenticatedUser | null): UserRoleId {
+  if (!user) return USER_ROLES.USER.id;
+
+  if (user.isSystemAdmin) return USER_ROLES.SYSTEM_ADMIN.id;
+  if (user.isClientAdmin) return USER_ROLES.CLIENT_ADMIN.id;
+  if (user.isProjectAdmin) return USER_ROLES.PROJECT_ADMIN.id;
+
+  return USER_ROLES.USER.id;
+}

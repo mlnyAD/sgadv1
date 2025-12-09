@@ -4,12 +4,13 @@ import ConfigList from "./configList/ConfigList";
 import ConfigListToastFeedback from "./configList/ConfigListToastFeedback";
 
 export default function ConfigsPageClient({
-  searchParams,
-  data,
+  searchParams = {},
+  initialData,
 }: {
-  searchParams: { [key: string]: string | undefined };
-  data: any[];
+  searchParams?: { [key: string]: string | undefined };
+  initialData: any;
 }) {
+
   const flags = {
     created: searchParams?.created === "1",
     updated: searchParams?.updated === "1",
@@ -20,7 +21,7 @@ export default function ConfigsPageClient({
   return (
     <>
       <ConfigListToastFeedback flags={flags} />
-      <ConfigList initialData={data} />
+      <ConfigList initialData={initialData} /> {/* ← CORRECT */}
     </>
   );
 }

@@ -1,14 +1,10 @@
-// src/components/Sidebar/types.ts
 import type { LucideIcon } from "lucide-react";
+import type { UserRoleId } from "@/domain/user/roles/user-role.enum";
 
-export type NavItem = {
+export interface NavItem {
+  id: string;
   title: string;
-  url: string;
-  icon?: LucideIcon;
-};
-
-export type SupportItem = {
-  title: string;
-  url: string;
+  href: string;
   icon: LucideIcon;
-};
+  roles?: UserRoleId[];
+}
