@@ -12,6 +12,7 @@ import {
   FileStack,
   ListTodo,
   AlertTriangle,
+  KanbanSquare,      // Icône pour "Opérations"
 } from "lucide-react";
 
 import {
@@ -20,19 +21,23 @@ import {
 } from "@/components/ui/sidebar";
 
 import SidebarMenuItems from "./SidebarMenuItems";
-import type { NavItem } from "./types";
+
+import type { NavItem } from "./Types";
 import { USER_ROLES, type UserRoleId } from "@/domain/user/roles/user-role.enum";
+import { useSidebar } from "@/components/ui/sidebar";
 
 interface NavMainProps {
   roleId: UserRoleId;
 }
 
+// Rôles autorisés pour certains menus
 const ADMIN = [
   USER_ROLES.SYSTEM_ADMIN.id,
   USER_ROLES.CLIENT_ADMIN.id,
   USER_ROLES.PROJECT_ADMIN.id,
 ];
 
+// Menu principal
 const ITEMS: NavItem[] = [
   {
     id: "dashboard",
@@ -105,6 +110,7 @@ const ITEMS: NavItem[] = [
   },
 ];
 
+// Filtrage automatique des menus selon le rôle
 function filterByRole(roleId: UserRoleId): NavItem[] {
   return ITEMS.filter((i) => !i.roles || i.roles.includes(roleId));
 }
@@ -112,9 +118,22 @@ function filterByRole(roleId: UserRoleId): NavItem[] {
 export default function NavMain({ roleId }: NavMainProps) {
   const items = filterByRole(roleId);
 
+  // Lecture collapsed du sidebar (shadcn)
+  const { state } = useSidebar();
+  const collapsed = state === "collapsed";
+
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Opérations</SidebarGroupLabel>
+
+      {/* Titre "Opérations" AVEC ICÔNE, compatible collapsed */}
+      <SidebarGroupLabel>
+        <div className="flex items-center gap-2 px-2 py-1">
+          <KanbanSquare className="h-4 w-4" />
+          {!collapsed && "Opérations"}
+        </div>
+      </SidebarGroupLabel>
+
+      {/* Menu principal dynamique */}
       <SidebarMenuItems items={items} />
     </SidebarGroup>
   );

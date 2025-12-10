@@ -48,3 +48,10 @@ export function getRoleIdFromUser(user: AuthenticatedUser | null): UserRoleId {
 
   return USER_ROLES.USER.id;
 }
+
+export function getUserRoleLabel(user: AuthenticatedUser): string {
+  if (user.isSystemAdmin) return "Administrateur système";
+  if (user.isClientAdmin) return "Administrateur client";
+  if (user.isProjectAdmin) return "Administrateur projet";
+  return "Utilisateur";
+}

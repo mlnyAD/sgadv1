@@ -1,12 +1,11 @@
-// src/domain/user/loadAuthenticatedUser.ts
-import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
 import type { AuthenticatedUser } from "./authenticated-user.interface";
 
-export async function loadAuthenticatedUser(userId: string): Promise<AuthenticatedUser | null> {
-  const cookieStore = await cookies();
+async function createClient() {
+  const cookieStore = await cookies(); // ← IMPORTANT : await obligatoire
 
-  const supabase = createServerClient(
+  return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -22,31 +21,69 @@ export async function loadAuthenticatedUser(userId: string): Promise<Authenticat
       },
     }
   );
+}
 
-  const { data: row } = await supabase
-    .from("user")
-    .select("*")
-    .eq("id", userId)
-    .maybeSingle();
+export async function loadAuthenticatedUser(): Promise<AuthenticatedUser | null> {
+  const supabase = await createClient();
 
-  if (!row) {
-    console.log("loadAuthenticatedUser: no row in public.user for", userId);
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user?.email) {
+    console.error("loadAuthenticatedUser: getUser error", authError);
     return null;
   }
 
-  const displayName =
-    `${row.first_name ?? ""} ${row.last_name ?? ""}`.trim() || row.email;
+  const { data: row, error } = await supabase
+    .from("vw_operator_list")
+    .select("*")
+    .eq("email", user.email)
+    .maybeSingle();
 
-  return {
+  if (error) {
+    console.error("loadAuthenticatedUser: error loading operator", error);
+    return null;
+  }
+
+  if (!row) return null;
+
+  const displayName =
+    `${row.first_name ?? ""} ${row.last_name ?? ""}`.trim() ||
+    user.email.split("@")[0] ||
+    "Utilisateur";
+
+  let functionLabel = row.metier_label || "Utilisateur";
+
+  switch (row.role_id) {
+    case 1:
+      functionLabel = "Administrateur système";
+      break;
+    case 2:
+      functionLabel = "Administrateur client";
+      break;
+    case 3:
+      functionLabel = "Administrateur projet";
+      break;
+  }
+
+  const result: AuthenticatedUser = {
     id: row.id,
     email: row.email,
     displayName,
-    isSystemAdmin: row.is_system_admin ?? false,
-    isClientAdmin: row.is_client_admin ?? false,
-    isProjectAdmin: row.is_project_admin ?? false,
+    welcomeMessage: "Bienvenue",
+
+    isSystemAdmin: row.role_id === 1,
+    isClientAdmin: row.role_id === 2,
+    isProjectAdmin: row.role_id === 3,
     isUser: true,
+
     clientIds: [],
     projectIds: [],
-    welcomeMessage: `Bienvenue ${displayName}`,
+
+    functionLabel,
   };
+
+  return result;
 }

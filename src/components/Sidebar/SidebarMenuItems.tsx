@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/sidebar";
 
 import { cn } from "@/lib/utils";
-import type { NavItem } from "./types";
+import type { NavItem } from "./Types";
 
 export default function SidebarMenuItems({ items }: { items: NavItem[] }) {
   const pathname = usePathname();

@@ -1,9 +1,8 @@
-// src/app/(auth)/logout/route.ts
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 
-export async function POST() {
+export async function POST(request: Request) {
   const cookieStore = await cookies();
 
   const supabase = createServerClient(
@@ -25,7 +24,8 @@ export async function POST() {
 
   await supabase.auth.signOut();
 
-  return NextResponse.redirect("/login", {
-    status: 303,
-  });
+  // Redirection ABSOLUE obligatoire
+  const redirectUrl = new URL("/login", request.url);
+
+  return NextResponse.redirect(redirectUrl, { status: 303 });
 }

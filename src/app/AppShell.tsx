@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import AppSidebar from "@/components/Sidebar/app-sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import AppSidebar from "@/components/Sidebar/AppSidebar";
 import { UserContextProvider, useUser } from "@/contexts/UserContext";
 import Header from "@/components/Header/Header";
 import { Separator } from "@/components/ui/separator";
@@ -31,13 +31,13 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
         <header className="flex h-16 items-center gap-2 border-b bg-background dark:bg-black">
           <div className="m-2 flex h-full w-full items-center gap-2">
 
-            {/* Remplace le comportement par défaut : collapse contrôlé */}
-            <button
-  onClick={() => setCollapsed(prev => !prev)}
-  className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-800"
->
-  <PanelLeft className="h-6 w-6" />
-</button>
+            {/* Toggle sidebar → utiliser un div : pas de button imbriqué */}
+            <div
+              onClick={() => setCollapsed(prev => !prev)}
+              className="p-2 rounded cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
+            >
+              <PanelLeft className="h-6 w-6" />
+            </div>
 
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Header />

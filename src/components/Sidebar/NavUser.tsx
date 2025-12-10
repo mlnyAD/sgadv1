@@ -1,8 +1,7 @@
 "use client";
 
 import { useUser } from "@/contexts/UserContext";
-import UserIdentity from "./userIdentity";
-
+import UserIdentity from "@/components/Sidebar/SidebarUserIdentity";
 import {
   SidebarMenuItem,
   SidebarMenuButton,
@@ -15,7 +14,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 
-import { ChevronsUpDown, LogOut, User2 } from "lucide-react";
+import { ChevronsUpDown, LogOut } from "lucide-react";
 import Link from "next/link";
 
 export default function NavUser() {
@@ -25,7 +24,7 @@ export default function NavUser() {
     return (
       <SidebarMenuItem>
         <SidebarMenuButton disabled className="opacity-60">
-          Chargement…
+          Chargement utilisateur…
         </SidebarMenuButton>
       </SidebarMenuItem>
     );
@@ -34,8 +33,8 @@ export default function NavUser() {
   if (!user) {
     return (
       <SidebarMenuItem>
-        <SidebarMenuButton disabled>
-          Utilisateur non disponible
+        <SidebarMenuButton disabled className="text-red-600">
+          Utilisateur non chargé
         </SidebarMenuButton>
       </SidebarMenuItem>
     );
@@ -44,27 +43,34 @@ export default function NavUser() {
   return (
     <SidebarMenuItem>
       <DropdownMenu>
+        {/* ❗ IMPORTANT : asChild DOIT avoir EXACTEMENT UN enfant */}
         <DropdownMenuTrigger asChild>
-          <SidebarMenuButton className="flex items-center gap-2">
-            <UserIdentity />
+          <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+            <UserIdentity compact={false} />
             <ChevronsUpDown className="ml-auto size-4" />
           </SidebarMenuButton>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="w-56" side="top" align="end">
+        <DropdownMenuContent className="w-56" side="bottom" align="end">
+          
+          {/* ✔ un seul enfant : Link */}
           <DropdownMenuItem asChild>
-            <Link href="/profile" className="flex items-center gap-2">
-              <User2 className="size-4" /> Mon compte
-            </Link>
+            <Link href="/profile">Mon profil</Link>
           </DropdownMenuItem>
 
-          <DropdownMenuItem asChild>
-            <form action="/(auth)/logout" method="POST">
-              <button className="flex w-full items-center gap-2 text-red-600">
-                <LogOut className="size-4" /> Déconnexion
+          {/* ✔ un seul enfant : button, pas form */}
+          <DropdownMenuItem>
+            <form action="/logout" method="POST" className="w-full">
+              <button
+                type="submit"
+                className="flex w-full items-center gap-2 text-red-600"
+              >
+                <LogOut className="size-4" />
+                Déconnexion
               </button>
             </form>
           </DropdownMenuItem>
+
         </DropdownMenuContent>
       </DropdownMenu>
     </SidebarMenuItem>

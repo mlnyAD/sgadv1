@@ -1,14 +1,10 @@
-// src/app/api/auth/me/route.ts
-import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { loadAuthenticatedUser } from "@/domain/user/loadAuthenticatedUser";
+import { USER_ROLES } from "@/domain/user/roles/user-role.enum";
 
 export async function GET() {
   const cookieStore = await cookies();
-
-  console.log("ME API: cookies sent by browser =", cookieStore.getAll());
-
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,36 +18,62 @@ export async function GET() {
           cookiesToSet.forEach(({ name, value, options }) => {
             cookieStore.set(name, value, options);
           });
-        },
-      },
+        }
+      }
     }
   );
 
-  // 1) >> Récupération utilisateur AUTH de manière sécurisée <<
-  const { data: authData, error: authError } = await supabase.auth.getUser();
+  // 1) Lecture utilisateur Supabase
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
-  console.log("ME API: auth error =", authError);
-console.log("ME API: auth user =", authData?.user);
-
-  if (authError || !authData?.user) {
-    console.log("ME API: NO AUTH USER", authError?.message);
+  if (error || !user) {
     return NextResponse.json({ user: null }, { status: 200 });
   }
 
-  const authUser = authData.user;
-  const userId = authUser.id;
+  // 2) Lecture dans ta vue vw_operator_list
+  const { data: op, error: opError } = await supabase
+    .from("vw_operator_list")
+    .select("*")
+    .eq("email", user.email)
+    .maybeSingle();
 
-  // 2) >> Chargement dans public.user <<
-  console.log("ME API: trying DB lookup for userId =", authData.user.id);
-
-  const user = await loadAuthenticatedUser(authData.user.id);
-
-  console.log("ME API: final returned user =", user);
-
-  if (!user) {
-    console.log("ME API: USER NOT IN PUBLIC.USER", userId);
-    return NextResponse.json({ user: null }, { status: 200 });
+  if (opError) {
+    console.error("vw_operator_list error:", opError);
   }
 
-  return NextResponse.json({ user }, { status: 200 });
+  // 3) Construction displayName
+  const displayName =
+    op?.first_name && op?.last_name
+      ? `${op.first_name} ${op.last_name}`
+      : user.email?.split("@")[0] ?? "Utilisateur";
+
+  // 4) Détermination du rôle
+  const roleId = op?.role_id ?? USER_ROLES.USER.id;
+
+  const functionLabel =
+    Object.values(USER_ROLES).find((r) => r.id === roleId)?.label ??
+    "Utilisateur";
+
+  // 5) Construction de ton AuthenticatedUser
+  const result = {
+    id: user.id,
+    email: user.email,
+    displayName,
+    welcomeMessage: "Bienvenue",
+
+    isSystemAdmin: roleId === USER_ROLES.SYSTEM_ADMIN.id,
+    isClientAdmin: roleId === USER_ROLES.CLIENT_ADMIN.id,
+    isProjectAdmin: roleId === USER_ROLES.PROJECT_ADMIN.id,
+    isUser: true,
+
+    clientIds: [],   // en attente de ta future table
+    projectIds: [],  // idem
+
+    functionLabel,
+  };
+
+  return NextResponse.json({ user: result });
 }

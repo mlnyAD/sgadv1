@@ -1,20 +1,21 @@
 // src/domain/user/authenticated-user.interface.ts
-
 export interface AuthenticatedUser {
-  id: string;                         // Supabase user.id (UUID)
+  id: string;
   email: string;
 
-  // Roles opérateurs
-  isSystemAdmin: boolean;             // rôle 1
-  isClientAdmin: boolean;             // rôle 2
-  isProjectAdmin: boolean;            // rôle 3
-  isUser: boolean;                    // rôle 4 (toujours true)
+  // Rôles
+  isSystemAdmin: boolean;
+  isClientAdmin: boolean;
+  isProjectAdmin: boolean;
+  isUser: boolean;
 
-  // Affectations (gérées via tes tables userclientrole, userprojectrole)
+  // Affectations
   clientIds: number[];
   projectIds: number[];
 
-  // Informations supplémentaires pour UI
-  displayName: string;                // éventuellement nom + prénom
-  welcomeMessage: string;             // utilisé au login
+  // Informations supplémentaires UI
+  displayName: string;
+  welcomeMessage: string;
+
+  functionLabel: string;   // <= AJOUT ICI
 }
