@@ -6,20 +6,23 @@ import { Squares2X2Icon } from "@heroicons/react/24/outline";
 export interface ColumnSelectorItem {
   key: string;
   label: string;
+  visible?: boolean;
 }
 
 interface ColumnSelectorProps {
   columns: ColumnSelectorItem[];
   visibleColumns: string[];
   onChange: (newVisible: string[]) => void;
+  defaultOpen?: boolean; 
 }
 
 export default function ColumnSelector({
   columns,
   visibleColumns,
   onChange,
+  defaultOpen = false
 }: ColumnSelectorProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
 
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -48,7 +51,12 @@ export default function ColumnSelector({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="px-4 py-2 rounded-md border border-ad-light text-ad-light hover:border-ad-dark hover:text-ad-dark transition flex items-center gap-2"
+         className="h-9 px-3 rounded-md flex items-center gap-2 text-sm
+             border border-gray-500/40 dark:border-neutral-700
+             bg-gray-50 dark:bg-neutral-800
+             text-gray-800 dark:text-gray-100
+             hover:bg-gray-100 dark:hover:bg-neutral-700
+             transition"
       >
         <Squares2X2Icon className="w-5 h-5" />
         Colonnes

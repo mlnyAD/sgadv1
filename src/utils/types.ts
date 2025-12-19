@@ -21,9 +21,15 @@ export type AuthenticatedUser = {
 };
 
 */
-
-
-
+/*
+export interface PaginatedResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+*/
 export type EquipeType = {
   id: number;
   task_id: number;

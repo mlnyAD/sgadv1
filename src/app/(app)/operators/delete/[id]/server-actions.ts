@@ -1,13 +1,20 @@
 "use server";
 
-import { OperatorService } from "@/domain/operator/operator.service";
+import { deleteOperator } from "@/domain/operator/operator.repository";
+import { redirect } from "next/navigation";
 
-const service = new OperatorService();
+export async function deleteOperatorAction(
+  formData: FormData
+) {
+  const rawId = formData.get("operatorId");
 
-export async function loadOperator(id: number) {
-  return await service.get(id);
-}
+  const operatorId = Number(rawId);
 
-export async function deleteOperatorAction(id: number) {
-  await service.delete(id);
+  if (!rawId || Number.isNaN(operatorId)) {
+    throw new Error("Invalid operator id");
+  }
+
+  await deleteOperator(operatorId);
+
+  redirect("/operators");
 }

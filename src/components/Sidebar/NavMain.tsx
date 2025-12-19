@@ -86,7 +86,7 @@ const ITEMS: NavItem[] = [
   {
     id: "contacts",
     title: "Contacts",
-    href: "/contacts",
+    href: "/operators",
     icon: Contact,
   },
   {

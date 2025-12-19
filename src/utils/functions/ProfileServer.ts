@@ -40,19 +40,6 @@ export async function srvGetProfileByUUID(uuid: string): Promise<{
   return { profile: data };
 }
 
-// ---------------------------
-// GET USER BY EMAIL
-// ---------------------------
-export async function srvGetUserByEmail(email: string) {
-  const supabase = await srv();
-  const { data, error } = await supabase
-    .from("vw_user_profiles")
-    .select("*")
-    .eq("userEmail", email);
-
-  if (error) return { error };
-  return { profiles: data };
-}
 
 // ---------------------------
 // UPSERT PROFILE

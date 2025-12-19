@@ -1,5 +1,6 @@
 import "@/app/globals.css";
 import { ThemeProvider } from "@/theme/theme-provider";
+import { Toaster } from "sonner";
 
 export const metadata = {
   title: "Axcio App",
@@ -16,6 +17,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider attribute="class">
           {children}
+          <Toaster richColors position="top-right" />
         </ThemeProvider>
       </body>
     </html>

@@ -1,22 +1,49 @@
-import { loadOperator, deleteOperatorAction } from "./server-actions";
+import { deleteOperatorAction } from "./server-actions";
+import { Button } from "@/components/ui/button";
 
 interface DeleteOperatorPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-export default async function DeleteOperatorPage({ params }: DeleteOperatorPageProps) {
-  const operator = await loadOperator(Number(params.id));
+export default async function DeleteOperatorPage({
+  params,
+}: DeleteOperatorPageProps) {
+  const { id } = await params;
+  const operatorId = Number(id);
 
-  if (!operator) {
-    return <div>Opérateur introuvable.</div>;
+  if (Number.isNaN(operatorId)) {
+    throw new Error("Invalid operator id");
   }
 
   return (
-    <form action={async () => await deleteOperatorAction(operator.id)}>
-      <p>
-        Confirmez-vous la suppression de {operator.lastName} {operator.firstName} ?
-      </p>
-      <button type="submit" className="btn btn-danger">Supprimer</button>
-    </form>
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
+      <div className="w-full max-w-lg rounded-lg border bg-background p-6 shadow-sm space-y-6">
+        <h1 className="text-xl font-semibold">
+          Supprimer l’opérateur
+        </h1>
+
+        <p className="text-sm text-muted-foreground">
+          Cette action est irréversible. Voulez-vous continuer ?
+        </p>
+
+        <form action={deleteOperatorAction}>
+          <input
+            type="hidden"
+            name="operatorId"
+            value={operatorId}
+          />
+
+          <div className="flex justify-end gap-3">
+            <Button variant="destructive" type="submit">
+              Supprimer
+            </Button>
+
+            <Button asChild variant="secondary">
+              <a href="/operators">Annuler</a>
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }

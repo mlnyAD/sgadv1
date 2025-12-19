@@ -1,99 +1,99 @@
 "use client";
 
-import {
-  ChevronsLeft,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsRight,
-} from "lucide-react";
+/* ------------------------------------------------------------------ */
+/* Types */
+/* ------------------------------------------------------------------ */
 
 interface IconPaginationProps {
   page: number;
-  totalPages: number;
   pageSize: number;
+  totalPages: number;
   onPageChange: (page: number) => void;
   onPageSizeChange: (size: number) => void;
 }
 
+/* ------------------------------------------------------------------ */
+/* Constantes */
+/* ------------------------------------------------------------------ */
+
+const PAGE_SIZE_OPTIONS: number[] = [10, 20, 50, 100];
+
+/* ------------------------------------------------------------------ */
+/* Component */
+/* ------------------------------------------------------------------ */
+
 export default function IconPagination({
   page,
-  totalPages,
   pageSize,
+  totalPages,
   onPageChange,
   onPageSizeChange,
 }: IconPaginationProps) {
-  const disabled = "opacity-40 cursor-not-allowed";
-
   return (
-    <div className="flex items-center justify-between p-3">
-
-      {/* LEFT: page size selector */}
-      <div className="flex items-center gap-2 text-sm">
-        <span>Éléments :</span>
+    <div className="flex items-center justify-between gap-4 py-2">
+      {/* Page size */}
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <span>Lignes par page</span>
         <select
           value={pageSize}
-          onChange={(e) => onPageSizeChange(Number(e.target.value))}
-          className="border border-ad-light text-ad-light px-2 py-1 rounded-md bg-white dark:bg-neutral-900"
+          onChange={(e) =>
+            onPageSizeChange(Number(e.target.value))
+          }
+          className="h-8 rounded-md border bg-background px-2"
         >
-          {[5, 10, 20, 50, 100].map((size) => (
+          {PAGE_SIZE_OPTIONS.map((size) => (
             <option key={size} value={size}>
-              {size} / page
+              {size}
             </option>
           ))}
         </select>
       </div>
 
-      {/* RIGHT: Pagination icons */}
-      <div className="flex items-center gap-2">
+      {/* Navigation */}
+      <div className="flex items-center gap-1">
+      {/* First */}
+      <button
+        onClick={() => onPageChange(1)}
+        disabled={page <= 1}
+        className="h-8 w-8 rounded-md border text-base disabled:opacity-90"
+        title="Première page"
+      >
+        {"<<"}
+      </button>
 
-        {/* First page */}
-        <button
-          disabled={page === 1}
-          onClick={() => onPageChange(1)}
-          className={`p-1 rounded-md border border-ad-light text-ad-light 
-                      hover:bg-ad-light hover:text-white transition
-                      ${page === 1 && disabled}`}
-        >
-          <ChevronsLeft className="w-4 h-4" />
-        </button>
+      {/* Previous */}
+      <button
+        onClick={() => onPageChange(page - 1)}
+        disabled={page <= 1}
+        className="h-8 w-8 rounded-md border text-base disabled:opacity-90"
+        title="Page précédente"
+      >
+        {"<"}
+      </button>
 
-        {/* Prev */}
-        <button
-          disabled={page === 1}
-          onClick={() => onPageChange(page - 1)}
-          className={`p-1 rounded-md border border-ad-light text-ad-light
-                      hover:bg-ad-light hover:text-white transition
-                      ${page === 1 && disabled}`}
-        >
-          <ChevronLeft className="w-4 h-4" />
-        </button>
+      <span className="mx-3 text-base font-medium">
+        Page {page} / {totalPages}
+      </span>
 
-        <span className="px-3 text-sm">
-          Page {page} / {totalPages}
-        </span>
-
-        {/* Next */}
-        <button
-          disabled={page === totalPages}
-          onClick={() => onPageChange(page + 1)}
-          className={`p-1 rounded-md border border-ad-light text-ad-light
-                      hover:bg-ad-light hover:text-white transition
-                      ${page === totalPages && disabled}`}
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
-
-        {/* Last page */}
-        <button
-          disabled={page === totalPages}
-          onClick={() => onPageChange(totalPages)}
-          className={`p-1 rounded-md border border-ad-light text-ad-light 
-                      hover:bg-ad-light hover:text-white transition
-                      ${page === totalPages && disabled}`}
-        >
-          <ChevronsRight className="w-4 h-4" />
-        </button>
-      </div>
+      {/* Next */}
+      <button
+        onClick={() => onPageChange(page + 1)}
+        disabled={page >= totalPages}
+        className="h-8 w-8 rounded-md border text-base disabled:opacity-90"
+        title="Page suivante"
+      >
+        {">"}
+      </button>
+      {/* Last */}
+      <button
+        onClick={() => onPageChange(totalPages)}
+        disabled={page >= totalPages}
+        className="h-8 w-8 rounded-md border text-base disabled:opacity-90"
+        title="Dernière page"
+      >
+        {">>"}
+      </button>
     </div>
+    </div >
   );
 }

@@ -5,7 +5,6 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { DbConfig } from '@/domain/config/config.interface';
 import { DbSociete } from '@/domain/societe/societe.interface';
 import { DbReunion } from '@/domain/reunion/reunion.interface';
 import { UserProfileType } from '@/utils/types';
@@ -14,7 +13,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 export type MasterData = {
 	societe: DbSociete[];
-	config: DbConfig[];
+	//config: DbConfig[];
 	reunion: DbReunion[];
 	contact: UserProfileType[];
 };
@@ -38,7 +37,7 @@ export const MasterDataProvider = ({ children }: { children: ReactNode }) => {
 
 	const [data, setData] = useState<MasterData>({
 		societe: [],
-		config: [],
+		//config: [],
 		reunion: [],
 		contact: [],
 	});
@@ -48,28 +47,28 @@ export const MasterDataProvider = ({ children }: { children: ReactNode }) => {
 	// fetch initial une seule fois
 	useEffect(() => {
 		if (isInitialLoaded) return;
-/*
-		const fetchInitialData = async () => {
-			try {
-				const { data: societeData } = await supabase.from('societe').select('*') as { data: SocieteType[] | null, error: any };
-				const { data: configData } = await supabase.from('config').select('*') as { data: ConfigType[] | null, error: any };
-				const { data: reunionData } = await supabase.from('vw_reunion').select('*') as { data: ReunionType[] | null, error: any };
-				const { data: contactData } = await supabase.from('vw_user_profiles').select('*') as { data: UserProfileType[] | null, error: any };
-				setData({
-					societe: societeData ?? [],
-					config: configData ?? [],
-					reunion: reunionData ?? [],
-					contact: contactData ?? [],
-				});
-
-				setIsInitialLoaded(true);
-			} catch (error) {
-				console.error('Erreur fetch initial:', error);
-			}
-		};
-
-		fetchInitialData();
-		*/
+		/*
+				const fetchInitialData = async () => {
+					try {
+						const { data: societeData } = await supabase.from('societe').select('*') as { data: SocieteType[] | null, error: any };
+						const { data: configData } = await supabase.from('config').select('*') as { data: ConfigType[] | null, error: any };
+						const { data: reunionData } = await supabase.from('vw_reunion').select('*') as { data: ReunionType[] | null, error: any };
+						const { data: contactData } = await supabase.from('vw_user_profiles').select('*') as { data: UserProfileType[] | null, error: any };
+						setData({
+							societe: societeData ?? [],
+							config: configData ?? [],
+							reunion: reunionData ?? [],
+							contact: contactData ?? [],
+						});
+		
+						setIsInitialLoaded(true);
+					} catch (error) {
+						console.error('Erreur fetch initial:', error);
+					}
+				};
+		
+				fetchInitialData();
+				*/
 	}, [isInitialLoaded]);
 
 	// Realtime listeners

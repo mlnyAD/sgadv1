@@ -9,3 +9,10 @@ export const USER_ROLES = {
 export type UserRoleKey = keyof typeof USER_ROLES;
 
 export type UserRoleId = (typeof USER_ROLES)[UserRoleKey]["id"];
+
+export enum UserRole {
+  SYSTEM_ADMIN = "SYSTEM_ADMIN",
+  CLIENT_ADMIN = "CLIENT_ADMIN",
+  PROJECT_ADMIN = "PROJECT_ADMIN",
+  USER = "USER",
+}

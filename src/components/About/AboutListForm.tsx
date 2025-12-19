@@ -17,10 +17,10 @@ import {
 } from "@/components/ui/accordion";
 
 import { ScrollArea } from "@/components/ui/scroll-area"; // plus propre que Radix direct
-import { TableTitle } from "@/components/IHM/TableTitle";
-import { CloseButton } from "@/components/Buttons/CloseButton";
+import { TableHeader } from "@/components/transaction/TableHeader";
 import { useRouter } from "next/navigation";
 import { APP_VERSION, APP_VERSION_DATE, APP_PROJECTNAME, APP_PROJECTDESCRIPTION } from "@/version";
+import { Button } from "../ui/button";
 
 export default function AboutListForm() {
   // Lecture des variables du .env
@@ -34,7 +34,10 @@ export default function AboutListForm() {
   return (
     <div className="flex size-full flex-col items-center justify-center bg-inherit">
       {/* Titre de la page */}
-      <TableTitle>À propos ...</TableTitle>
+      <TableHeader
+        title="À propos ..."
+        subtitle="Liste des points corrigés/apportés par version"
+      />
 
       <ScrollArea className="w-full overflow-x-auto">
         <Card className="m-5 w-5/6">
@@ -64,7 +67,8 @@ export default function AboutListForm() {
                       Build du {date}
                     </div>
                   </div>
-                  <p className="mt-2 text-xs">1 - Version stable avec sidebar, header, config</p>
+                  <p className="mt-2 text-xs">1 - Version stable operateurs (contacts)</p>
+                  <p className="mt-2 text-xs">2 - Version stable configurations</p>
                 </AccordionContent>
               </AccordionItem>
 
@@ -72,6 +76,8 @@ export default function AboutListForm() {
               <AccordionItem value="history">
                 <AccordionTrigger>Historique</AccordionTrigger>
                 <AccordionContent>
+                  <p className="text-2xl text-red-500">Version 1.05 du 10/12/2025</p>
+                  <p className="mt-2 text-xs">1 - Version stable avec sidebar, header, config</p>
                   <p className="text-2xl text-red-500">Version 1.04.02 du 09/12/2025</p>
                   <p className="mt-2 text-xs">1 - Correction au niveau sidebar</p>
                   <p className="mt-2 text-xs">2 - mise à niveau transaction configs</p>
@@ -89,7 +95,7 @@ export default function AboutListForm() {
                   <p className="text-2xl text-red-500">Version 1.01 du 26/11/2025</p>
                   <p className="mt-2 text-xs">1 - Reprise de la transaction configuration</p>
                   <p className="text-xs">2 - Reprise look and feel + sidebar menu</p>
-   
+
                   <p className="text-2xl text-red-500">Version 1.00 du 18/11/2025</p>
                   <p className="text-xs">1 - Reprise de l&apos;application</p>
                   <p className="text-xs">2 - Reprise du login avec cookies</p>
@@ -99,7 +105,11 @@ export default function AboutListForm() {
           </CardContent>
 
           <CardFooter>
-            <CloseButton onClick={() => router.push("/dashboard")} />
+            <Button
+              variant="outline"
+              onClick={() => router.push("/dashboard")} >
+                Fermer
+            </Button>
           </CardFooter>
         </Card>
       </ScrollArea>
