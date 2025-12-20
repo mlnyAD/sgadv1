@@ -3,16 +3,16 @@
 
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Moon, Sun, Monitor } from "lucide-react";
 import { useTheme } from "next-themes";
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true); // ⚠️ c’est ok ici, car ça ne provoque pas de cascade dans next-themes
+    setMounted(true);
   }, []);
 
   if (!mounted) return null;

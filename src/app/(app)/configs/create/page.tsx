@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { TransactionHeader } from "@/components/transaction/TransactionHeader";
 import { ConfigNameField } from "../components/fields/ConfigNameField";
 import { ConfigTypeField } from "../components/fields/ConfigTypeField";
-import type { ConfigTypeId } from "@/shared/enums/config-type";
 import { ConfigForm, ConfigFormValues } from "../components/form/ConfigForm";
 import { ConfigFormCard } from "../components/form/ConfigFormCard";
 import { toast } from "sonner";
@@ -13,8 +12,8 @@ import { toast } from "sonner";
 export default function CreateConfigPage() {
   const router = useRouter();
 
-  const [label, setLabel] = useState("");
-  const [configTypeId, setConfigTypeId] = useState<ConfigTypeId | null>(null);
+//  const [label, setLabel] = useState("");
+//  const [configTypeId, setConfigTypeId] = useState<ConfigTypeId | null>(null);
   const [saving, setSaving] = useState(false);
 
   /* ==========================================================================

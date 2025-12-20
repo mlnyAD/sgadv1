@@ -98,6 +98,7 @@ export function ConfigsTable({
     <GenericListTable
       data={data}
       columns={configColumns}
+      selectableColumns={selectableColumns}
       page={page}
       pageSize={pageSize}
       totalPages={totalPages}
@@ -113,3 +114,6 @@ export function ConfigsTable({
     />
   );
 }
+
+
+ 

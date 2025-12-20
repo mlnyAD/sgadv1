@@ -1,7 +1,6 @@
 // src/components/Header/Header.tsx
 "use client";
 
-import React from "react";
 import HeaderProjet from "./HeaderProject";
 import HeaderSearch from "./HeaderSearch";
 import HeaderTheme from "./HeaderTheme";

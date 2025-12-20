@@ -4,13 +4,10 @@ import { getSupabaseAdminClient } from "@/utils/supabase/admin";
 
 
 export async function GET(
-  request: Request,
+  _: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-
-  console.log("GET Operator id =", id);
-
   const operatorId = Number(id);
 
   if (!operatorId) {

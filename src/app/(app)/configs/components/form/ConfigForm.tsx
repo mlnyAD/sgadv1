@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ConfigType, ConfigTypeId } from "@/shared/enums/config-type";
+import { ConfigTypeId } from "@/shared/enums/config-type";
 
 export interface ConfigFormValues {
   label: string;
@@ -24,8 +24,6 @@ export interface ConfigFormProps {
 export function ConfigForm({
   initialValues,
   onSubmit,
-  onCancel,
-  saving,
   children,
 }: ConfigFormProps) {
   const [values, setValues] = useState<ConfigFormValues>(initialValues);
