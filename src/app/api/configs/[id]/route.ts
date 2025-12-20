@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -10,10 +10,11 @@ const supabase = createClient(
    GET /api/configs/[id]
    ============================================================================ */
 export async function GET(
-  _req: Request,
-  { params }: { params: { id: string } }
+  _req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
-  const configId = Number(params.id);
+  const { id } = await context.params;
+  const configId = Number(id);
 
   if (Number.isNaN(configId)) {
     return NextResponse.json(
@@ -48,10 +49,11 @@ export async function GET(
    PUT /api/configs/[id]
    ============================================================================ */
 export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
-  const configId = Number(params.id);
+  const { id } = await context.params;
+  const configId = Number(id);
 
   if (Number.isNaN(configId)) {
     return NextResponse.json(
@@ -86,20 +88,18 @@ export async function PUT(
     );
   }
 
-  return NextResponse.json({
-    success: true,
-    updated_id: data.config_id,
-  });
+  return NextResponse.json({ success: true });
 }
 
 /* ============================================================================
    DELETE /api/configs/[id]
    ============================================================================ */
 export async function DELETE(
-  _req: Request,
-  { params }: { params: { id: string } }
+  _req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
-  const configId = Number(params.id);
+  const { id } = await context.params;
+  const configId = Number(id);
 
   if (Number.isNaN(configId)) {
     return NextResponse.json(
