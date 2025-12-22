@@ -1,13 +1,14 @@
 // src/utils/functions/ProfileServer.ts
 "use server";
 
-import { getSupabaseServerClient } from "@/utils/supabase/server";
+import { createSupabaseServerActionClient } from "@/lib/supabase/server-action";
+
 //import { insertActivite } from "@/utils/functions/ActiviteBD";
 import { UserProfileType } from "@/utils/types";
 
 // Helper
 async function srv() {
-  return await getSupabaseServerClient();
+  return await createSupabaseServerActionClient();
 }
 
 // ---------------------------
@@ -73,12 +74,12 @@ export async function upsertProfile(input: {
 
     if (error) return { error };
 
- /*   await insertActivite({
-      actType: "Utilisateur",
-      actSType: "Ajout",
-      actMessage: input.newNom,
-      actUser: "OPE1",
-    });*/
+    /*   await insertActivite({
+         actType: "Utilisateur",
+         actSType: "Ajout",
+         actMessage: input.newNom,
+         actUser: "OPE1",
+       });*/
 
     return { message: "success" };
   }
@@ -91,12 +92,12 @@ export async function upsertProfile(input: {
 
     if (error) return { error };
 
-  /*  await insertActivite({
-      actType: "Utilisateur",
-      actSType: "Modification",
-      actMessage: input.newNom,
-      actUser: "OPE1",
-    });*/
+    /*  await insertActivite({
+        actType: "Utilisateur",
+        actSType: "Modification",
+        actMessage: input.newNom,
+        actUser: "OPE1",
+      });*/
 
     return { message: "success" };
   }

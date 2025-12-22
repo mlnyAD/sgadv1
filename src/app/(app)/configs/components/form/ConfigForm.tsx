@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ConfigTypeId } from "@/shared/enums/config-type";
+import { ConfigTypeId } from "@/shared/config/config-type";
 
 export interface ConfigFormValues {
   label: string;

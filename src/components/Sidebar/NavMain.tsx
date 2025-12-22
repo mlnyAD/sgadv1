@@ -23,7 +23,8 @@ import {
 import SidebarMenuItems from "./SidebarMenuItems";
 
 import type { NavItem } from "./Types";
-import { USER_ROLES, type UserRoleId } from "@/domain/user/roles/user-role.enum";
+import { USER_ROLES } from "@/shared/catalogs/user-role.constants";
+import type { UserRoleId } from "@/domain/user/roles/user-role.type";
 import { useSidebar } from "@/components/ui/sidebar";
 
 interface NavMainProps {
@@ -99,7 +100,7 @@ const ITEMS: NavItem[] = [
   {
     id: "todo",
     title: "TODO Liste",
-    href: "/todo",
+    href: "/todos",
     icon: ListTodo,
   },
   {

@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { getSupabaseAdminClient } from "@/utils/supabase/admin";
-import { getSupabaseServerClient } from "@/utils/supabase/server";
+import { getSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
 
 export async function POST(request: Request) {
-  const supabase = await getSupabaseServerClient();      // DB
+  const supabase = await createSupabaseServerReadClient();      // DB
   const supabaseAdmin = getSupabaseAdminClient();        // AUTH
 
   const body = await request.json();

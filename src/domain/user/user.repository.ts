@@ -1,7 +1,8 @@
-import { getSupabaseServerClient } from "@/utils/supabase/server";
+import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
+
 
 export async function findUserByEmail(email: string) {
-  const supabase = await getSupabaseServerClient();
+  const supabase = await createSupabaseServerReadClient();
 
   const { data, error } = await supabase
     .from("user")
@@ -21,7 +22,7 @@ export async function createUser(input: {
   firstName: string;
   lastName: string;
 }) {
-  const supabase = await getSupabaseServerClient();
+  const supabase = await createSupabaseServerReadClient();
 
   const { data, error } = await supabase
     .from("user")

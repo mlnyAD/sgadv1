@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import type { UserRoleId } from "@/domain/user/roles/user-role.enum";
+import type { UserRoleId } from "@/domain/user/roles/user-role.type";
 
 export interface NavItem {
   id: string;

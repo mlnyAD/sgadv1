@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getSupabaseServerClient } from "@/utils/supabase/server";
-import { getSupabaseAdminClient } from "@/utils/supabase/admin";
+import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
+import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 
 
 export async function GET(
@@ -17,11 +17,11 @@ export async function GET(
     );
   }
 
-  const supabase = await getSupabaseServerClient();
+  const supabase = await createSupabaseServerReadClient();
 
- const { data, error } = await supabase
-  .from("vw_operator_list")
-  .select(`
+  const { data, error } = await supabase
+    .from("vw_operator_list")
+    .select(`
     operator_id,
     user_id,
     email,
@@ -32,11 +32,11 @@ export async function GET(
     societe_id,
     metier_id
   `)
-  .eq("operator_id", operatorId)
-  .single();
+    .eq("operator_id", operatorId)
+    .single();
 
 
-     console.log("Get Operator ", data);
+  console.log("Get Operator ", data);
 
 
   if (error || !data) {
@@ -58,7 +58,7 @@ export async function PUT(
 ) {
   const { id } = await params;
 
-  const supabase = await getSupabaseServerClient();   // DB (RLS)
+  const supabase = await createSupabaseServerReadClient(); // DB (RLS)
   const supabaseAdmin = getSupabaseAdminClient();     // Auth admin
 
   const body = await request.json();

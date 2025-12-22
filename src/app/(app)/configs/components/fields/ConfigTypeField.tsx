@@ -1,4 +1,4 @@
-import { ConfigType, ConfigTypeId } from "@/shared/enums/config-type";
+import { CONFIG_TYPE_CATALOG, ConfigTypeId } from "@/shared/config/config-type";
 
 interface ConfigTypeFieldProps {
   value: ConfigTypeId | null;
@@ -30,7 +30,7 @@ export function ConfigTypeField({
             Sélectionner un type
           </option>
 
-          {ConfigType.map((type) => (
+          {CONFIG_TYPE_CATALOG.map((type) => (
             <option key={type.id} value={type.id}>
               {type.label}
             </option>

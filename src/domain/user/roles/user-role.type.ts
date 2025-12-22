@@ -1,4 +1,4 @@
-import { USER_ROLES } from "./user-role.enum";
+import { USER_ROLES } from "@/shared/catalogs/user-role.constants";
 
 export type UserRoleKey = keyof typeof USER_ROLES;
 

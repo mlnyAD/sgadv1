@@ -3,7 +3,7 @@
  * Représente UNE ligne dans la table Operators
  */
 
-import { UserRoleId } from "@/domain/user/roles/user-role.enum";
+import { UserRoleId } from "@/domain/user/roles/user-role.type";
 
 export interface OperatorListItem {
   id: number;

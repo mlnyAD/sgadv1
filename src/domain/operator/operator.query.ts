@@ -1,4 +1,4 @@
-import { getSupabaseServerClient } from "@/utils/supabase/server";
+import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
 import { OperatorRow } from "./operator.types";
 
 /* ------------------------------------------------------------------ */
@@ -27,7 +27,8 @@ export async function fetchOperatorRows({
   rows: OperatorRow[];
   totalPages: number;
 }> {
-  const supabase = await getSupabaseServerClient();
+  const supabase = await createSupabaseServerReadClient();
+
 
   let query = supabase
     .from("vw_operator_list")

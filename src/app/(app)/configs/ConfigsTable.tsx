@@ -5,7 +5,7 @@ import { GenericListTable } from "@/components/table/GenericListTable";
 import { configColumns, ConfigListItem } from "./columns";
 import type { ColumnSelectorItem } from "@/components/table/ColumnSelector";
 import { ConfigsFilters } from "./ConfigFilters";
-import { ConfigType } from "@/shared/enums/config-type";
+import { CONFIG_TYPE_CATALOG } from "@/shared/config/config-type";
 
 /* ------------------------------------------------------------------ */
 /* Props */
@@ -41,9 +41,9 @@ export function ConfigsTable({
 }: ConfigsTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
- 
 
-  const typeOptions = ConfigType.map((type) => ({
+
+  const typeOptions = CONFIG_TYPE_CATALOG.map((type) => ({
     id: type.id,
     label: type.label,
   }));
@@ -116,4 +116,3 @@ export function ConfigsTable({
 }
 
 
- 

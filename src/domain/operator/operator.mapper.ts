@@ -1,6 +1,6 @@
 import { OperatorRow } from "./operator.types";
 import { OperatorListItem } from "./operator.dto";
-import { USER_ROLES } from "@/domain/user/roles/user-role.enum";
+import { USER_ROLES } from "@/shared/catalogs/user-role.constants";
 
 /**
  * Traduction role_id → libellé métier

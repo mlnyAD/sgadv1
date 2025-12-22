@@ -18,4 +18,13 @@ export interface AuthenticatedUser {
   welcomeMessage: string;
 
   functionLabel: string;   // <= AJOUT ICI
+      // --- flags métier ---
+  //  isActive: true,
+  //  isExternal: false,
+  
+    // --- collections ---
+  //  roles: [],
+  //  permissions: [],
+
+
 }

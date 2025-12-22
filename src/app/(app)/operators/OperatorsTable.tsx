@@ -6,7 +6,7 @@ import { operatorColumns } from "./columns";
 import { OperatorListItem } from "@/domain/operator/operator.dto";
 import { OperatorsFilters } from "./OperatorsFilters";
 import type { ColumnSelectorItem } from "@/components/table/ColumnSelector";
-import { USER_ROLES } from "@/domain/user/roles/user-role.enum";
+import { USER_ROLES } from "@/shared/catalogs/user-role.constants";
 
 
 /* ------------------------------------------------------------------ */

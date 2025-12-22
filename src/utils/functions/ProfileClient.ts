@@ -1,7 +1,7 @@
 // src/utils/functions/ProfileClient.ts
 "use client";
 
-import { getSupabaseBrowserClient } from "@/utils/supabase/client";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 // GET CONNECTED USER (CLIENT)
 export async function cliGetUserConnected() {

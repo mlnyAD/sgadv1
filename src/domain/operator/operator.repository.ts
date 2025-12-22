@@ -7,8 +7,8 @@ import { OperatorListItem } from "./operator.dto";
 import { OperatorUpdateInput } from "./operator.dto";
 import { CreateOperatorByAdminInput } from "./operator.dto";
 
-import { getSupabaseServerClient } from "@/utils/supabase/server";
-import { getSupabaseAdminClient } from "@/utils/supabase/admin";
+import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
+import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 
 /* ------------------------------------------------------------------ */
 /* LISTE */
@@ -33,7 +33,7 @@ export async function listOperators(
 /* ------------------------------------------------------------------ */
 
 export async function deleteOperator(operatorId: number) {
-  const supabase = await getSupabaseServerClient();
+  const supabase = await createSupabaseServerReadClient();
 
   const { error } = await supabase
     .from("operator")
@@ -50,7 +50,7 @@ export async function deleteOperator(operatorId: number) {
 /* ------------------------------------------------------------------ */
 
 export async function updateOperator(input: OperatorUpdateInput) {
-  const supabase = await getSupabaseServerClient();
+  const supabase = await createSupabaseServerReadClient();
 
   const { error } = await supabase
     .from("operator")
@@ -128,7 +128,7 @@ async function createUserRow(input: {
   firstName: string;
   lastName: string;
 }) {
-  const supabase = await getSupabaseServerClient();
+  const supabase = await createSupabaseServerReadClient();
 
   const { error } = await supabase.from("user").insert({
     id: input.authUserId, // FK = auth.users.id
@@ -149,7 +149,7 @@ async function createOperatorRow(input: {
   metierId?: number | null;
   active: boolean;
 }) {
-  const supabase = await getSupabaseServerClient();
+  const supabase = await createSupabaseServerReadClient();
 
   const { error } = await supabase.from("operator").insert({
     user_id: input.userId,

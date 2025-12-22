@@ -5,7 +5,7 @@
 - SGBD : PostgreSQL
 - Schéma : `public`
 - Convention de nommage :
-  - Tables : `snake_case` en français (`project`, `lottrav`, `todolist`, …)
+  - Tables : `snake_case` en français (`project`, `lottrav`, `todo`, …)
   - Vues : préfixe `vw_…` (`vw_project`, `vw_task`, …)
   - Colonnes identifiants : suffixe `_id` (ex : `project_id`, `lottrav_id`)
 - Types :
@@ -350,12 +350,12 @@ Association personnes ↔ projets.
 
 ## 7. Todo, notifications, messagerie
 
-### 7.1 Table `todolist` & vue `vw_todolist`
+### 7.1 Table `todo` & vue `vw_todo_view`
 
 **Rôle**  
 Tâches personnelles de type ToDo.
 
-**`todolist`**
+**`todo`**
 - `todo_id` (smallint, PK)
 - `todo_creation`, `todo_cloture` (date)
 - `todo_titre`, `todo_text` (text)
@@ -365,7 +365,7 @@ Tâches personnelles de type ToDo.
 - `todo_etat_nom` (text) : libellé d’état (stocké)
 - `lmod` (timestamptz)
 
-**`vw_todolist`**
+**`vw_todo_view_`**
 - Ajoute `profiles.userEmail` en `todo_user_email`.
 
 ---
@@ -475,7 +475,7 @@ Tables d’états / rôles / classifications diverses, utilisées selon les modu
 - `vw_risk`  
   Risques + toutes les dimensions de typologie + projet.
 
-- `vw_todolist`  
+- `vw_todo_view_`  
   Todos + email utilisateur + état.
 
 - `vw_dossier_lottrav_task`  
@@ -488,7 +488,7 @@ Tables d’états / rôles / classifications diverses, utilisées selon les modu
 1. Certaines colonnes `_etat_id`, `_type_id`, `_fonction_id` n’ont **plus de FK** par choix architectural :
    - `task.task_etat_id` → `task.constantes.ts`
    - `document.doc_etat_id` → `doc_constantes.ts`
-   - `todolist.todo_etat_id` → `todo_constantes.ts`
+   - `todo.todo_etat_id` → `todo_constantes.ts`
    - `reunion.reunion_etat_id` → `reunion_constantes.ts`
    - `personne.fonction_id` → `personne.constantes.ts`
    - `profiles.fonction_id` → `profiles.constantes.ts`
