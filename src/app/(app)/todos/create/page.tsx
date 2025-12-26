@@ -13,7 +13,7 @@ import { TodoUrgentField } from "../components/fields/TodoUrgentField";
 import { TodoImportantField } from "../components/fields/TodoImportantField";
 import { TodoEtatField } from "../components/fields/TodoEtatField";
 import type { TodoFormValues } from "@/domain/todo/todo.form";
-import { toast } from "sonner";
+import { getTodayISO, addDaysISO } from "@/helpers/date";
 
 export default function CreateTodoPage() {
   const router = useRouter();
@@ -23,35 +23,37 @@ export default function CreateTodoPage() {
      Submit
      ========================================================================== */
   async function handleSubmit(values: TodoFormValues) {
-    try {
-      setSaving(true);
+  try {
+    setSaving(true);
 
-      const res = await fetch("/api/todos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          todo_titre: values.titre,
-          todo_text: values.text || null,
-          todo_important: values.important,
-          todo_urgent: values.urgent,
-          todo_etat_id: values.etatId,
-          todo_creation: values.creation,
-          todo_cloture: values.cloture || null,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error();
-      }
-
-      toast.success("Action créée");
-      router.push("/todos");
-    } catch {
-      toast.error("Erreur lors de la création");
-    } finally {
-      setSaving(false);
+ const res = await fetch("/api/todos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        titre: values.titre,
+        text: values.text || null,
+        important: values.important,
+        urgent: values.urgent,
+        etatId: values.etatId,
+        creation: values.creation,
+        cloture: values.cloture || null,
+      }),
+    });
+    if (!res.ok) {
+      throw new Error("Erreur lors de la création du todo");
     }
+    
+    // ✅ 1) Rafraîchir les données côté serveur
+    router.refresh();
+
+    // ✅ 2) Retour à la liste
+    router.push("/todos");
+
+  } finally {
+    setSaving(false);
   }
+}
+
 
   /* ==========================================================================
      Rendu
@@ -67,8 +69,8 @@ export default function CreateTodoPage() {
         initialValues={{
           titre: "",
           text: "",
-          creation: "",
-          cloture: "",
+          creation: getTodayISO(),
+          cloture: addDaysISO(5),
           urgent: false,
           important: false,
           etatId: null,
@@ -124,12 +126,12 @@ export default function CreateTodoPage() {
               }
             />
 
-           <TodoEtatField
-  value={values.etatId}
-  onChange={(etatId) =>
-    setValues((v) => ({ ...v, etatId }))
-  }
-/>
+            <TodoEtatField
+              value={values.etatId}
+              onChange={(etatId) =>
+                setValues((v) => ({ ...v, etatId }))
+              }
+            />
           </TodoFormCard>
         )}
       </TodoForm>

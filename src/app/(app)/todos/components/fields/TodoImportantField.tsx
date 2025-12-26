@@ -16,23 +16,22 @@ export function TodoImportantField({
 }: TodoImportantFieldProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center border-b border-muted pb-2">
-      <label className="md:col-span-1 text-sm font-medium">Important?</label>
+      <label className="md:col-span-1 text-sm font-medium">Important ?</label>
 
       <div className="md:col-span-5">
         <RadioGroup
-          value={value ? "Important" : "Normal"}
-          onValueChange={(v) => onChange(v === "Important")}
+          value={value ? "important" : "normal"}
+          onValueChange={(v) => onChange(v === "important")}
           disabled={disabled}
           className="flex gap-6"
         >
           <div className="flex items-center gap-2">
-            <RadioGroupItem value="important" id="status-important" />
-            <Label htmlFor="status-important">Important</Label>
+            <RadioGroupItem value="important" id="important-yes" />
+            <Label htmlFor="important-yes">Important</Label>
           </div>
-
           <div className="flex items-center gap-2">
-            <RadioGroupItem value="normal" id="status-normal" />
-            <Label htmlFor="status-normal">Normal</Label>
+            <RadioGroupItem value="normal" id="important-no" />
+            <Label htmlFor="important-no">Normal</Label>
           </div>
         </RadioGroup>
       </div>

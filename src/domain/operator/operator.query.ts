@@ -31,7 +31,7 @@ export async function fetchOperatorRows({
 
 
   let query = supabase
-    .from("vw_operator_list")
+    .from("vw_operator_view")
     .select("*", { count: "exact" });
 
   /* -------------------- Filtres -------------------- */

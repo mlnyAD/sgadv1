@@ -3,11 +3,16 @@ import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
 import { todoRepository } from '@/domain/todo/todo.repository'
 import { toTodoListItem } from "@/domain/todo/todo-list.mapper";
 
-type ListTodosParams = {
-  page: number
-  pageSize: number
-  search?: string
-}
+
+export type ListTodosParams = {
+  page: number;
+  pageSize: number;
+  search?: string;
+  urgent?: boolean;
+  important?: boolean;
+  etatId?: number;
+};
+
 
 export async function listTodos(params: ListTodosParams) {
   const supabase = await createSupabaseServerReadClient()

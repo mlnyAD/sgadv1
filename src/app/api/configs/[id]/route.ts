@@ -24,7 +24,7 @@ export async function GET(
   }
 
   const { data, error } = await supabase
-    .from("vw_config_list")
+    .from("vw_config_view")
     .select(`
       config_id,
       config_nom,

@@ -51,49 +51,49 @@ export default function IconPagination({
 
       {/* Navigation */}
       <div className="flex items-center gap-1">
-      {/* First */}
-      <button
-        onClick={() => onPageChange(1)}
-        disabled={page <= 1}
-        className="h-8 w-8 rounded-md border text-base disabled:opacity-90"
-        title="Première page"
-      >
-        {"<<"}
-      </button>
+        {/* First */}
+        <button
+          onClick={() => onPageChange(1)}
+          disabled={page <= 1}
+          className="h-8 w-8 rounded-md border text-base disabled:opacity-90"
+          title="Première page"
+        >
+          {"<<"}
+        </button>
 
-      {/* Previous */}
-      <button
-        onClick={() => onPageChange(page - 1)}
-        disabled={page <= 1}
-        className="h-8 w-8 rounded-md border text-base disabled:opacity-90"
-        title="Page précédente"
-      >
-        {"<"}
-      </button>
+        {/* Previous */}
+        <button
+          onClick={() => onPageChange(page - 1)}
+          disabled={page <= 1}
+          className="h-8 w-8 rounded-md border text-base disabled:opacity-90"
+          title="Page précédente"
+        >
+          {"<"}
+        </button>
 
-      <span className="mx-3 text-base font-medium">
-        Page {page} / {totalPages}
-      </span>
+        <span className="mx-3 text-base font-medium">
+          Page {page} / {totalPages}
+        </span>
 
-      {/* Next */}
-      <button
-        onClick={() => onPageChange(page + 1)}
-        disabled={page >= totalPages}
-        className="h-8 w-8 rounded-md border text-base disabled:opacity-90"
-        title="Page suivante"
-      >
-        {">"}
-      </button>
-      {/* Last */}
-      <button
-        onClick={() => onPageChange(totalPages)}
-        disabled={page >= totalPages}
-        className="h-8 w-8 rounded-md border text-base disabled:opacity-90"
-        title="Dernière page"
-      >
-        {">>"}
-      </button>
-    </div>
+        {/* Next */}
+        <button
+          onClick={() => onPageChange?.(page + 1)}
+          disabled={page >= totalPages || !onPageChange}
+          className="h-8 w-8 rounded-md border text-base disabled:opacity-90"
+          title="Page suivante"
+        >
+          {">"}
+        </button>
+        {/* Last */}
+        <button
+          onClick={() => onPageChange(totalPages)}
+          disabled={page >= totalPages}
+          className="h-8 w-8 rounded-md border text-base disabled:opacity-90"
+          title="Dernière page"
+        >
+          {">>"}
+        </button>
+      </div>
     </div >
   );
 }

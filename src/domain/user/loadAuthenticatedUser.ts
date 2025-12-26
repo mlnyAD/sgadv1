@@ -37,7 +37,7 @@ export async function loadAuthenticatedUser(): Promise<AuthenticatedUser | null>
   }
 
   const { data: row, error } = await supabase
-    .from("vw_operator_list")
+    .from("vw_operator_view")
     .select("*")
     .eq("email", user.email)
     .maybeSingle();
@@ -69,7 +69,7 @@ export async function loadAuthenticatedUser(): Promise<AuthenticatedUser | null>
   }
 
   const result: AuthenticatedUser = {
-    id: row.id,
+    id: user.id,
     email: row.email,
     displayName,
     welcomeMessage: "Bienvenue",
@@ -85,5 +85,6 @@ export async function loadAuthenticatedUser(): Promise<AuthenticatedUser | null>
     functionLabel,
   };
 
+  //console.log("loadAuthenticatedUser ", result)
   return result;
 }

@@ -1,7 +1,9 @@
-import { Tooltip, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 import { formatDateFR } from "@/helpers/date";
 import { ColumnDef } from "@tanstack/react-table";
-import { Circle, CircleCheckBig, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
+import { truncate } from "@/helpers/text";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 
 /* ------------------------------------------------------------------
@@ -21,19 +23,31 @@ export interface TodoListItem {
    ------------------------------------------------------------------ */
 
 export const todoColumns: ColumnDef<TodoListItem>[] = [
+
   {
     accessorKey: "id",
     header: "ID",
   },
   {
-    accessorKey: "titre",
-    header: "Titre",
-    cell: ({ getValue }) => (
-      <span className="font-medium">
-        {getValue<string>()}
-      </span>
-    ),
+accessorKey: "titre",
+  header: "Titre",
+  cell: ({ row }) => {
+    const titre = row.original.nom;
+
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="block max-w-[420px] truncate whitespace-nowrap">
+            {truncate(titre, 70)}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>
+          {titre}
+        </TooltipContent>
+      </Tooltip>
+    );
   },
+},
   {
     accessorKey: "creation",
     header: "Création",
@@ -50,53 +64,44 @@ export const todoColumns: ColumnDef<TodoListItem>[] = [
       return formatDateFR(date);
     },
   },
-  {
-    accessorKey: "important",
-    header: "Important",
-    cell: ({ row }) => {
-      const todo = row.original;
-      return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="flex justify-center">
-                {todo.important ? (
-                  <CircleCheckBig className="ml-2 h-5 w-5 fill-green-500" />
-                ) : (
-                  <Circle className="ml-2 h-5 w-5 fill-gray-500" />
-                )}
-              </span>
-            </TooltipTrigger>
-          </Tooltip>
-        </TooltipProvider>
-      );
-    },
+{
+  accessorKey: "important",
+  header: "Important",
+  cell: ({ row }) => {
+    const important = row.original.important;
 
+    return (
+      <span
+        className={
+          important
+            ? "font-semibold text-green-600"
+            : "text-gray-500"
+        }
+      >
+        {important ? "Oui" : "Non"}
+      </span>
+    );
   },
-  {
-    accessorKey: "urgent",
-    header: "Urgent",
-    cell: ({ row }) => {
-      const todo = row.original;
-      return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="flex justify-center">
-                {todo.urgent ? (
-                  <CircleCheckBig className="ml-2 h-5 w-5 fill-green-500" />
-                ) : (
-                  <Circle className="ml-2 h-5 w-5 fill-gray-500" />
-                )}
-              </span>
-            </TooltipTrigger>
+},{
+  accessorKey: "urgent",
+  header: "Urgent",
+  cell: ({ row }) => {
+    const important = row.original.urgent;
 
-          </Tooltip>
-        </TooltipProvider>
-      );
-    },
-
+    return (
+      <span
+        className={
+          important
+            ? "font-semibold text-green-600"
+            : "text-gray-500"
+        }
+      >
+        {important ? "Oui" : "Non"}
+      </span>
+    );
   },
+},
+
   {
     accessorKey: "etat",
     header: "Etat",

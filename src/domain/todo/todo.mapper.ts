@@ -20,6 +20,7 @@ export function mapTodoDbToModel(row: TodoDbRow): Todo {
       lastName: row.last_name ?? "",
     },
     lastModified: new Date(row.lmod!),
+    
   };
 }
 

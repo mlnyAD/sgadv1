@@ -33,15 +33,17 @@ export async function GET() {
     return NextResponse.json({ user: null }, { status: 200 });
   }
 
-  // 2) Lecture dans ta vue vw_operator_list
+  //console.log("Get Auth by email in vw_operator_view ", user)
+  
+  // 2) Lecture dans ta vue vw_operator_view
   const { data: op, error: opError } = await supabase
-    .from("vw_operator_list")
+    .from("vw_operator_view")
     .select("*")
     .eq("email", user.email)
     .maybeSingle();
 
   if (opError) {
-    console.error("vw_operator_list error:", opError);
+    console.error("vw_operator_view error:", opError);
   }
 
   // 3) Construction displayName

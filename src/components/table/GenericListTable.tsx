@@ -58,7 +58,10 @@ export function GenericListTable<T>({
 }: GenericListTableProps<T>) {
   /* -------------------- Recherche locale (fallback) -------------------- */
   const [internalSearch, setInternalSearch] = useState("");
-  const effectiveSearch = searchValue ?? internalSearch;
+// Force l’utilisation exclusive du searchValue externe
+// Résultat : filtrage dès le 1er caractère, exactement comme dans Configs  
+ const effectiveSearch =
+  searchValue !== undefined ? searchValue : internalSearch;
 
   const filteredData = useMemo(() => {
     if (!filterFn || !effectiveSearch) return data;

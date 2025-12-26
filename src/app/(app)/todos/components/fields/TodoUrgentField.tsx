@@ -20,22 +20,23 @@ export function TodoUrgentField({
 
       <div className="md:col-span-5">
         <RadioGroup
-          value={value ? "Urgent" : "Normal"}
-          onValueChange={(v) => onChange(v === "Urgent")}
+          value={value ? "urgent" : "normal"}
+          onValueChange={(v) => onChange(v === "urgent")}
           disabled={disabled}
           className="flex gap-6"
         >
           <div className="flex items-center gap-2">
-            <RadioGroupItem value="urgent" id="status-urgent" />
-            <Label htmlFor="status-urgent">Urgent</Label>
+            <RadioGroupItem value="urgent" id="urgent-yes" />
+            <Label htmlFor="urgent-yes">Urgent</Label>
           </div>
 
           <div className="flex items-center gap-2">
-            <RadioGroupItem value="normal" id="status-normal" />
-            <Label htmlFor="status-normal">Normal</Label>
+            <RadioGroupItem value="normal" id="urgent-no" />
+            <Label htmlFor="urgent-no">Normal</Label>
           </div>
         </RadioGroup>
       </div>
     </div>
   );
 }
+

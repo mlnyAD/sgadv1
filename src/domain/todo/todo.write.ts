@@ -4,6 +4,7 @@ export interface CreateTodoInput {
   text?: string;
   urgent: boolean;
   important: boolean;
+  cloture?: Date;
   etatId: number;
 }
 
@@ -12,5 +13,7 @@ export interface UpdateTodoInput {
   text?: string;
   urgent?: boolean;
   important?: boolean;
+  creation: Date;
+  cloture?: Date;
   etatId?: number;
 }

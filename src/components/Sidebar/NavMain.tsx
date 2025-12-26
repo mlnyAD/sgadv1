@@ -78,9 +78,9 @@ const ITEMS: NavItem[] = [
     roles: ADMIN,
   },
   {
-    id: "companies",
+    id: "societes",
     title: "Sociétés",
-    href: "/companies",
+    href: "/societes",
     icon: Building2,
     roles: ADMIN,
   },

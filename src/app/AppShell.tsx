@@ -6,7 +6,6 @@ import AppSidebar from "@/components/Sidebar/AppSidebar";
 import { UserContextProvider, useUser } from "@/contexts/UserContext";
 import Header from "@/components/Header/Header";
 import { Separator } from "@/components/ui/separator";
-import { Toaster } from "@/components/ui/sonner";
 import { PanelLeft } from "lucide-react";
 
 function AppShellInner({ children }: { children: React.ReactNode }) {
@@ -50,7 +49,6 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
         </div>
       </SidebarInset>
 
-      <Toaster position="bottom-right" />
     </SidebarProvider>
   );
 }

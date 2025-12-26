@@ -10,9 +10,11 @@ import type { CreateTodoInput, UpdateTodoInput } from "./todo.write";
 /* LISTE DES TODOS POUR UN UTILISATEUR                                 */
 /* ------------------------------------------------------------------ */
 export async function listTodosForUser(userId: string): Promise<Todo[]> {
+
   const supabase = await createSupabaseServerReadClient();
 
   console.log("Entrée listTodosForUser userr = ", userId);
+
   const { data, error } = await supabase
     .from("vw_todo_view")
     .select("*")
@@ -63,16 +65,32 @@ export async function createTodo(
 ): Promise<void> {
   const supabase = await createSupabaseServerReadClient();
 
+  const {
+    titre,
+    text,
+    urgent,
+    important,
+    etatId,
+    cloture,
+  } = input;
+
   const { error } = await supabase.from("todo").insert({
-    todo_titre: input.titre,
-    todo_text: input.text ?? null,
-    todo_urgent: input.urgent,
-    todo_important: input.important,
-    todo_etat_id: input.etatId,
+    todo_titre: titre,
+    todo_text: text ?? null,
+    todo_urgent: urgent,
+    todo_important: important,
+    todo_etat_id: etatId,
+    todo_cloture: cloture,
     todo_user_id: userId,
   });
 
   if (error) {
+    console.error("CREATE TODO ERROR", {
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      code: error.code,
+    });
     throw error;
   }
 }
@@ -80,6 +98,7 @@ export async function createTodo(
 /* ------------------------------------------------------------------ */
 /* MISE A JOUR D'UN TODO                                               */
 /* ------------------------------------------------------------------ */
+
 export async function updateTodo(
   todoId: number,
   userId: string,
@@ -87,18 +106,24 @@ export async function updateTodo(
 ): Promise<void> {
   const supabase = await createSupabaseServerReadClient();
 
+  const {
+    titre,
+    text,
+    urgent,
+    important,
+    etatId,
+    cloture,
+  } = input;
+
   const { error } = await supabase
     .from("todo")
     .update({
-      ...(input.titre !== undefined && { todo_titre: input.titre }),
-      ...(input.text !== undefined && { todo_text: input.text }),
-      ...(input.urgent !== undefined && { todo_urgent: input.urgent }),
-      ...(input.important !== undefined && {
-        todo_important: input.important,
-      }),
-      ...(input.etatId !== undefined && {
-        todo_etat_id: input.etatId,
-      }),
+      ...(titre !== undefined && { todo_titre: titre }),
+      ...(text !== undefined && { todo_text: text ?? null }),
+      ...(urgent !== undefined && { todo_urgent: urgent }),
+      ...(important !== undefined && { todo_important: important }),
+      ...(etatId !== undefined && { todo_etat_id: etatId }), // ✅ clé
+      ...(cloture !== undefined && { todo_cloture: cloture ?? null }),
     })
     .eq("todo_id", todoId)
     .eq("todo_user_id", userId);
@@ -134,6 +159,9 @@ type ListByOwnerParams = {
   page: number
   pageSize: number
   search?: string
+  urgent?: boolean
+  important?: boolean
+  etatId?: number
   ownerId: string
 }
 
@@ -142,23 +170,37 @@ export const todoRepository = {
     page,
     pageSize,
     search,
+    urgent,
+    important,
+    etatId,
     ownerId,
   }: ListByOwnerParams) {
-   const supabase = await createSupabaseServerReadClient();
-
+    const supabase = await createSupabaseServerReadClient()
 
     const from = (page - 1) * pageSize
     const to = from + pageSize - 1
 
     let query = supabase
-      .from('todo')
+      .from('vw_todo_view')
       .select('*', { count: 'exact' })
-      .eq('owner_id', ownerId)
-      .order('created_at', { ascending: false })
+      .eq('todo_user_id', ownerId)
+      .order('todo_creation', { ascending: false })
       .range(from, to)
 
     if (search) {
-      query = query.ilike('title', `%${search}%`)
+      query = query.ilike('todo_titre', `%${search}%`)
+    }
+
+    if (urgent !== undefined) {
+      query = query.eq('todo_urgent', urgent)
+    }
+
+    if (important !== undefined) {
+      query = query.eq('todo_important', important)
+    }
+
+    if (etatId !== undefined) {
+      query = query.eq('todo_etat_id', etatId)
     }
 
     const { data, count, error } = await query
@@ -168,5 +210,6 @@ export const todoRepository = {
       items: (data ?? []).map(mapTodoDbToModel),
       totalPages: Math.ceil((count ?? 0) / pageSize),
     }
-  },
+  }
 }
+

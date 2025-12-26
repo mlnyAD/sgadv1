@@ -41,6 +41,7 @@ export async function GET(
     );
   }
 
+   // console.log("Todo à éditer ", todo)
   return NextResponse.json(todo);
 }
 

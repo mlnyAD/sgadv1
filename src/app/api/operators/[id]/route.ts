@@ -20,7 +20,7 @@ export async function GET(
   const supabase = await createSupabaseServerReadClient();
 
   const { data, error } = await supabase
-    .from("vw_operator_list")
+    .from("vw_operator_view")
     .select(`
     operator_id,
     user_id,

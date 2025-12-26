@@ -41,7 +41,7 @@ export async function listConfigs({
   totalPages: number;
 }> {
 let query = supabase
-  .from("vw_config_list")
+  .from("vw_config_view")
   .select(
     `
       config_id,

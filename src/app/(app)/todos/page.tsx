@@ -2,53 +2,60 @@ import { listTodos } from "@/app/(app)/todos/todos.list";
 import { TodosTable } from "./TodosTable";
 import { TodosToolbar } from "./TodosToolbar";
 
-/* ------------------------------------------------------------------ */
-/* Props */
-/* ------------------------------------------------------------------ */
-
-interface TodosPageProps {
-  searchParams: Record<string, string | string[] | undefined>;
-}
-
-/* ------------------------------------------------------------------ */
-/* Page */
-/* ------------------------------------------------------------------ */
+type TodosSearchParams = {
+  page?: string;
+  pageSize?: string;
+  search?: string;
+  urgent?: string;
+  important?: string;
+  etatId?: string;
+};
 
 export default async function TodosPage({
   searchParams,
-}: TodosPageProps) {
-  /* ------------------------------------------------------------------
-     Lecture et normalisation des paramètres URL
-     ------------------------------------------------------------------ */
+}: {
+  searchParams: Promise<TodosSearchParams>;
+}) {
+  const resolvedSearchParams = await searchParams;
 
   const page =
-    typeof searchParams.page === "string"
-      ? Number(searchParams.page)
+    typeof resolvedSearchParams.page === "string"
+      ? Number(resolvedSearchParams.page)
       : 1;
 
   const pageSize =
-    typeof searchParams.pageSize === "string"
-      ? Number(searchParams.pageSize)
+    typeof resolvedSearchParams.pageSize === "string"
+      ? Number(resolvedSearchParams.pageSize)
       : 10;
 
   const search =
-    typeof searchParams.search === "string"
-      ? searchParams.search
+    typeof resolvedSearchParams.search === "string"
+      ? resolvedSearchParams.search
       : undefined;
 
-  /* ------------------------------------------------------------------
-     Data
-     ------------------------------------------------------------------ */
+  const urgent =
+    resolvedSearchParams.urgent === "true"
+      ? true
+      : undefined;
+
+  const important =
+    resolvedSearchParams.important === "true"
+      ? true
+      : undefined;
+
+  const etatId =
+    typeof resolvedSearchParams.etatId === "string"
+      ? Number(resolvedSearchParams.etatId)
+      : undefined;
 
   const { items, totalPages } = await listTodos({
     page,
     pageSize,
     search,
+    urgent,
+    important,
+    etatId,
   });
-
-  /* ------------------------------------------------------------------
-     Render
-     ------------------------------------------------------------------ */
 
   return (
     <>

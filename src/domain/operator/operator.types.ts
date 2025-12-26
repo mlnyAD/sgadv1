@@ -1,5 +1,5 @@
 /**
- * Shape DB – vue vw_operator_list
+ * Shape DB – vue vw_operator_view
  */
 export interface OperatorRow {
   operator_id: number;

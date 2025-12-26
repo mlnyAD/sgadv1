@@ -17,14 +17,13 @@ import { TodoImportantField } from "@/app/(app)/todos/components/fields/TodoImpo
 import { TodoEtatField } from "@/app/(app)/todos/components/fields/TodoEtatField";
 
 import type { TodoFormValues } from "@/domain/todo/todo.form";
+import { toDateInputValue } from "@/helpers/date";
 
 export default function EditTodoPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
-  const [initialValues, setInitialValues] =
-    useState<TodoFormValues | null>(null);
-
+  const [initialValues, setInitialValues] = useState<TodoFormValues | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -39,16 +38,18 @@ export default function EditTodoPage() {
 
         const data = await res.json();
 
+        console.log("recherche article todo ", data);
+
         // 🔁 Mapping API → Form
         setInitialValues({
-          titre: data.todo_titre ?? "",
-          text: data.todo_text ?? "",
-          creation: data.todo_creation ?? "",
-          cloture: data.todo_cloture ?? "",
-          urgent: Boolean(data.todo_urgent),
-          important: Boolean(data.todo_important),
-          etatId: data.todo_etat_id ?? null,
+          titre: data.titre ?? "",
+          text: data.text ?? "",
+          creation: toDateInputValue(data.creation),
+          cloture: toDateInputValue(data.cloture), urgent: Boolean(data.urgent),
+          important: Boolean(data.important),
+          etatId: data.etatId ?? null,
         });
+
       } catch {
         toast.error("Impossible de charger l'action");
       } finally {
@@ -57,6 +58,7 @@ export default function EditTodoPage() {
     }
 
     if (id) {
+      console.log("Chargement des données à modifier")
       loadTodo();
     }
   }, [id]);
@@ -68,17 +70,19 @@ export default function EditTodoPage() {
     try {
       setSaving(true);
 
+      console.log("Sauvegarde ")
+
       const res = await fetch(`/api/todos/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          todo_titre: values.titre,
-          todo_text: values.text || null,
-          todo_urgent: values.urgent,
-          todo_important: values.important,
-          todo_etat_id: values.etatId,
-          todo_creation: values.creation,
-          todo_cloture: values.cloture || null,
+          titre: values.titre,
+          text: values.text || null,
+          important: values.important,
+          urgent: values.urgent,
+          etatId: values.etatId,
+          creation: values.creation,
+          cloture: values.cloture || null,
         }),
       });
 
@@ -97,7 +101,7 @@ export default function EditTodoPage() {
      Rendu conditionnel
      ------------------------------------------------------------------ */
   if (loading || !initialValues) {
-    return <p>Chargement…</p>;
+    return <p>Chargement en cours…</p>;
   }
 
   return (
@@ -131,6 +135,7 @@ export default function EditTodoPage() {
                 setValues((v) => ({ ...v, text }))
               }
             />
+            
 
             <TodoCreationField
               value={values.creation}
@@ -160,12 +165,12 @@ export default function EditTodoPage() {
               }
             />
 
-  <TodoEtatField
-  value={values.etatId}
-  onChange={(etatId) =>
-    setValues((v) => ({ ...v, etatId }))
-  }
-/>
+            <TodoEtatField
+              value={values.etatId}
+              onChange={(etatId) =>
+                setValues((v) => ({ ...v, etatId }))
+              }
+            />
           </TodoFormCard>
         )}
       </TodoForm>
