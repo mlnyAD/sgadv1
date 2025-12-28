@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Pencil, Trash2 } from "lucide-react";
-
+import { ColumnSelectorItem } from "@/components/table/ColumnSelector";
 
 /* ------------------------------------------------------------------
    Type ligne de liste (équivalent OperatorListItem)
@@ -88,4 +88,14 @@ export const configColumns: ColumnDef<ConfigListItem>[] = [
   },
 }
 
+];
+
+/* ------------------------------------------------------------------ */
+/* Colonnes sélectionnables */
+/* ------------------------------------------------------------------ */
+export const selectableColumns: ColumnSelectorItem[] = [
+  { key: "id", label: "ID", visible: false },
+  { key: "nom", label: "Nom", visible: true },
+  { key: "typeLabel", label: "Type", visible: true },
+  // "actions" toujours visible
 ];

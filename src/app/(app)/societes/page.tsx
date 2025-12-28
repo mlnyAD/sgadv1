@@ -1,6 +1,4 @@
-// src/app/(app)/societes/page.tsx
-
-import { listSocietes } from "./societes.list";
+import { listSocietes } from "@/domain/societe";
 import { SocietesTable } from "./SocietesTable";
 import { SocietesToolbar } from "./SocietesToolbar";
 
@@ -15,32 +13,29 @@ interface SocietesPageProps {
 export default async function SocietesPage({
   searchParams,
 }: SocietesPageProps) {
-  /* -------------------- Params -------------------- */
-
   const params = await searchParams;
 
-  const page = Number(params.page ?? 1);
-  const pageSize = Number(params.pageSize ?? 10);
-  const search = params.search;
+  const page = Number(params.page ?? "1");
+  const pageSize = Number(params.pageSize ?? "10");
+  const search =
+    typeof params.search === "string"
+      ? params.search
+      : undefined;
 
-  /* -------------------- Data -------------------- */
-
-  const { items, total } = await listSocietes({
+  const { data, total } = await listSocietes({
     page,
     pageSize,
     search,
   });
-  //console.log("PAGE societe → items:", items);
-  //console.log("PAGE societe → total:", total);
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
-  /* -------------------- Render -------------------- */
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <>
       <SocietesToolbar />
+
       <SocietesTable
-        data={items}
+        data={data}
         page={page}
         pageSize={pageSize}
         totalPages={totalPages}

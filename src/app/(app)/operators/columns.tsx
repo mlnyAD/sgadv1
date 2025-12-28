@@ -2,6 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { OperatorListItem } from "@/domain/operator/operator.dto";
 import Link from "next/link";
 import { Pencil } from "lucide-react";
+import { ColumnSelectorItem } from "@/components/table/ColumnSelector";
 
 export const operatorColumns: ColumnDef<OperatorListItem>[] = [
   {
@@ -74,4 +75,19 @@ export const operatorColumns: ColumnDef<OperatorListItem>[] = [
       );
     },
   },
+];
+
+
+/* ------------------------------------------------------------------ */
+/* Colonnes sélectionnables */
+/* ------------------------------------------------------------------ */
+export const selectableColumns: ColumnSelectorItem[] = [
+  { key: "id", label: "ID", visible: false },
+  { key: "lastName", label: "Nom", visible: true },
+  { key: "firstName", label: "Prénom", visible: true },
+  { key: "email", label: "Email", visible: true },
+  { key: "roleLabel", label: "Rôle", visible: true },
+  { key: "metierLabel", label: "Métier", visible: true },
+  { key: "active", label: "Statut", visible: true },
+  // ne pas inclure "actions" (toujours visible)
 ];

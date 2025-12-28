@@ -1,13 +1,13 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Pencil, Trash2 } from "lucide-react";
-import { SocieteListItem } from "@/domain/societe/societe-list-item";
-
+import { SocieteUI } from "@/domain/societe";
+import { ColumnSelectorItem } from "@/components/table/ColumnSelector";
 
 /* ------------------------------------------------------------------
    Colonnes
    ------------------------------------------------------------------ */
 
-export const societeColumns: ColumnDef<SocieteListItem>[] = [
+export const societeColumns: ColumnDef<SocieteUI>[] = [
   {
     accessorKey: "id",
     header: "ID",
@@ -93,5 +93,19 @@ export const societeColumns: ColumnDef<SocieteListItem>[] = [
     );
   },
 }
+];
 
+
+/* ------------------------------------------------------------------ */
+/* Colonnes sélectionnables */
+/* ------------------------------------------------------------------ */
+export const societeSelectableColumns: ColumnSelectorItem[] = [
+  { key: "id", label: "ID", visible: false },
+  { key: "nom", label: "Nom", visible: true },
+  { key: "adresse1", label: "Adresse 1", visible: true },
+  { key: "adresse2", label: "Adresse 2", visible: true },
+  { key: "adresse3", label: "Adresse 3", visible: true },
+  { key: "ville", label: "Ville", visible: true },
+  { key: "codePostal", label: "Code postal", visible: true },
+  // "actions" toujours visible];
 ];

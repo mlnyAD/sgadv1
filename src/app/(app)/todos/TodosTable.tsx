@@ -2,8 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { GenericListTable } from "@/components/table/GenericListTable";
-import { todoColumns } from "./columns";
-import type { ColumnSelectorItem } from "@/components/table/ColumnSelector";
+import { selectableColumns, todoColumns } from "./columns";
 import { TodosFilters, TodosFiltersValues } from "./TodosFilters";
 
 import type { TodoListItem } from "./columns";
@@ -22,20 +21,6 @@ interface TodosTableProps {
 
 
 
-/* ------------------------------------------------------------------ */
-/* Colonnes sélectionnables */
-/* ------------------------------------------------------------------ */
-
-const selectableColumns: ColumnSelectorItem[] = [
-	{ key: "id", label: "ID", visible: false },
-	{ key: "titre", label: "Titre", visible: true },
-	{ key: "creation", label: "Crée le", visible: true },
-	{ key: "cloture", label: "Pour le", visible: true },
-	{ key: "important", label: "Important", visible: true },
-	{ key: "urgent", label: "Urgent", visible: true },
-	{ key: "etat", label: "Etat", visible: true },
-	// "actions" toujours visible
-];
 
 /* ------------------------------------------------------------------ */
 /* Component */

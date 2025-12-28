@@ -1,48 +1,50 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { listSocietes, createSociete } from "@/domain/societe";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+/* ------------------------------------------------------------------ */
+/* GET /api/societes */
+/* ------------------------------------------------------------------ */
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
 
-/* ============================================================================
-   POST /api/configs
-   ============================================================================ */
+  const page = Number(searchParams.get("page") ?? "1");
+  const pageSize = Number(searchParams.get("pageSize") ?? "10");
+  const search = searchParams.get("search") ?? undefined;
+
+  if (
+    Number.isNaN(page) ||
+    Number.isNaN(pageSize) ||
+    page < 1 ||
+    pageSize < 1
+  ) {
+    return NextResponse.json(
+      { error: "Invalid pagination parameters" },
+      { status: 400 }
+    );
+  }
+
+  const result = await listSocietes({
+    page,
+    pageSize,
+    search,
+  });
+
+  return NextResponse.json(result);
+}
+
+/* ------------------------------------------------------------------ */
+/* POST /api/societes */
+/* ------------------------------------------------------------------ */
 export async function POST(req: Request) {
   const body = await req.json();
 
-  const { nom, adresse1, adresse2, adresse3, ville, codePostal } = body;
-
-  if (!nom) {
-	return NextResponse.json(
-	  { error: "Invalid payload" },
-	  { status: 400 }
-	);
+  try {
+    const id = await createSociete(body);
+    return NextResponse.json({ id }, { status: 201 });
+  } catch (e) {
+    return NextResponse.json(
+      { error: (e as Error).message },
+      { status: 500 }
+    );
   }
-
-  const { error } = await supabase
-	.from("societe")
-	.insert({
-	  societe_nom: nom,
-	  societe_adresse1: adresse1,
-	  societe_adresse2: adresse2,
-	  societe_adresse3: adresse3,
-	  societe_ville: ville,
-	  societe_code_postal: codePostal,
-	});
-
-if (error) {
-  console.error("POST /api/societes error:", error);
-
-  return NextResponse.json(
-	{
-	  error: error.message,
-	  details: error,
-	},
-	{ status: 500 }
-  );
-}
-
-  return NextResponse.json({ success: true });
 }

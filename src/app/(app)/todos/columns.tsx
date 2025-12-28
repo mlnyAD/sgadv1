@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Pencil, Trash2 } from "lucide-react";
 import { truncate } from "@/helpers/text";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { ColumnSelectorItem } from "@/components/table/ColumnSelector";
 
 
 /* ------------------------------------------------------------------
@@ -159,4 +160,18 @@ accessorKey: "titre",
     },
   }
 
+];
+/* ------------------------------------------------------------------ */
+/* Colonnes sélectionnables */
+/* ------------------------------------------------------------------ */
+
+export const selectableColumns: ColumnSelectorItem[] = [
+  { key: "id", label: "ID", visible: false },
+  { key: "titre", label: "Titre", visible: true },
+  { key: "creation", label: "Crée le", visible: true },
+  { key: "cloture", label: "Pour le", visible: true },
+  { key: "important", label: "Important", visible: true },
+  { key: "urgent", label: "Urgent", visible: true },
+  { key: "etat", label: "Etat", visible: true },
+  // "actions" toujours visible
 ];

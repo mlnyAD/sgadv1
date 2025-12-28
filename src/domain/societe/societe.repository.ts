@@ -1,129 +1,139 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+
+// src/domain/societe/societe.repository.ts
+
+import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
+import { createSupabaseServerActionClient } from "@/lib/supabase/server-action";
+import { SocieteDbRow } from "./societe.db";
+import { mapSocieteDbToUI } from "./societe.mapper";
+import { mapSocieteUIToDb } from "./societe.mapper";
+import { SocieteUI } from "./societe.ui";
 
 /* ------------------------------------------------------------------ */
-/* Types internes repository (DB shape) */
+/* Read */
 /* ------------------------------------------------------------------ */
 
-export interface SocieteRow {
-  societe_id: number;
-  societe_nom: string;
-  societe_adresse1: string;
-  societe_adresse2: string;
-  societe_adresse3: string;
-  societe_ville: string;
-  societe_code_postal: string;
+export async function getSocieteById(
+  id: number
+): Promise<SocieteUI | null> {
+
+  const supabase = await createSupabaseServerReadClient();
+
+  const { data, error } = await supabase
+    .from("vw_societe_view")
+    .select("*")
+    .eq("societe_id", id)
+    .maybeSingle<SocieteDbRow>();
+
+  if (error || !data) {
+    return null;
+  }
+
+  return mapSocieteDbToUI(data);
 }
 
 /* ------------------------------------------------------------------ */
-/* Repository */
+/* Read - list */
 /* ------------------------------------------------------------------ */
 
-export class SocieteRepository {
-  /* -------------------- Supabase client -------------------- */
-  private async getClient() {
-    const cookieStore = await cookies();
+export interface SocieteListResult {
+  data: SocieteUI[];
+  total: number;
+}
 
-    return createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get: (name: string) => cookieStore.get(name)?.value,
-        },
-      }
-    );
+interface ListParams {
+  page: number;
+  pageSize: number;
+  search?: string;
+}
+
+export async function listSocietes(
+  params: ListParams
+): Promise<SocieteListResult> {
+
+   const supabase = await createSupabaseServerReadClient();
+  const { page, pageSize, search } = params;
+
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  let query = supabase
+    .from("vw_societe_view")
+    .select("*", { count: "exact" });
+
+  if (search) {
+    query = query.ilike("societe_nom", `%${search}%`);
   }
 
-  /* -------------------- Liste paginée -------------------- */
-  async findPaginated({
-    page,
-    pageSize,
-    search,
-  }: {
-    page: number;
-    pageSize: number;
-    search?: string;
-  }): Promise<{
-    data: SocieteRow[];
-    total: number;
-  }> {
-    const supabase = await this.getClient();
+  const { data, error, count } = await query
+    .range(from, to)
+    .order("societe_nom", { ascending: true });
 
-    const from = (page - 1) * pageSize;
-    const to = from + pageSize - 1;
-
-    let query = supabase
-      .from("vw_societe_view")
-      .select(
-        `
-        societe_id,
-        societe_nom,
-        societe_adresse1,
-        societe_adresse2,
-        societe_adresse3,
-        societe_ville,
-        societe_code_postal
-        `,
-        { count: "exact" }
-      )
-      .range(from, to)
-      .order("societe_nom", { ascending: true });
-
-    if (search) {
-      query = query.ilike("societe_nom", `%${search}%`);
-    }
-
-    const { data, count, error } = await query;
-
-    if (error) {
-      throw error;
-    }
-
-    return {
-      data: data ?? [],
-      total: count ?? 0,
-    };
+  if (error || !data) {
+    return { data: [], total: 0 };
   }
 
-  /* -------------------- Détail -------------------- */
-  async findById(id: number): Promise<SocieteRow | null> {
-    const supabase = await this.getClient();
+  return {
+    data: data.map(mapSocieteDbToUI),
+    total: count ?? 0,
+  };
+}
 
-    const { data, error } = await supabase
-      .from("vw_societe_view")
-      .select(
-        `
-        societe_id,
-        societe_nom,
-        societe_adresse1,
-        societe_adresse2,
-        societe_adresse3,
-        societe_ville,
-        societe_code_postal
-        `
-      )
-      .eq("societe_id", id)
-      .maybeSingle();
+/* ------------------------------------------------------------------ */
+/* Write */
+/* ------------------------------------------------------------------ */
 
-    if (error) {
-      throw error;
-    }
+export async function createSociete(
+  ui: SocieteUI
+): Promise<number> {
 
-    return data ?? null;
+  const supabase = await createSupabaseServerActionClient();
+
+  const payload = mapSocieteUIToDb(ui);
+
+  const { data, error } = await supabase
+    .from("societe")
+    .insert(payload)
+    .select("societe_id")
+    .single();
+
+  if (error || !data) {
+    throw new Error(error?.message ?? "Create failed");
   }
 
-  /* -------------------- Suppression -------------------- */
-  async deleteById(id: number): Promise<void> {
-    const supabase = await this.getClient();
+  return data.societe_id as number;
+}
 
-    const { error } = await supabase
-      .from("societe")
-      .delete()
-      .eq("societe_id", id);
+export async function updateSociete(
+  id: number,
+  ui: SocieteUI
+): Promise<void> {
 
-    if (error) {
-      throw error;
-    }
+  const supabase = await createSupabaseServerActionClient();
+
+  const payload = mapSocieteUIToDb(ui);
+
+  const { error } = await supabase
+    .from("societe")
+    .update(payload)
+    .eq("societe_id", id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function deleteSociete(
+  id: number
+): Promise<void> {
+
+  const supabase = await createSupabaseServerActionClient();
+
+  const { error } = await supabase
+    .from("societe")
+    .delete()
+    .eq("societe_id", id);
+
+  if (error) {
+    throw new Error(error.message);
   }
 }

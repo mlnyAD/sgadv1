@@ -1,48 +1,57 @@
+
+// Transformation explicite et centralisée
+// Tout ce qui sort de la BD passe par mapXxxDbToUI
+// Tout ce qui entre en BD passe par mapXxxUIToDb
+// src/domain/societe/societe.mapper.ts
+
 import { SocieteDbRow } from "./societe.db";
-import type { Societe } from "./societe.model";
+import { SocieteUI } from "./societe.ui";
 
+/* ------------------------------------------------------------------ */
+/* DB -> UI (lecture) */
+/* ------------------------------------------------------------------ */
 
-// sens BD (view) -> Appli UI 
-export function mapSocieteDbToModel(row: SocieteDbRow): Societe {
+export function mapSocieteDbToUI(
+  row: SocieteDbRow
+): SocieteUI {
   return {
-    id: row.societe_id!,
-    nom: row.societe_nom!,
-    adresse1: row.societe_adresse1 ?? "",
-    adresse2: row.societe_adresse2 ?? "",
-    adresse3: row.societe_adresse3 ?? "",
-    ville: row.societe_ville!,
-    codePostal: row.societe_code_postal ?? "",
+    id: row.societe_id,
+    nom: row.societe_nom,
+    adresse1: row.societe_adresse1 ?? undefined,
+    adresse2: row.societe_adresse2 ?? undefined,
+    adresse3: row.societe_adresse3 ?? undefined,
+    ville: row.societe_ville ?? undefined,
+    codePostal: row.societe_code_postal ?? undefined,
   };
 }
 
-// sens appli UI -> BD (table) -- CREATION
-import { CreateSocieteInput, UpdateSocieteInput } from "./societe.write";
+/* ------------------------------------------------------------------ */
+/* UI -> DB (écriture) */
+/* ------------------------------------------------------------------ */
 
-export function mapCreateSocieteToDb(input: CreateSocieteInput, ) {
-  return {
-	societe_nom: input.nom,
-	societe_adresse1: input.adresse1,
-	societe_adresse2: input.adresse2 ?? null,
-	societe_adresse3: input.adresse3 ?? null,
-	societe_ville: input.ville,
-	societe_code_postal: input.codePostal,
-  };
+/**
+ * Payload utilisé pour CREATE / UPDATE.
+ * - Pas d'id (clé technique)
+ * - Noms strictement BD
+ */
+export interface SocieteDbWrite {
+  societe_nom: string;
+  societe_adresse1: string | null;
+  societe_adresse2: string | null;
+  societe_adresse3: string | null;
+  societe_ville: string | null;
+  societe_code_postal: string | null;
 }
 
-// sens appli UI -> BD (table) -- UPDATE
-export function mapUpdateSocieteToDb(input: UpdateSocieteInput) {
+export function mapSocieteUIToDb(
+  ui: SocieteUI
+): SocieteDbWrite {
   return {
-    ...(input.nom !== undefined && { societe_nom: input.nom }),
-    ...(input.adresse1 !== undefined && { societe_adresse1: input.adresse1 }),
-    ...(input.adresse2 !== undefined && {
-      societe_adresse2: input.adresse2 || null
-    }),
-    ...(input.adresse3 !== undefined && {
-      societe_adresse3: input.adresse3 || null
-    }),
-    ...(input.ville !== undefined && { societe_ville: input.ville }),
-    ...(input.codePostal !== undefined && {
-      societe_code_postal: input.codePostal
-    }),
+    societe_nom: ui.nom,
+    societe_adresse1: ui.adresse1 ?? null,
+    societe_adresse2: ui.adresse2 ?? null,
+    societe_adresse3: ui.adresse3 ?? null,
+    societe_ville: ui.ville ?? null,
+    societe_code_postal: ui.codePostal ?? null,
   };
 }

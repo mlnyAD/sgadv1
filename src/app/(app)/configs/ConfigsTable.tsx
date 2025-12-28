@@ -2,8 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { GenericListTable } from "@/components/table/GenericListTable";
-import { configColumns, ConfigListItem } from "./columns";
-import type { ColumnSelectorItem } from "@/components/table/ColumnSelector";
+import { configColumns, ConfigListItem, selectableColumns } from "./columns";
 import { ConfigsFilters } from "./ConfigFilters";
 import { CONFIG_TYPE_CATALOG } from "@/shared/config/config-type";
 
@@ -18,16 +17,6 @@ interface ConfigsTableProps {
   totalPages: number;
 }
 
-/* ------------------------------------------------------------------ */
-/* Colonnes sélectionnables */
-/* ------------------------------------------------------------------ */
-
-const selectableColumns: ColumnSelectorItem[] = [
-  { key: "id", label: "ID", visible: false },
-  { key: "nom", label: "Nom", visible: true },
-  { key: "typeLabel", label: "Type", visible: true },
-  // "actions" toujours visible
-];
 
 /* ------------------------------------------------------------------ */
 /* Component */

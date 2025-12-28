@@ -30,38 +30,38 @@ export default function DeleteConfigDialog({
   const [isPending, startTransition] = useTransition();
 
   function handleDelete() {
-startTransition(async () => {
-  try {
-    await deleteConfig(configId);
-    toast.success("Configuration supprimée");
-    onDeleted?.();
-  } catch {
-    toast.error("Impossible de supprimer la configuration");
-  }
-});
+    startTransition(async () => {
+      try {
+        await deleteConfig(configId);
+        toast.success("Configuration supprimée");
+        onDeleted?.();
+      } catch {
+        toast.error("Impossible de supprimer la configuration");
+      }
+    });
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
- <DialogContent>
-  <DialogHeader>
-    <DialogTitle>Supprimer cette configuration ?</DialogTitle>
-  </DialogHeader>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Supprimer cette configuration ?</DialogTitle>
+        </DialogHeader>
 
-  <p className="mt-2">
-    Voulez-vous vraiment supprimer <strong>{configName}</strong> ?
-  </p>
+        <p className="mt-2">
+          Voulez-vous vraiment supprimer <strong>{configName}</strong> ?
+        </p>
 
-  <DialogFooter className="mt-6">
-    <Button variant="secondary" onClick={() => onOpenChange(false)}>
-      Annuler
-    </Button>
+        <DialogFooter className="mt-6">
+          <Button variant="secondary" onClick={() => onOpenChange(false)}>
+            Annuler
+          </Button>
 
-    <Button variant="destructive" onClick={handleDelete} disabled={isPending}>
-      Supprimer
-    </Button>
-  </DialogFooter>
-</DialogContent>
+          <Button variant="destructive" onClick={handleDelete} disabled={isPending}>
+            Supprimer
+          </Button>
+        </DialogFooter>
+      </DialogContent>
 
     </Dialog>
   );

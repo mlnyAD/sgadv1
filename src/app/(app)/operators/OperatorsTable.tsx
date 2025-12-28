@@ -2,10 +2,9 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { GenericListTable } from "@/components/table/GenericListTable";
-import { operatorColumns } from "./columns";
+import { operatorColumns, selectableColumns } from "./columns";
 import { OperatorListItem } from "@/domain/operator/operator.dto";
 import { OperatorsFilters } from "./OperatorsFilters";
-import type { ColumnSelectorItem } from "@/components/table/ColumnSelector";
 import { USER_ROLES } from "@/shared/catalogs/user-role.constants";
 
 
@@ -19,16 +18,6 @@ interface OperatorsTableProps {
   pageSize: number;
   totalPages: number;
 }
-const selectableColumns: ColumnSelectorItem[] = [
-  { key: "id", label: "ID", visible: false },
-  { key: "lastName", label: "Nom", visible: true },
-  { key: "firstName", label: "Prénom", visible: true },
-  { key: "email", label: "Email", visible: true },
-  { key: "roleLabel", label: "Rôle", visible: true },
-  { key: "metierLabel", label: "Métier", visible: true },
-  { key: "active", label: "Statut", visible: true },
-  // ne pas inclure "actions" (toujours visible)
-];
 
 /* ------------------------------------------------------------------ */
 /* Component */

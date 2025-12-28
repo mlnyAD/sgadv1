@@ -137,7 +137,7 @@ export type PersByProjectType = {
 	projectIdent: string;
 }; //Vue
 
-export type ProfileType = {
+/*export type ProfileType = {
 	id: UUID;
 	updated_at: Date;
 	userEmail: string;
@@ -153,7 +153,7 @@ export type ProfileType = {
 	societe_id: number;
 	pers_avec_cpte: boolean;
 }; //Table
-
+*/
 
 export type RiskType = {
 	risk_id: number;

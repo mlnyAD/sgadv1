@@ -12,6 +12,8 @@ import { SocieteCodePostalField } from "../components/fields/SocieteCodePostalFi
 import { SocieteForm, SocieteFormValues } from "../components/form/SocieteForm";
 import { SocieteFormCard } from "../components/form/SocieteFormCard";
 import { toast } from "sonner";
+import { mapSocieteFormToUI } from "@/app/(app)/societes/components/form/societe.form.mapper";
+import { mapSocieteUIToForm } from "@/app/(app)/societes/components/form/societe.form.mapper";
 
 export default function CreateSocietePage() {
   const router = useRouter();
@@ -27,17 +29,12 @@ export default function CreateSocietePage() {
     try {
       setSaving(true);
 
+      const payload = mapSocieteFormToUI(values);
+
       const res = await fetch("/api/societes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-  nom: values.nom || null,
-  adresse1: values.adresse1 || null,
-  adresse2: values.adresse2 || null,
-  adresse3: values.adresse3 || null,
-  ville: values.ville || null,
-  codePostal: values.codePostal || null,
-}),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -66,14 +63,7 @@ export default function CreateSocietePage() {
       />
 
       <SocieteForm
-        initialValues={{
-          nom: "",
-          adresse1: "",
-          adresse2: "",
-          adresse3: "",
-          ville: "",
-          codePostal: "",
-        }}
+        initialValues={mapSocieteUIToForm()}
         onSubmit={handleSubmit}
         onCancel={() => router.back()}
         saving={saving}

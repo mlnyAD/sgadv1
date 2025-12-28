@@ -16,6 +16,8 @@ import { SocieteCodePostalField } from "@/app/(app)/societes/components/fields/S
 
 import { TransactionHeader } from "@/components/transaction/TransactionHeader";
 import { SocieteFormCard } from "@/app/(app)/societes/components/form/SocieteFormCard";
+import { mapSocieteFormToUI } from "@/app/(app)/societes/components/form/societe.form.mapper";
+import { mapSocieteUIToForm } from "@/app/(app)/societes/components/form/societe.form.mapper";
 
 export default function EditSocietePage() {
 
@@ -38,14 +40,8 @@ export default function EditSocietePage() {
 
         const data = await res.json();
 
-setInitialValues({
-  nom: data.societe_nom ?? "",
-  adresse1: data.societe_adresse1 ?? "",
-  adresse2: data.societe_adresse2 ?? "",
-  adresse3: data.societe_adresse3 ?? "",
-  ville: data.societe_ville ?? "",
-  codePostal: data.societe_code_postal ?? "",
-});
+        setInitialValues(mapSocieteUIToForm(data));
+
       } catch {
         toast.error("Impossible de charger la societe");
       } finally {
@@ -65,18 +61,13 @@ setInitialValues({
     try {
       setSaving(true);
 
-      const res = await fetch(`/api/societes/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-  nom: values.nom || null,
-  adresse1: values.adresse1 || null,
-  adresse2: values.adresse2 || null,
-  adresse3: values.adresse3 || null,
-  ville: values.ville || null,
-  codePostal: values.codePostal || null,
-}),
-      });
+  const payload = mapSocieteFormToUI(values);
+
+  const res = await fetch(`/api/societes/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
 
       if (!res.ok) {
         throw new Error();
@@ -105,61 +96,61 @@ setInitialValues({
         subtitle="Mettre à jour les informations de la société"
       />
 
-<SocieteForm
-  initialValues={initialValues}
-  onSubmit={handleSubmit}
-  onCancel={() => router.back()}
-  saving={saving}
->
-  {({ values, setValues }) => (
-    <SocieteFormCard
-      onCancel={() => router.back()}
-      saving={saving}
-    >
-      <SocieteNameField
-        value={values.nom}
-        onChange={(nom) =>
-          setValues((v) => ({ ...v, nom }))
-        }
-      />
+      <SocieteForm
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        onCancel={() => router.back()}
+        saving={saving}
+      >
+        {({ values, setValues }) => (
+          <SocieteFormCard
+            onCancel={() => router.back()}
+            saving={saving}
+          >
+            <SocieteNameField
+              value={values.nom}
+              onChange={(nom) =>
+                setValues((v) => ({ ...v, nom }))
+              }
+            />
 
-      <SocieteAdresse1Field
-        value={values.adresse1}
-        onChange={(adresse1) =>
-          setValues((v) => ({ ...v, adresse1 }))
-        }
-      />
+            <SocieteAdresse1Field
+              value={values.adresse1}
+              onChange={(adresse1) =>
+                setValues((v) => ({ ...v, adresse1 }))
+              }
+            />
 
-      <SocieteAdresse2Field
-        value={values.adresse2}
-        onChange={(adresse2) =>
-          setValues((v) => ({ ...v, adresse2 }))
-        }
-      />
+            <SocieteAdresse2Field
+              value={values.adresse2}
+              onChange={(adresse2) =>
+                setValues((v) => ({ ...v, adresse2 }))
+              }
+            />
 
-      <SocieteAdresse3Field
-        value={values.adresse3}
-        onChange={(adresse3) =>
-          setValues((v) => ({ ...v, adresse3 }))
-        }
-      />
+            <SocieteAdresse3Field
+              value={values.adresse3}
+              onChange={(adresse3) =>
+                setValues((v) => ({ ...v, adresse3 }))
+              }
+            />
 
-      <SocieteVilleField
-        value={values.ville}
-        onChange={(ville) =>
-          setValues((v) => ({ ...v, ville }))
-        }
-      />
+            <SocieteVilleField
+              value={values.ville}
+              onChange={(ville) =>
+                setValues((v) => ({ ...v, ville }))
+              }
+            />
 
-      <SocieteCodePostalField
-        value={values.codePostal}
-        onChange={(codePostal) =>
-          setValues((v) => ({ ...v, codePostal }))
-        }
-      />
-    </SocieteFormCard>
-  )}
-</SocieteForm>
+            <SocieteCodePostalField
+              value={values.codePostal}
+              onChange={(codePostal) =>
+                setValues((v) => ({ ...v, codePostal }))
+              }
+            />
+          </SocieteFormCard>
+        )}
+      </SocieteForm>
     </>
   );
 }

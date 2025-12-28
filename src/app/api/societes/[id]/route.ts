@@ -1,135 +1,76 @@
+import { NextResponse } from "next/server";
+import {
+  getSocieteById,
+  updateSociete,
+  deleteSociete,
+} from "@/domain/societe";
 
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-/* ============================================================================
-   GET /api/societes/[id]
-   ============================================================================ */
-export async function GET(
-  _req: Request,
-  context: { params: Promise<{ id: string }> }
-) {
-  const { id } = await context.params;
-  const numericId = Number(id);
-
-  if (Number.isNaN(numericId)) {
-    return NextResponse.json(
-      { error: "Invalid societe id" },
-      { status: 400 }
-    );
-  }
-
-  const { data, error } = await supabase
-    .from("vw_societe_view")
-    .select("*")
-    .eq("societe_id", numericId)
-    .maybeSingle();
-
-  if (error) {
-    console.error("GET /api/societes/[id]", error);
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
-  }
-
-  if (!data) {
-    return NextResponse.json(
-      { error: "Societe not found" },
-      { status: 404 }
-    );
-  }
-
-  return NextResponse.json(data);
+interface RouteContext {
+  params: Promise<{ id: string }>;
 }
 
-
-
-/* ============================================================================
-   PUT /api/societes/[id]
-   ============================================================================ */
-export async function PUT(
-  req: Request,
-  context: { params: Promise<{ id: string }> }
-) {
-  const { id } = await context.params;
-  const numericId = Number(id);
-
-  const body = await req.json();
-  const { nom, adresse1, adresse2, adresse3, ville, codePostal } = body;
-
-  if (!nom) {
-    return NextResponse.json(
-      { error: "Invalid payload" },
-      { status: 400 }
-    );
-  }
-
-  const { error } = await supabase
-    .from("societe")
-    .update({
-      societe_nom: nom,
-      societe_adresse1: adresse1,
-      societe_adresse2: adresse2,
-      societe_adresse3: adresse3,
-      societe_ville: ville,
-      societe_code_postal: codePostal,
-    })
-    .eq("societe_id", numericId);
-
-  if (error) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
-  }
-
-  return NextResponse.json({ success: true });
-}
-
-
-/* ============================================================================
-   DELETE /api/configs/[id]
-   ============================================================================ */
-export async function DELETE(
-  _req: NextRequest,
-  context: { params : Promise<{ id: string }> }
-) {
+/* ------------------------------------------------------------------ */
+/* GET */
+/* ------------------------------------------------------------------ */
+export async function GET(_req: Request, context: RouteContext) {
   const { id } = await context.params;
   const societeId = Number(id);
 
   if (Number.isNaN(societeId)) {
-    return NextResponse.json(
-      { error: "Invalid societe id" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Invalid societe id" }, { status: 400 });
   }
 
-  const { data, error } = await supabase
-    .from("societe")
-    .delete()
-    .eq("societe_id", societeId)
-    .select("societe_id")
-    .maybeSingle();
+  const societe = await getSocieteById(societeId);
 
-  if (error) {
+  if (!societe) {
+    return NextResponse.json({ error: "Societe not found" }, { status: 404 });
+  }
+
+  return NextResponse.json(societe);
+}
+
+/* ------------------------------------------------------------------ */
+/* PUT */
+/* ------------------------------------------------------------------ */
+export async function PUT(req: Request, context: RouteContext) {
+  const { id } = await context.params;
+  const societeId = Number(id);
+
+  if (Number.isNaN(societeId)) {
+    return NextResponse.json({ error: "Invalid societe id" }, { status: 400 });
+  }
+
+  const body = await req.json();
+
+  try {
+    await updateSociete(societeId, body);
+    return NextResponse.json({ success: true });
+  } catch (e) {
     return NextResponse.json(
-      { error: error.message },
+      { error: (e as Error).message },
       { status: 500 }
     );
   }
+}
 
-  if (!data) {
-    return NextResponse.json(
-      { error: `No row deleted for societe_id=${societeId}` },
-      { status: 404 }
-    );
+/* ------------------------------------------------------------------ */
+/* DELETE */
+/* ------------------------------------------------------------------ */
+export async function DELETE(_req: Request, context: RouteContext) {
+  const { id } = await context.params;
+  const societeId = Number(id);
+
+  if (Number.isNaN(societeId)) {
+    return NextResponse.json({ error: "Invalid societe id" }, { status: 400 });
   }
 
-  return NextResponse.json({ success: true });
+  try {
+    await deleteSociete(societeId);
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    return NextResponse.json(
+      { error: (e as Error).message },
+      { status: 500 }
+    );
+  }
 }
