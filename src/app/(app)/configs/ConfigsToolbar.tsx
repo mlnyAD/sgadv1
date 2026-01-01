@@ -12,7 +12,7 @@ export function ConfigsToolbar() {
         <div>
           <TableHeader
             title="Configurations" 
-            subtitle="Gérer les configurations du système"
+            subtitle="Gérer les données de configuration du système"
           />
         </div>
 

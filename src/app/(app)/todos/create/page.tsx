@@ -12,10 +12,13 @@ import { TodoClotureField } from "../components/fields/TodoClotureField";
 import { TodoUrgentField } from "../components/fields/TodoUrgentField";
 import { TodoImportantField } from "../components/fields/TodoImportantField";
 import { TodoEtatField } from "../components/fields/TodoEtatField";
-import type { TodoFormValues } from "@/domain/todo/todo.form";
+import type { TodoFormValues } from "../components/form/TodoForm";
 import { getTodayISO, addDaysISO } from "@/helpers/date";
+import { toast } from "sonner";
+import { mapTodoFormToUI } from "../components/form/todo.form.mapper";
 
 export default function CreateTodoPage() {
+
   const router = useRouter();
   const [saving, setSaving] = useState(false);
 
@@ -25,29 +28,33 @@ export default function CreateTodoPage() {
   async function handleSubmit(values: TodoFormValues) {
   try {
     setSaving(true);
+    const payload = mapTodoFormToUI(values);
+
+    console.log("Todo CREATE payload", payload);
 
  const res = await fetch("/api/todos", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        titre: values.titre,
-        text: values.text || null,
-        important: values.important,
-        urgent: values.urgent,
-        etatId: values.etatId,
-        creation: values.creation,
-        cloture: values.cloture || null,
-      }),
+      body: JSON.stringify(payload),
     });
+
+    
+      console.log("Todo Retour create", res);
+
     if (!res.ok) {
-      throw new Error("Erreur lors de la création du todo");
+      throw new Error();
     }
     
+    
+      toast.success("Action créée");
+
     // ✅ 1) Rafraîchir les données côté serveur
-    router.refresh();
+    //router.refresh();
 
     // ✅ 2) Retour à la liste
     router.push("/todos");
+    } catch {
+      toast.error("Erreur lors de la création de l'action");
 
   } finally {
     setSaving(false);

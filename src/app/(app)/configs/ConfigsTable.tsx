@@ -2,21 +2,21 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { GenericListTable } from "@/components/table/GenericListTable";
-import { configColumns, ConfigListItem, selectableColumns } from "./columns";
+import { configColumns, selectableColumns } from "./columns";
 import { ConfigsFilters } from "./ConfigFilters";
-import { CONFIG_TYPE_CATALOG } from "@/shared/config/config-type";
+import { CONFIG_TYPE_CATALOG } from "@/domain/config/config.catalog";
+import type { ConfigUI } from "@/domain/config";
 
 /* ------------------------------------------------------------------ */
 /* Props */
 /* ------------------------------------------------------------------ */
 
 interface ConfigsTableProps {
-  data: ConfigListItem[];
+  data: ConfigUI[];
   page: number;
   pageSize: number;
   totalPages: number;
 }
-
 
 /* ------------------------------------------------------------------ */
 /* Component */
@@ -31,7 +31,6 @@ export function ConfigsTable({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-
   const typeOptions = CONFIG_TYPE_CATALOG.map((type) => ({
     id: type.id,
     label: type.label,
@@ -44,15 +43,12 @@ export function ConfigsTable({
       : null,
   };
 
-
   function onFiltersChange(next: typeof filters) {
     const params = new URLSearchParams(searchParams.toString());
 
-    // search
     if (next.search) params.set("search", next.search);
     else params.delete("search");
 
-    // configTypeId
     if (next.configTypeId !== null)
       params.set("configTypeId", String(next.configTypeId));
     else params.delete("configTypeId");
@@ -60,10 +56,6 @@ export function ConfigsTable({
     params.set("page", "1");
     router.push(`/configs?${params.toString()}`);
   }
-
-  /* ------------------------------------------------------------------
-     Pagination handlers
-     ------------------------------------------------------------------ */
 
   function onPageChange(newPage: number) {
     const params = new URLSearchParams(searchParams.toString());
@@ -78,10 +70,6 @@ export function ConfigsTable({
     params.set("pageSize", String(size));
     router.push(`/configs?${params.toString()}`);
   }
-
-  /* ------------------------------------------------------------------
-     Render
-     ------------------------------------------------------------------ */
 
   return (
     <GenericListTable
@@ -103,5 +91,3 @@ export function ConfigsTable({
     />
   );
 }
-
-

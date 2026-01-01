@@ -1,3 +1,4 @@
+
 /* Type d'une configuration */
 export const CONFIG_TYPE_CATALOG  = [
   { id: 1, label: "Type de document" },
@@ -10,4 +11,4 @@ export const CONFIG_TYPE_CATALOG  = [
   { id: 8, label: "Type de réunion" },  // ← mis à jour
 ] as const;
 
-export type ConfigTypeId = (typeof CONFIG_TYPE_CATALOG )[number]["id"];
+export type ConfigTypeId = (typeof CONFIG_TYPE_CATALOG) [number]["id"];

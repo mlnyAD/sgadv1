@@ -1,18 +1,19 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
+import {
+    getConfigById,
+    updateConfig,
+    deleteConfig,
+} from "@/domain/config"
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+interface RouteContext {
+  params: Promise<{ id: string }>;
+}
 
 /* ============================================================================
    GET /api/configs/[id]
    ============================================================================ */
-export async function GET(
-  _req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function GET( _req: Request, context: RouteContext)  {
+
   const { id } = await context.params;
   const configId = Number(id);
 
@@ -23,35 +24,16 @@ export async function GET(
     );
   }
 
-  const { data, error } = await supabase
-    .from("vw_config_view")
-    .select(`
-      config_id,
-      config_nom,
-      config_type,
-      type_nom,
-      lmod
-    `)
-    .eq("config_id", configId)
-    .single();
+  const config = await getConfigById(configId);
 
-  if (error) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
-  }
-
-  return NextResponse.json(data);
+  return NextResponse.json(config);
 }
 
 /* ============================================================================
    PUT /api/configs/[id]
    ============================================================================ */
-export async function PUT(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function PUT( req: Request, context: RouteContext)  {
+
   const { id } = await context.params;
   const configId = Number(id);
 
@@ -64,38 +46,22 @@ export async function PUT(
 
   const body = await req.json();
 
-  const { data, error } = await supabase
-    .from("config")
-    .update({
-      config_nom: body.label,
-      config_type: body.config_type_id,
-    })
-    .eq("config_id", configId)
-    .select("config_id")
-    .maybeSingle();
-
-  if (error) {
-    return NextResponse.json(
-      { error: error.message },
+  try{
+    await updateConfig(configId, body);
+    return NextResponse.json({success: true});
+  } catch (e) {
+   return NextResponse.json(
+      { error: (e as Error).message },
       { status: 500 }
     );
   }
-
-  if (!data) {
-    return NextResponse.json(
-      { error: `No row updated for config_id=${configId}` },
-      { status: 404 }
-    );
-  }
-
-  return NextResponse.json({ success: true });
 }
 
 /* ============================================================================
    DELETE /api/configs/[id]
    ============================================================================ */
 export async function DELETE(
-  _req: NextRequest,
+  _req: Request,
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
@@ -108,26 +74,13 @@ export async function DELETE(
     );
   }
 
-  const { data, error } = await supabase
-    .from("config")
-    .delete()
-    .eq("config_id", configId)
-    .select("config_id")
-    .maybeSingle();
-
-  if (error) {
+  try {
+    await deleteConfig(configId);
+    return NextResponse.json({ success: true });
+  } catch (e) {
     return NextResponse.json(
-      { error: error.message },
+      { error: (e as Error).message },
       { status: 500 }
     );
   }
-
-  if (!data) {
-    return NextResponse.json(
-      { error: `No row deleted for config_id=${configId}` },
-      { status: 404 }
-    );
-  }
-
-  return NextResponse.json({ success: true });
 }

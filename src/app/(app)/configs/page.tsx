@@ -1,15 +1,15 @@
-import { listConfigs } from "@/app/(app)/configs/configs.list";
+import { listConfigs } from "@/domain/config";
 import { ConfigsTable } from "./ConfigsTable";
 import { ConfigsToolbar } from "./ConfigsToolbar";
 
-/* ------------------------------------------------------------------ */
-/* Props */
-/* ------------------------------------------------------------------ */
-
 interface ConfigsPageProps {
-  searchParams: Record<string, string | string[] | undefined>;
-}
-
+  searchParams: Promise<{
+    page?: string;
+    pageSize?: string;
+    search?: string;
+    configTypeId?: string;
+  }>;
+};
 /* ------------------------------------------------------------------ */
 /* Page */
 /* ------------------------------------------------------------------ */
@@ -17,21 +17,13 @@ interface ConfigsPageProps {
 export default async function ConfigsPage({
   searchParams,
 }: ConfigsPageProps) {
-  /* ------------------------------------------------------------------
-     Lecture et normalisation des paramètres URL
-     ------------------------------------------------------------------ */
-
   const params = await searchParams;
 
-  const page =
-    typeof params.page === "string"
-      ? Number(params.page)
-      : 1;
-
-  const pageSize =
-    typeof params.pageSize === "string"
-      ? Number(params.pageSize)
-      : 10;
+  const page = Number(params.page ?? "1");
+  const pageSize = Number(params.pageSize ?? "10");
+  const configTypeId = params.configTypeId
+    ? Number(params.configTypeId)
+    : undefined;
 
   const search =
     typeof params.search === "string"
@@ -41,27 +33,15 @@ export default async function ConfigsPage({
   /* ------------------------------------------------------------------
      Data
      ------------------------------------------------------------------ */
-  const configTypeId =
-    typeof params.configTypeId === "string"
-      ? Number(params.configTypeId)
-      : undefined;
 
-  const { items, totalPages } = await listConfigs({
-  page,
-  pageSize,
-  search,
-  configTypeId,
-});
-
-
-  await listConfigs({
+  const { data, total } = await listConfigs({
     page,
     pageSize,
     search,
-    configTypeId,
+    typeId: configTypeId,
   });
 
-
+  const totalPages = Math.ceil(total / pageSize);
 
   /* ------------------------------------------------------------------
      Render
@@ -71,7 +51,7 @@ export default async function ConfigsPage({
     <>
       <ConfigsToolbar />
       <ConfigsTable
-        data={items}
+        data={data}
         page={page}
         pageSize={pageSize}
         totalPages={totalPages}

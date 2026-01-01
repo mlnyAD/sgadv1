@@ -5,25 +5,15 @@ import { Pencil, Trash2 } from "lucide-react";
 import { truncate } from "@/helpers/text";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ColumnSelectorItem } from "@/components/table/ColumnSelector";
+import { TodoUI } from "@/domain/todo";
+import { TODO_ETAT_CATALOG } from "@/domain/todo/todo.catalog"
 
-
-/* ------------------------------------------------------------------
-   Type ligne de liste (équivalent OperatorListItem)
-   ------------------------------------------------------------------ */
-
-export interface TodoListItem {
-  important: boolean;
-  urgent: boolean;
-  id: number;
-  nom: string;
-  etat: string;
-}
 
 /* ------------------------------------------------------------------
    Colonnes
    ------------------------------------------------------------------ */
 
-export const todoColumns: ColumnDef<TodoListItem>[] = [
+export const todoColumns: ColumnDef<TodoUI>[] = [
 
   {
     accessorKey: "id",
@@ -33,7 +23,7 @@ export const todoColumns: ColumnDef<TodoListItem>[] = [
 accessorKey: "titre",
   header: "Titre",
   cell: ({ row }) => {
-    const titre = row.original.nom;
+    const titre = row.original.titre;
 
     return (
       <Tooltip>
@@ -106,6 +96,16 @@ accessorKey: "titre",
   {
     accessorKey: "etat",
     header: "Etat",
+        cell: ({ row }) => {
+          const etatId = row.original.etatId;
+    
+          const type = TODO_ETAT_CATALOG.find(
+            (t) => t.id === etatId
+          );
+    
+          return type ? type.label : "";
+        }
+    
   },
 
   /* ------------------------------------------------------------------
@@ -166,7 +166,7 @@ accessorKey: "titre",
 /* ------------------------------------------------------------------ */
 
 export const selectableColumns: ColumnSelectorItem[] = [
-  { key: "id", label: "ID", visible: false },
+  { key: "id", label: "ID", visible: true },
   { key: "titre", label: "Titre", visible: true },
   { key: "creation", label: "Crée le", visible: true },
   { key: "cloture", label: "Pour le", visible: true },

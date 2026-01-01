@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import {
   getTodoById,
   updateTodo,
   deleteTodo,
-} from "@/domain/todo/todo.repository";
+} from "@/domain/todo";
 import { loadAuthenticatedUser } from "@/domain/user/loadAuthenticatedUser";
 
 /* ============================================================================

@@ -1,34 +1,28 @@
 import { TodoDbRow } from "./todo.db";
-import type { Todo } from "./todo.model";
+import { TodoUI } from "./todo.ui";
 
 
 // sens BD (view) -> Appli UI 
-export function mapTodoDbToModel(row: TodoDbRow): Todo {
+export function mapTodoDbToUI(row: TodoDbRow): TodoUI {
   return {
     id: row.todo_id!,
     creation: new Date(row.todo_creation!),
-    cloture: row.todo_cloture ? new Date(row.todo_cloture) : undefined,
+    cloture: row.todo_cloture ? new Date(row.todo_cloture) : null,
     titre: row.todo_titre ?? "",
-    text: row.todo_text ?? undefined,
+    text: row.todo_text ?? null,
     important: row.todo_important ?? false,
     urgent: row.todo_urgent ?? false,
     etatId: row.todo_etat_id!,
-    user: {
-      id: row.todo_user_id!,
-      email: row.email ?? "",
-      firstName: row.first_name ?? "",
-      lastName: row.last_name ?? "",
-    },
-    lastModified: new Date(row.lmod!),
-    
+  user: {
+    id: row.todo_user_id!,
+  }    
   };
 }
 
 // sens appli UI -> BD (table) -- CREATION
-import { CreateTodoInput, UpdateTodoInput } from "./todo.write";
 
 export function mapCreateTodoToDb(
-  input: CreateTodoInput,
+  input: TodoUI,
   userId: string
 ) {
   return {
@@ -42,7 +36,7 @@ export function mapCreateTodoToDb(
 }
 
 // sens appli UI -> BD (table) -- UPDATE
-export function mapUpdateTodoToDb(input: UpdateTodoInput) {
+export function mapUpdateTodoToDb(input: TodoUI) {
   return {
     ...(input.titre !== undefined && { todo_titre: input.titre }),
     ...(input.text !== undefined && { todo_text: input.text }),

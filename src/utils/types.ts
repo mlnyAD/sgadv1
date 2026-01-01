@@ -185,7 +185,7 @@ export type RiskType = {
     riskProbabilityNom: string;
     riskStateNom: string;
 }; //Vue
-
+/*
 export type Session = {
 	asSessionId: number;
 	asUserMail: string;
@@ -197,7 +197,7 @@ export type Session = {
 	persnom: string;
 	persprenom: string;
 }; //Vue
-
+*/
 
 
 

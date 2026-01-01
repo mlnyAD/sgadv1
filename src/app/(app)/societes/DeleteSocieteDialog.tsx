@@ -11,20 +11,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { deleteConfig } from "@/lib/config/config.service";
+import { deleteSociete } from "@/domain/societe/societe.repository";
 
 
-export default function DeleteConfigDialog({
+export default function DeleteSocieteDialog({
   open,
   onOpenChange,
-  configId,
-  configName,
+  societeId,
+  societeName,
   onDeleted,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  configId: number;
-  configName: string;
+  societeId: number;
+  societeName: string;
   onDeleted: () => void;
 }) {
   const [isPending, startTransition] = useTransition();
@@ -32,11 +32,11 @@ export default function DeleteConfigDialog({
   function handleDelete() {
     startTransition(async () => {
       try {
-        await deleteConfig(configId);
-        toast.success("Configuration supprimée");
+        await deleteSociete(societeId);
+        toast.success("Société supprimée");
         onDeleted?.();
       } catch {
-        toast.error("Impossible de supprimer la configuration");
+        toast.error("Impossible de supprimer la société");
       }
     });
   }
@@ -45,11 +45,11 @@ export default function DeleteConfigDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Supprimer cette configuration ?</DialogTitle>
+          <DialogTitle>Supprimer cette société ?</DialogTitle>
         </DialogHeader>
 
         <p className="mt-2">
-          Voulez-vous vraiment supprimer <strong>{configName}</strong> ?
+          Voulez-vous vraiment supprimer <strong>{societeName}</strong> ?
         </p>
 
         <DialogFooter className="mt-6">

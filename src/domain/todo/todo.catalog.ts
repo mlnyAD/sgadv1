@@ -10,9 +10,3 @@ export const TODO_ETAT_CATALOG = [
 export type TodoEtatId = (typeof TODO_ETAT_CATALOG )[number]["id"];
 
 
-/**
- * Type guard métier
- */
-export function isTodoEtatId(value: number): value is TodoEtatId {
-  return TODO_ETAT_CATALOG.some((e) => e.id === value);
-}

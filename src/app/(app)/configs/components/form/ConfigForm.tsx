@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { ConfigTypeId } from "@/shared/config/config-type";
+import type { ConfigTypeId } from "@/domain/config/config.catalog";
 
 export interface ConfigFormValues {
-  label: string;
-  config_type_id: ConfigTypeId | null;
+  nom: string;
+  typeId: ConfigTypeId | null;
 }
 
 type ConfigFormChildrenProps = {
@@ -26,6 +26,7 @@ export function ConfigForm({
   onSubmit,
   children,
 }: ConfigFormProps) {
+
   const [values, setValues] = useState<ConfigFormValues>(initialValues);
 
   return (

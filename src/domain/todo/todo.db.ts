@@ -1,4 +1,7 @@
+// Décrire ce qui sort de la base (tables + vues)
 // lecture DB / vue
+// domain/todo/todo.db.ts
+
 export interface TodoDbRow {
   todo_id: number | null;
   todo_creation: string | null;

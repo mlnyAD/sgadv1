@@ -1,10 +1,37 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { listConfigs, createConfig } from "@/domain/config";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+
+/* ------------------------------------------------------------------ */
+/* GET /api/societes */
+/* ------------------------------------------------------------------ */
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+
+  const page = Number(searchParams.get("page") ?? "1");
+  const pageSize = Number(searchParams.get("pageSize") ?? "10");
+  const search = searchParams.get("search") ?? undefined;
+
+  if (
+    Number.isNaN(page) ||
+    Number.isNaN(pageSize) ||
+    page < 1 ||
+    pageSize < 1
+  ) {
+    return NextResponse.json(
+      { error: "Invalid pagination parameters" },
+      { status: 400 }
+    );
+  }
+
+  const result = await listConfigs({
+    page,
+    pageSize,
+    search,
+  });
+
+  return NextResponse.json(result);
+}
 
 /* ============================================================================
    POST /api/configs
@@ -12,33 +39,13 @@ const supabase = createClient(
 export async function POST(req: Request) {
   const body = await req.json();
 
-  const { label, config_type_id } = body;
-
-  if (!label || !config_type_id) {
+  try {
+    const id = await createConfig(body);
+    return NextResponse.json({ id }, { status: 201 });
+  } catch (e) {
     return NextResponse.json(
-      { error: "Invalid payload" },
-      { status: 400 }
+      { error: (e as Error).message },
+      { status: 500 }
     );
   }
-
-  const { error } = await supabase
-    .from("config")
-    .insert({
-      config_nom: label,
-      config_type: config_type_id,
-    });
-
-if (error) {
-  console.error("POST /api/configs error:", error);
-
-  return NextResponse.json(
-    {
-      error: error.message,
-      details: error,
-    },
-    { status: 500 }
-  );
-}
-
-  return NextResponse.json({ success: true });
 }

@@ -3,11 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-
 import { TransactionHeader } from "@/components/transaction/TransactionHeader";
 import { TodoForm } from "@/app/(app)/todos/components/form/TodoForm";
 import { TodoFormCard } from "@/app/(app)/todos/components/form/TodoFormCard";
-
 import { TodoTitleField } from "@/app/(app)/todos/components/fields/TodoTitleField";
 import { TodoTextField } from "@/app/(app)/todos/components/fields/TodoTextField";
 import { TodoCreationField } from "@/app/(app)/todos/components/fields/TodoCreationField";
@@ -15,14 +13,14 @@ import { TodoClotureField } from "@/app/(app)/todos/components/fields/TodoClotur
 import { TodoUrgentField } from "@/app/(app)/todos/components/fields/TodoUrgentField";
 import { TodoImportantField } from "@/app/(app)/todos/components/fields/TodoImportantField";
 import { TodoEtatField } from "@/app/(app)/todos/components/fields/TodoEtatField";
-
-import type { TodoFormValues } from "@/domain/todo/todo.form";
-import { toDateInputValue } from "@/helpers/date";
+import type { TodoFormValues } from "@/app/(app)/todos/components/form/TodoForm";
+import { TodoUI } from "@/domain/todo";
+import { mapTodoFormToUI, mapTodoUIToForm } from "../../components/form/todo.form.mapper";
 
 export default function EditTodoPage() {
+
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-
   const [initialValues, setInitialValues] = useState<TodoFormValues | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -36,19 +34,12 @@ export default function EditTodoPage() {
         const res = await fetch(`/api/todos/${id}`);
         if (!res.ok) throw new Error();
 
-        const data = await res.json();
+        const data: TodoUI = await res.json();
 
         console.log("recherche article todo ", data);
 
         // 🔁 Mapping API → Form
-        setInitialValues({
-          titre: data.titre ?? "",
-          text: data.text ?? "",
-          creation: toDateInputValue(data.creation),
-          cloture: toDateInputValue(data.cloture), urgent: Boolean(data.urgent),
-          important: Boolean(data.important),
-          etatId: data.etatId ?? null,
-        });
+        setInitialValues(mapTodoUIToForm(data));
 
       } catch {
         toast.error("Impossible de charger l'action");
@@ -70,20 +61,14 @@ export default function EditTodoPage() {
     try {
       setSaving(true);
 
-      console.log("Sauvegarde ")
+      const payload = mapTodoFormToUI(values);
+
+      console.log("Sauvegarde Todo payload ", payload)
 
       const res = await fetch(`/api/todos/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          titre: values.titre,
-          text: values.text || null,
-          important: values.important,
-          urgent: values.urgent,
-          etatId: values.etatId,
-          creation: values.creation,
-          cloture: values.cloture || null,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) throw new Error();

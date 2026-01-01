@@ -3,28 +3,24 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-
-import { ConfigForm } from "@/app/(app)/configs/components/form/ConfigForm";
-import type { ConfigFormValues } from "@/app/(app)/configs/components/form/ConfigForm";
-
+import { TransactionHeader } from "@/components/transaction/TransactionHeader";
+import { ConfigForm, ConfigFormValues, } from "@/app/(app)/configs/components/form/ConfigForm";
+import { ConfigFormCard } from "@/app/(app)/configs/components/form/ConfigFormCard";
 import { ConfigNameField } from "@/app/(app)/configs/components/fields/ConfigNameField";
 import { ConfigTypeField } from "@/app/(app)/configs/components/fields/ConfigTypeField";
-
-import { TransactionHeader } from "@/components/transaction/TransactionHeader";
-import { ConfigFormCard } from "../../components/form/ConfigFormCard";
+import { mapConfigFormToUI, mapConfigUIToForm, } from "@/app/(app)/configs/components/form/config.form.mapper";
+import { ConfigUI } from "@/domain/config";
 
 export default function EditConfigPage() {
+
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-
-  const [initialValues, setInitialValues] =
-    useState<ConfigFormValues | null>(null);
-
+  const [initialValues, setInitialValues] = useState<ConfigFormValues | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   /* ------------------------------------------------------------------
-     Chargement de la configuration
+     Load config
      ------------------------------------------------------------------ */
   useEffect(() => {
     async function loadConfig() {
@@ -34,12 +30,9 @@ export default function EditConfigPage() {
           throw new Error();
         }
 
-        const data = await res.json();
+        const data: ConfigUI = await res.json();
 
-        setInitialValues({
-          label: data.config_nom,
-          config_type_id: data.config_type,
-        });
+        setInitialValues(mapConfigUIToForm(data));
       } catch {
         toast.error("Impossible de charger la configuration");
       } finally {
@@ -59,13 +52,12 @@ export default function EditConfigPage() {
     try {
       setSaving(true);
 
+      const payload = mapConfigFormToUI(values);
+
       const res = await fetch(`/api/configs/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          label: values.label,
-          config_type_id: values.config_type_id,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -82,10 +74,10 @@ export default function EditConfigPage() {
   }
 
   /* ------------------------------------------------------------------
-     Rendu conditionnel (CRITIQUE)
+     Render
      ------------------------------------------------------------------ */
   if (loading || !initialValues) {
-    return <p>Chargement…</p>;
+    return <p>Chargement en cours…</p>;
   }
 
   return (
@@ -95,33 +87,33 @@ export default function EditConfigPage() {
         subtitle="Mettre à jour les informations de la configuration"
       />
 
-<ConfigForm
-  initialValues={initialValues}
-  onSubmit={handleSubmit}
-  onCancel={() => router.back()}
-  saving={saving}
->
-  {({ values, setValues }) => (
-    <ConfigFormCard
-      onCancel={() => router.back()}
-      saving={saving}
-    >
-      <ConfigNameField
-        value={values.label}
-        onChange={(label) =>
-          setValues((v) => ({ ...v, label }))
-        }
-      />
+      <ConfigForm
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        onCancel={() => router.back()}
+        saving={saving}
+      >
+        {({ values, setValues }) => (
+          <ConfigFormCard
+            onCancel={() => router.back()}
+            saving={saving}
+          >
+            <ConfigNameField
+              value={values.nom}
+              onChange={(nom) =>
+                setValues((v) => ({ ...v, nom }))
+              }
+            />
 
-      <ConfigTypeField
-        value={values.config_type_id}
-        onChange={(config_type_id) =>
-          setValues((v) => ({ ...v, config_type_id }))
-        }
-      />
-    </ConfigFormCard>
-  )}
-</ConfigForm>
+            <ConfigTypeField
+              value={values.typeId}
+              onChange={(typeId) =>
+                setValues((v) => ({ ...v, typeId }))
+              }
+            />
+          </ConfigFormCard>
+        )}
+      </ConfigForm>
     </>
   );
 }

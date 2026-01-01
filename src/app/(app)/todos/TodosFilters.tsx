@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { TODO_ETAT_CATALOG } from "@/domain/todo/todo-etat.catalog";
+import { TODO_ETAT_CATALOG } from "@/domain/todo/todo.catalog";
 
 
 export type TodosFiltersValues = {

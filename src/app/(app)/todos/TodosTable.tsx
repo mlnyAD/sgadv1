@@ -5,7 +5,7 @@ import { GenericListTable } from "@/components/table/GenericListTable";
 import { selectableColumns, todoColumns } from "./columns";
 import { TodosFilters, TodosFiltersValues } from "./TodosFilters";
 
-import type { TodoListItem } from "./columns";
+import type { TodoUI } from "@/domain/todo/index";
 
 
 /* ------------------------------------------------------------------ */
@@ -13,14 +13,11 @@ import type { TodoListItem } from "./columns";
 /* ------------------------------------------------------------------ */
 
 interface TodosTableProps {
-	data: TodoListItem[];
+	data: TodoUI[];
 	page: number;
 	pageSize: number;
 	totalPages: number;
 }
-
-
-
 
 /* ------------------------------------------------------------------ */
 /* Component */
@@ -77,7 +74,6 @@ export function TodosTable({
 		// 🔴 TRÈS IMPORTANT
 		params.set("page", "1");
 
-		
 		console.log("Filtres changés", params);
 
 		router.push(`/todos?${params.toString()}`);
@@ -89,6 +85,7 @@ export function TodosTable({
 	   ------------------------------------------------------------------ */
 
 	function onPageChange(newPage: number) {
+		 console.log("onPageChange called with", newPage);
 		const params = new URLSearchParams(searchParams.toString());
 		params.set("page", String(newPage));
 		params.set("pageSize", String(pageSize));

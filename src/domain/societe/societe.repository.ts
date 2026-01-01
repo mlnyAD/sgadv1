@@ -79,7 +79,7 @@ export async function listSocietes(
 }
 
 /* ------------------------------------------------------------------ */
-/* Write */
+/* CREATE */
 /* ------------------------------------------------------------------ */
 
 export async function createSociete(
@@ -103,6 +103,10 @@ export async function createSociete(
   return data.societe_id as number;
 }
 
+
+/* ------------------------------------------------------------------
+   UPDATE
+   ------------------------------------------------------------------ */
 export async function updateSociete(
   id: number,
   ui: SocieteUI
@@ -121,6 +125,11 @@ export async function updateSociete(
     throw new Error(error.message);
   }
 }
+
+
+/* ------------------------------------------------------------------
+   DELETE
+   ------------------------------------------------------------------ */
 
 export async function deleteSociete(
   id: number

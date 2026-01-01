@@ -2,32 +2,61 @@
 
 
 import { createSupabaseServerReadClient } from '@/lib/supabase/server-read'
-import { mapTodoDbToModel } from '@/domain/todo/todo.mapper'
-import type { Todo } from "./todo.model";
-import type { CreateTodoInput, UpdateTodoInput } from "./todo.write";
+import { createSupabaseServerActionClient } from '@/lib/supabase/server-action'
+import { mapTodoDbToUI } from '@/domain/todo/todo.mapper'
+import { CreateTodoUI, TodoUI } from "./todo.ui";
 
+export type PagedResult<T> = {
+  items: T[];
+  totalPages: number;
+};
 /* ------------------------------------------------------------------ */
 /* LISTE DES TODOS POUR UN UTILISATEUR                                 */
 /* ------------------------------------------------------------------ */
-export async function listTodosForUser(userId: string): Promise<Todo[]> {
-
+export async function listTodosForUser(params: {
+  userId: string;
+  page: number;
+  pageSize: number;
+  search?: string;
+  urgent?: boolean;
+  important?: boolean;
+  etatId?: number;
+}): Promise<PagedResult<TodoUI>> {
   const supabase = await createSupabaseServerReadClient();
 
-  console.log("Entrée listTodosForUser userr = ", userId);
-
-  const { data, error } = await supabase
+  let query = supabase
     .from("vw_todo_view")
-    .select("*")
-    .eq("todo_user_id", userId)
+    .select("*", { count: "exact" })
+    .eq("todo_user_id", params.userId)
     .order("todo_id");
 
-  if (error) {
-    throw error;
+  if (params.search) {
+    query = query.ilike("todo_titre", `%${params.search}%`);
   }
 
-  console.log("listTodosForUser user, data", userId, data);
+  if (params.etatId) {
+    query = query.eq("todo_etat_id", params.etatId);
+  }
 
-  return data.map(mapTodoDbToModel);
+  if (params.urgent !== undefined) {
+    query = query.eq("todo_urgent", params.urgent);
+  }
+
+  if (params.important !== undefined) {
+    query = query.eq("todo_important", params.important);
+  }
+
+  const from = (params.page - 1) * params.pageSize;
+  const to = from + params.pageSize - 1;
+
+  const { data, count, error } = await query.range(from, to);
+
+  if (error) throw error;
+
+  const items = (data ?? []).map(mapTodoDbToUI);
+  const totalPages = Math.max(1, Math.ceil((count ?? 0) / params.pageSize));
+
+  return { items, totalPages };
 }
 
 /* ------------------------------------------------------------------ */
@@ -36,7 +65,7 @@ export async function listTodosForUser(userId: string): Promise<Todo[]> {
 export async function getTodoById(
   todoId: number,
   userId: string
-): Promise<Todo | null> {
+): Promise<TodoUI | null> {
   const supabase = await createSupabaseServerReadClient();
 
   const { data, error } = await supabase
@@ -53,17 +82,17 @@ export async function getTodoById(
     throw error;
   }
 
-  return mapTodoDbToModel(data);
+  return mapTodoDbToUI(data);
 }
 
 /* ------------------------------------------------------------------ */
 /* CREATION D'UN TODO                                                  */
 /* ------------------------------------------------------------------ */
 export async function createTodo(
-  input: CreateTodoInput,
+  input: CreateTodoUI,
   userId: string
 ): Promise<void> {
-  const supabase = await createSupabaseServerReadClient();
+  const supabase = await createSupabaseServerActionClient();
 
   const {
     titre,
@@ -100,11 +129,11 @@ export async function createTodo(
 /* ------------------------------------------------------------------ */
 
 export async function updateTodo(
-  todoId: number,
+  id: number,
   userId: string,
-  input: UpdateTodoInput
+  input: TodoUI
 ): Promise<void> {
-  const supabase = await createSupabaseServerReadClient();
+  const supabase = await createSupabaseServerActionClient();
 
   const {
     titre,
@@ -125,7 +154,7 @@ export async function updateTodo(
       ...(etatId !== undefined && { todo_etat_id: etatId }), // ✅ clé
       ...(cloture !== undefined && { todo_cloture: cloture ?? null }),
     })
-    .eq("todo_id", todoId)
+    .eq("todo_id", id)
     .eq("todo_user_id", userId);
 
   if (error) {
@@ -137,22 +166,22 @@ export async function updateTodo(
 /* SUPPRESSION D'UN TODO                                               */
 /* ------------------------------------------------------------------ */
 export async function deleteTodo(
-  todoId: number,
+  id: number,
   userId: string
 ): Promise<void> {
-  const supabase = await createSupabaseServerReadClient();
+  const supabase = await createSupabaseServerActionClient();
 
   const { error } = await supabase
     .from("todo")
     .delete()
-    .eq("todo_id", todoId)
+    .eq("todo_id", id)
     .eq("todo_user_id", userId);
 
   if (error) {
     throw error;
   }
 }
-
+/*
 import 'server-only'
 
 type ListByOwnerParams = {
@@ -211,5 +240,5 @@ export const todoRepository = {
       totalPages: Math.ceil((count ?? 0) / pageSize),
     }
   }
-}
+}*/
 

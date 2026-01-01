@@ -8,7 +8,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { TODO_ETAT_CATALOG } from "@/domain/todo/todo-etat.catalog";
+import { TODO_ETAT_CATALOG } from "@/domain/todo/todo.catalog";
 
 interface TodoEtatFieldProps {
 	value: number | null;

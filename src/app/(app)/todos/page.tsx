@@ -1,6 +1,8 @@
-import { listTodos } from "@/app/(app)/todos/todos.list";
+import { listTodosForUser } from "@/domain/todo";
 import { TodosTable } from "./TodosTable";
 import { TodosToolbar } from "./TodosToolbar";
+import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
+import { redirect } from "next/navigation";
 
 type TodosSearchParams = {
   page?: string;
@@ -48,7 +50,16 @@ export default async function TodosPage({
       ? Number(resolvedSearchParams.etatId)
       : undefined;
 
-  const { items, totalPages } = await listTodos({
+  // Recherche de l'utilisateur connecté
+  const supabase = await createSupabaseServerReadClient();
+const { data: { user } } = await supabase.auth.getUser();
+
+if (!user) {
+  redirect("/login");
+}
+
+  const { items, totalPages } = await listTodosForUser({
+    userId: user.id,
     page,
     pageSize,
     search,
