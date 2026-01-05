@@ -1,10 +1,7 @@
 "use client";
 
 import {
-  LayoutDashboard,
   FolderKanban,
-  Clock,
-  History,
   Users,
   Settings2,
   Building2,
@@ -40,30 +37,19 @@ const ADMIN = [
 
 // Menu principal
 const ITEMS: NavItem[] = [
-  {
-    id: "dashboard",
-    title: "Tableau de bord général",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    id: "projects-current",
-    title: "Projets en cours",
-    href: "/projects/current",
-    icon: FolderKanban,
-  },
-  {
-    id: "projects-pending",
-    title: "Projets en attente",
-    href: "/projects/pending",
-    icon: Clock,
-  },
-  {
-    id: "projects-done",
-    title: "Projets terminés",
-    href: "/projects/done",
-    icon: History,
-  },
+{
+  id: "projects",
+  title: "Projets",
+  href: "/projects",
+  icon: FolderKanban,
+},
+{
+  id: "clients",
+  title: "Clients",
+  href: "/clients",
+  icon: Building2,
+  roles: [USER_ROLES.SYSTEM_ADMIN.id],
+},
   {
     id: "teams",
     title: "Équipes",

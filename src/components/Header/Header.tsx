@@ -4,6 +4,7 @@
 import HeaderProjet from "./HeaderProject";
 import HeaderSearch from "./HeaderSearch";
 import HeaderTheme from "./HeaderTheme";
+import HeaderInfo from "./HeaderInfo";
 
 export default function Header() {
   return (
@@ -14,6 +15,9 @@ export default function Header() {
         <HeaderProjet />
       </div>
 
+      {/* Info projet (centre gauche) */}
+      <HeaderInfo />
+
       {/* Search (centre) */}
       <div className="flex flex-1 justify-center">
         <HeaderSearch />
@@ -21,9 +25,9 @@ export default function Header() {
 
       {/* Actions (droite) */}
       <div className="flex flex-none items-center gap-4">
-        {/* Placeholder chat simple */}
-        <span className="hidden md:block text-sm text-muted-foreground">Chat</span>
-
+        <span className="hidden md:block text-sm text-muted-foreground">
+          Chat
+        </span>
         <HeaderTheme />
       </div>
 

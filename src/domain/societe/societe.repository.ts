@@ -7,11 +7,30 @@ import { SocieteDbRow } from "./societe.db";
 import { mapSocieteDbToUI } from "./societe.mapper";
 import { mapSocieteUIToDb } from "./societe.mapper";
 import { SocieteUI } from "./societe.ui";
+import type { SocieteSelectRow } from "./societe.db";
+
+
+/* ------------------------------------------------------------------
+   Select list (MOA / MOE / Client / etc.)
+   ------------------------------------------------------------------ */
+export async function getSocietesForSelect(): Promise<SocieteSelectRow[]> {
+  const supabase = await createSupabaseServerReadClient();
+
+  const { data, error } = await supabase
+    .from("societe")
+    .select("societe_id, societe_nom")
+    .order("societe_nom");
+
+  if (error) {
+    throw error;
+  }
+
+  return data ?? [];
+}
 
 /* ------------------------------------------------------------------ */
 /* Read */
 /* ------------------------------------------------------------------ */
-
 export async function getSocieteById(
   id: number
 ): Promise<SocieteUI | null> {

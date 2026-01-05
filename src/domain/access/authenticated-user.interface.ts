@@ -1,19 +1,57 @@
+
+
+// src/domain/access/authenticated-user.interface.ts
+
 import type { DbUser } from "../user/user.interface";
 import type { DbUserProfile } from "../user/userprofile.interface";
-import type { DbClient } from "../client/client.interface";
-import type { DbProject } from "../project/project.interface";
+
+import type { ClientUI } from "../client/client.ui";
+import type { ProjectUI } from "../project/project.ui";
+
 import type { DbUserClientRole } from "../user/roles/user-client-role.interface";
 import type { DbUserProjectRole } from "../user/roles/user-project-role.interface";
 
+/**
+ * Utilisateur authentifié dans l'application.
+ * Agrégat métier construit côté serveur.
+ */
 export interface AuthenticatedUser {
+  /* ------------------------------------------------------------------
+     Identité
+     ------------------------------------------------------------------ */
+
   user: DbUser;
   profile: DbUserProfile | null;
 
-  clientRoles: DbUserClientRole[];    // Rôles de l'utilisateur par client
-  projectRoles: DbUserProjectRole[];  // Rôles de l'utilisateur par projet
+  /* ------------------------------------------------------------------
+     Rôles (relationnels / DB)
+     ------------------------------------------------------------------ */
 
-  clients: DbClient[];                // Clients accessibles
-  projects: DbProject[];              // Projets accessibles
+  clientRoles: DbUserClientRole[];
+  projectRoles: DbUserProjectRole[];
 
-  isSystemAdmin: boolean;             // Dérivé de user.is_system_admin
+  /* ------------------------------------------------------------------
+     Périmètre métier
+     ------------------------------------------------------------------ */
+
+  /**
+   * Clients accessibles par l'utilisateur.
+   * → entités métier (portent les états WAIT / ACTIVE / …)
+   */
+  clients: ClientUI[];
+
+  /**
+   * Projets accessibles par l'utilisateur.
+   * → entités internes (project_id = integer)
+   */
+  projects: ProjectUI[];
+
+  /* ------------------------------------------------------------------
+     Dérivés
+     ------------------------------------------------------------------ */
+
+  /**
+   * Dérivé de user.is_system_admin
+   */
+  isSystemAdmin: boolean;
 }

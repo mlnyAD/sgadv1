@@ -25,7 +25,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"]
     }
   },
   "include": [
@@ -35,6 +35,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "src/lib/todo/todo.service.ts.old", "src/domain/societe/societe.write.ts.old", "src/app/(app)/todos/todos.list.ts.old"  ],
+, "src/lib/todo/todo.service.ts.old", "src/domain/societe/societe.write.ts.old", "src/app/(app)/todos/todos.list.ts.old", "src/app/(app)/projects/[projectId]/resume/page.tsx.old"  ],
   "exclude": ["node_modules"]
 }

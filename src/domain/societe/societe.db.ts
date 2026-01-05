@@ -11,3 +11,8 @@ export interface SocieteDbRow {
   societe_ville: string | null;
   societe_code_postal: string | null;
 }
+
+export interface SocieteSelectRow {
+  societe_id: number;
+  societe_nom: string;
+}

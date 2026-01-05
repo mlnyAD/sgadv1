@@ -55,8 +55,9 @@ export default function AboutListForm() {
                 <AccordionTrigger>Dernière version en ligne</AccordionTrigger>
                 <AccordionContent>
                   <div className="mt-2 rounded-lg border bg-white dark:bg-black p-4 shadow-sm">
-                    <p className="text-xl text-red-500">Version 1.09 du 01/01/2026</p>
-                    <p className="mt-2 text-xs">1 - Transactions remaniées : Configuration, Societe, Todo</p>
+                    <p className="text-xl text-red-500">Version 1.10 du 05/01/2026</p>
+                    <p className="mt-2 text-xs">1 - Nouvelle transaction : Client</p>
+                    <p className="mt-2 text-xs">1 - Début intégration projet : liste + résumé</p>
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -65,6 +66,8 @@ export default function AboutListForm() {
               <AccordionItem value="history">
                 <AccordionTrigger>Historique</AccordionTrigger>
                 <AccordionContent>
+                    <p className="text-xl text-red-500">Version 1.09 du 01/01/2026</p>
+                    <p className="mt-2 text-xs">1 - Transactions remaniées : Configuration, Societe, Todo</p>
                     <p className="text-xl text-red-500">Version 1.08.01 du 26/12/2025</p>
                     <p className="mt-2 text-xs">1 - Transaction Sociétés optimisée</p>
                     <p className="text-xl text-red-500">Version 1.08 du 26/12/2025</p>
