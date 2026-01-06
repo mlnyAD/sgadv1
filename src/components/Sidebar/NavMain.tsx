@@ -11,6 +11,7 @@ import {
   AlertTriangle,
   KanbanSquare,      // Icône pour "Opérations"
 } from "lucide-react";
+import { KeyRound } from "lucide-react"; // ou un autre pictogramme
 
 import {
   SidebarGroup,
@@ -37,19 +38,26 @@ const ADMIN = [
 
 // Menu principal
 const ITEMS: NavItem[] = [
-{
-  id: "projects",
-  title: "Projets",
-  href: "/projects",
-  icon: FolderKanban,
-},
-{
-  id: "clients",
-  title: "Clients",
-  href: "/clients",
-  icon: Building2,
-  roles: [USER_ROLES.SYSTEM_ADMIN.id],
-},
+  {
+    id: "projects",
+    title: "Projets",
+    href: "/projects",
+    icon: FolderKanban,
+  },
+  {
+    id: "clients",
+    title: "Clients",
+    href: "/clients",
+    icon: Building2,
+    roles: [USER_ROLES.SYSTEM_ADMIN.id],
+  },
+  {
+    id: "licences",
+    title: "Licences",
+    href: "/licences",
+    icon: KeyRound,
+    roles: ADMIN,
+  },
   {
     id: "teams",
     title: "Équipes",

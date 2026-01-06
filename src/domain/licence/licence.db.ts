@@ -2,13 +2,16 @@
 
 // src/domain/licence/licence.db.ts
 
-import { LicenceStatus } from "./licence.catalog";
-
 export interface LicenceDbRow {
-  licence_id: number;
-  client_id: number;
-  licence_status: LicenceStatus;
-  licence_start_at: Date;
-  licence_end_at?: Date | null;
-  lmod: Date;
+  id: string;
+
+  client_id: string;
+  client_label: string;
+
+  nom: string;
+
+  status: string;
+
+  start_date: string;
+  end_date: string | null;
 }

@@ -4,4 +4,4 @@
 
 export * from "./licence.ui";
 export * from "./licence.catalog";
-export * from "./licence.repository";
+
