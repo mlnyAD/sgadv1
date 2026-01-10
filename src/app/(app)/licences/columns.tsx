@@ -26,7 +26,7 @@ export const licenceColumns: ColumnDef<LicenceUI>[] = [
   },
   {
     accessorKey: "statusLabel",
-    header: "Statut",
+    header: "Etat",
     cell: ({ row }) => {
       const status = row.original.status;
 
@@ -36,6 +36,18 @@ export const licenceColumns: ColumnDef<LicenceUI>[] = [
 
       return item ? item.label : "";
     },
+  },
+  {
+    accessorKey: "startDate",
+    header: "Début",   
+  },
+  {
+    accessorKey: "endDate",
+    header: "Fin",   
+  },
+  {
+    accessorKey: "clientLabel",
+    header: "Client",
   },
   {
     id: "actions",
@@ -89,8 +101,11 @@ export const licenceColumns: ColumnDef<LicenceUI>[] = [
 /* ------------------------------------------------------------------ */
 
 export const selectableColumns: ColumnSelectorItem[] = [
-  { key: "id", label: "ID", visible: true },
+  { key: "id", label: "ID", visible: false },
   { key: "nom", label: "Nom", visible: true },
   { key: "statusLabel", label: "Statut", visible: true },
+  { key: "startDate", label: "Début", visible: true },
+  { key: "endDate", label: "Fin", visible: true },
+  { key: "clientLabel", label: "Client", visible: true },
   // "actions" toujours visible
 ];

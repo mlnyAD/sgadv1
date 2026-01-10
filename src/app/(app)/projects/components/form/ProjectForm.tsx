@@ -3,55 +3,68 @@
 "use client";
 
 import { useState } from "react";
-import type { ProjectDbRow } from "@/domain/project/project.db";
 
-import {
-  Tabs,
-  TabsContent,
-} from "@/components/ui/tabs";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import type { ProjectDbRow } from "@/domain/project/project.db";
+import type { SelectOption } from "@/app/(app)/components/fields/types";
+
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { ProjectFormTabs } from "./ProjectFormTabs";
 import { ProjectFormActions } from "./ProjectFormActions";
 
 import { ProjectGeneralTab } from "./tabs/ProjectGeneralTab";
 import { ProjectIntervenantsTab } from "./tabs/ProjectIntervenantsTab";
+import { ProjectCalendarTab } from "./tabs/ProjectCalendarTab";
+import { ProjectMotifsTab } from "./tabs/ProjectMotifsTab";
+import { ProjectBudgetTab } from "./tabs/ProjectBudgetTab";
+import { ProjectOptionsTab } from "./tabs/ProjectOptionsTab";
 
-interface ProjectFormProps {
+import { ProjectFormState } from "./project.form.types"
+import { mapProjectDbToForm } from "./project.form.mapper";
+
+/* ------------------------------------------------------------------
+   Props
+   ------------------------------------------------------------------ */
+
+export interface ProjectFormProps {
   mode: "create" | "edit";
-  initialProject: ProjectDbRow;
   projectId?: number;
-  moaOptions: {
-    id: number;
-    label: string;
-  }[];
+  initialProject: ProjectDbRow;
+
+  moaOptions: SelectOption[];
+  ouvrageOptions: SelectOption[];
+  motifOptions: SelectOption[];
+  budgetOptions: SelectOption[];
 }
 
+/* ------------------------------------------------------------------
+   Component
+   ------------------------------------------------------------------ */
 
 export function ProjectForm({
   mode,
-  initialProject,
   projectId,
+  initialProject,
   moaOptions,
+  ouvrageOptions,
+  motifOptions,
+  budgetOptions,
 }: ProjectFormProps) {
-  // State métier global
-  const [project, setProject] =
-    useState<ProjectDbRow>(initialProject);
+  /* ------------------------------------------------------------------
+     State (unique source of truth)
+     ------------------------------------------------------------------ */
 
-  // Onglet actif (UI only)
-  /*const [activeTab, setActiveTab] = useState<
-    "general" | "intervenants" | "calendrier" | "motifs"| "finance" | "options"
-  >("general");
-*/
-const [activeTab, setActiveTab] = useState<string>("general");
+  const [project, setProject] = useState<ProjectFormState>(() =>
+    mapProjectDbToForm(initialProject)
+  );
 
-  console.log("ProjectForm moaOptions = ", moaOptions);
-  
+  const [activeTab, setActiveTab] = useState<string>("general");
+
+  /* ------------------------------------------------------------------
+     Render
+     ------------------------------------------------------------------ */
+
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -63,8 +76,7 @@ const [activeTab, setActiveTab] = useState<string>("general");
       </CardHeader>
 
       <CardContent className="space-y-6">
-        {/* Tabs shadcn pilotent TOUT : triggers + contenus */}
-        <Tabs value={activeTab}   onValueChange={setActiveTab}>
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           <ProjectFormTabs />
 
           <TabsContent value="general" className="mt-4">
@@ -83,27 +95,34 @@ const [activeTab, setActiveTab] = useState<string>("general");
           </TabsContent>
 
           <TabsContent value="calendrier" className="mt-4">
-            <div className="text-sm text-muted-foreground">
-              Calendrier
-            </div>
+            <ProjectCalendarTab
+              project={project}
+              onChange={setProject}
+            />
           </TabsContent>
 
           <TabsContent value="motifs" className="mt-4">
-            <div className="text-sm text-muted-foreground">
-              Motifs
-            </div>
+            <ProjectMotifsTab
+              project={project}
+              onChange={setProject}
+              ouvrageOptions={ouvrageOptions}
+              motifOptions={motifOptions}
+            />
           </TabsContent>
 
           <TabsContent value="finance" className="mt-4">
-            <div className="text-sm text-muted-foreground">
-              Finances
-            </div>
+            <ProjectBudgetTab
+              project={project}
+              onChange={setProject}
+              budgetOptions={budgetOptions}
+            />
           </TabsContent>
 
           <TabsContent value="options" className="mt-4">
-            <div className="text-sm text-muted-foreground">
-              Options
-            </div>
+            <ProjectOptionsTab
+              project={project}
+              onChange={setProject}
+            />
           </TabsContent>
         </Tabs>
 

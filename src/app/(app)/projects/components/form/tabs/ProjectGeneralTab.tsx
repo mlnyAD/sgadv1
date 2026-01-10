@@ -8,12 +8,12 @@ import { ProjectAddressField } from "../../fields/general/ProjectAddressField";
 import { ProjectPostalCodeField } from "../../fields/general/ProjectPostalCodeField";
 import { ProjectTownField } from "../../fields/general/ProjectTownField";
 import { ProjectStatusField } from "../../fields/general/ProjectStatusField";
+import type { ProjectFormState } from "../project.form.types";
 
 interface Props {
-  project: ProjectDbRow;
-  onChange: (next: ProjectDbRow) => void;
+  project: ProjectFormState;
+  onChange: (p: ProjectFormState) => void;
 }
-
 export function ProjectGeneralTab({ project, onChange }: Props) {
   function update<K extends keyof ProjectDbRow>(
     key: K,
@@ -25,16 +25,19 @@ export function ProjectGeneralTab({ project, onChange }: Props) {
     });
   }
 
+  //console.log("ProjectGeneralTab project = ", project)
   return (
     <div className="grid grid-cols-1 gap-1">
 
       <ProjectIdentField
         value={project.project_ident}
         onChange={(value) =>
-          update("project_ident", value)
+          onChange({
+            ...project,
+            project_ident: value,
+          })
         }
       />
-
       <ProjectNameField
         value={project.project_nom}
         onChange={(value) =>
@@ -52,7 +55,7 @@ export function ProjectGeneralTab({ project, onChange }: Props) {
       <ProjectAddressField
         value={project.project_adresse ?? ""}
         onChange={(value) =>
-          update("project_adresse",  value || null)
+          update("project_adresse", value || null)
         }
       />
 
@@ -66,7 +69,7 @@ export function ProjectGeneralTab({ project, onChange }: Props) {
       <ProjectTownField
         value={project.project_ville ?? ""}
         onChange={(value) =>
-          update("project_ville",  value || null)
+          update("project_ville", value || null)
         }
       />
 

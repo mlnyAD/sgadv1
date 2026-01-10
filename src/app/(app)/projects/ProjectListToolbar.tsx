@@ -19,7 +19,7 @@ export function ProjectListToolbar() {
         {/* Actions */}
         <div className="flex gap-2">
           <Button asChild variant="axcio">
-            <Link href="/projects/new">
+            <Link href="/projects/create">
               Nouveau projet
             </Link>
           </Button>

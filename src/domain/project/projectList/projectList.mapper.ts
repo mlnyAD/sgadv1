@@ -3,6 +3,10 @@
 import type { ProjectListDTO, ProjectListRow } from "./projectList.types";
 
 export function mapProjectListRow(row: ProjectListRow): ProjectListDTO {
+
+
+  //console.log("Project mapper row ", row)
+
   return {
     project_id: row.project_id,
     project_ident: row.project_ident,

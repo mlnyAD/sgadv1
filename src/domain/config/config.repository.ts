@@ -2,6 +2,7 @@ import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
 import { mapConfigDbToUI, mapConfigUIToDb, } from "./config.mapper";
 import { ConfigUI } from "./config.ui";
 import { createSupabaseServerActionClient } from "@/lib/supabase/server-action";
+import { ConfigDbRow } from "./config.db";
 
 
 /* ------------------------------------------------------------------ */
@@ -31,6 +32,30 @@ export async function getConfigById(
 
 	return mapConfigDbToUI(data);
 }
+
+/* ------------------------------------------------------------------
+   LIST BY TYPE (helper métier)
+   ------------------------------------------------------------------ */
+
+export async function getConfigsByType(
+  typeId: number
+): Promise<ConfigDbRow[]> {
+
+	const supabase = await createSupabaseServerReadClient();
+	
+  const { data, error } = await supabase
+    .from("config")
+    .select("*")
+    .eq("config_type", typeId);
+
+  if (error) {
+    throw error;
+  }
+
+  return data as ConfigDbRow[];
+}
+
+
 /* ------------------------------------------------------------------
    LIST
    ------------------------------------------------------------------ */

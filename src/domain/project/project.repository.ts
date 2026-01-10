@@ -2,8 +2,7 @@
 
 import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
 import { createSupabaseServerActionClient } from "@/lib/supabase/server-action";
-import type { ProjectDbRow } from "./project.db";
-import type { ProjectDbViewRow } from "./project.mapper";
+import type { ProjectDbRow, ProjectDbViewRow } from "./project.db";
 
 /* ------------------------------------------------------------------
    Lecture – vue vw_project
@@ -15,18 +14,17 @@ export async function getProjectDbViewById(
   const supabase = await createSupabaseServerReadClient();
 
   const { data, error } = await supabase
-    .from("vw_project_list")
+    .from("vw_project")
     .select("*")
     .eq("project_id", projectId)
     .single();
 
+
   if (error) {
-    if (error.code === "PGRST116") {
-      return null;
-    }
     throw error;
   }
 
+   // console.log("Retour getProjectDBviewbyId ", data)
   return data as ProjectDbViewRow;
 }
 

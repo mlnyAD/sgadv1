@@ -9,11 +9,17 @@ import { z } from "zod";
    Zod schema
    ------------------------------------------------------------------ */
 
+/**
+ * Identifiant du projet :
+ * - obligatoire
+ * - court et lisible (code projet)
+ * - pas d'espaces en début / fin
+ */
 const schema = z
   .string()
   .trim()
   .min(2, "L'identifiant du projet doit comporter au moins 2 caractères")
-  .max(10, "L'identifiant du projet doit comporter au maximum 10 caractères'");
+  .max(10, "L'identifiant du projet doit comporter au maximum 10 caractères");
 
 /* ------------------------------------------------------------------
    Props
@@ -22,47 +28,54 @@ const schema = z
 interface Props {
   value: string;
   onChange: (value: string) => void;
+  disabled?: boolean;
 }
 
 /* ------------------------------------------------------------------
    Component
    ------------------------------------------------------------------ */
 
-export function ProjectIdentField({ value, onChange }: Props) {
+export function ProjectIdentField({
+  value,
+  onChange,
+  disabled,
+}: Props) {
   const [error, setError] = useState<string | null>(null);
 
   function handleChange(v: string) {
-	const parsed = schema.safeParse(v);
+    const parsed = schema.safeParse(v);
 
-	if (!parsed.success) {
-	  setError(parsed.error.issues[0].message);
-	} else {
-	  setError(null);
-	}
+    if (!parsed.success) {
+      setError(parsed.error.issues[0].message);
+    } else {
+      setError(null);
+    }
 
-	onChange(v);
+    // Toujours propager la valeur (UX non bloquante)
+    onChange(v);
   }
 
   return (
-	<div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center border-b border-muted pb-2">
-	  <label className="md:col-span-1 text-sm font-medium">
-		Identifiant du projet
-	  </label>
+    <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center border-b border-muted pb-2">
+      <label className="md:col-span-1 text-sm font-medium">
+        Identifiant du projet
+      </label>
 
-	  <div className="md:col-span-5">
-		<input
-		  type="text"
-		  className="h-9 w-full rounded-md border px-3 text-sm"
-		  value={value}
-		  onChange={(e) => handleChange(e.target.value)}
-		/>
+      <div className="md:col-span-5">
+        <input
+          type="text"
+          className="h-9 w-full rounded-md border px-3 text-sm disabled:opacity-50"
+          value={value}
+          disabled={disabled}
+          onChange={(e) => handleChange(e.target.value)}
+        />
 
-		{error && (
-		  <p className="text-sm text-destructive">
-			{error}
-		  </p>
-		)}
-	  </div>
-	</div>
+        {error && (
+          <p className="mt-1 text-sm text-destructive">
+            {error}
+          </p>
+        )}
+      </div>
+    </div>
   );
 }

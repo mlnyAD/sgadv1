@@ -2,33 +2,16 @@
 
 "use client";
 
-import { useMemo, ChangeEvent } from "react";
-import { Label } from "@/components/ui/label";
+import type { SelectOption } from "@/app/(app)/components/fields/types";
 
 /* ------------------------------------------------------------------
-   Types
+   Props
    ------------------------------------------------------------------ */
 
-export interface ProjectMoaOption {
-  id: number;
-  label: string;
-}
-
-interface ProjectMoaFieldProps {
-  /** ID de la société MOA sélectionnée */
-  value: number | null;
-
-  /** Liste des sociétés disponibles */
-  options: ProjectMoaOption[];
-
-  /**
-   * Libellé courant issu de la vue (optionnel).
-   * Utile si la société n’est plus dans la liste.
-   */
-  currentLabel?: string | null;
-
-  /** Callback métier */
-  onChange: (value: number | null) => void;
+interface Props {
+  value: string | null;
+  options: SelectOption[];
+  onChange: (value: string | null) => void;
 }
 
 /* ------------------------------------------------------------------
@@ -38,55 +21,33 @@ interface ProjectMoaFieldProps {
 export function ProjectMOAField({
   value,
   options,
-  currentLabel,
   onChange,
-}: ProjectMoaFieldProps) {
-  /* -------------------- Options effectives -------------------- */
-  const effectiveOptions = useMemo(() => {
-    if (
-      value !== null &&
-      currentLabel &&
-      !options.some((o) => o.id === value)
-    ) {
-      return [
-        { id: value, label: currentLabel },
-        ...options,
-      ];
-    }
-    return options;
-  }, [value, currentLabel, options]);
-
-  /* -------------------- Handlers -------------------- */
-
-  function handleChange(e: ChangeEvent<HTMLSelectElement>) {
-    const next = e.target.value
-      ? Number(e.target.value)
-      : null;
-    onChange(next);
-  }
-
-  /* -------------------- Render -------------------- */
-
+}: Props) {
+  
   return (
-    <div className="space-y-1">
-      <Label htmlFor="project_moa_id">
-        Maître d’ouvrage (MOA)
-      </Label>
+    <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center border-b border-muted pb-2">
+      <label className="md:col-span-1 text-sm font-medium">
+        Maître d’ouvrage
+      </label>
+
+      <div className="md:col-span-5">
 
       <select
-        id="project_moa_id"
-        className="h-9 w-full rounded-md border px-3 text-sm"
+       className="h-9 w-full rounded-md border px-3 text-sm"
         value={value ?? ""}
-        onChange={handleChange}
+        onChange={(e) =>
+          onChange(e.target.value || null)
+        }
       >
-        <option value="">Sélectionner…</option>
+        <option value="">—</option>
 
-        {effectiveOptions.map((o) => (
-          <option key={o.id} value={o.id}>
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
             {o.label}
           </option>
         ))}
       </select>
+    </div>
     </div>
   );
 }

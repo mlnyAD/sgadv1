@@ -36,7 +36,7 @@ Représente un projet/dossier de travaux (entité centrale du modèle).
 - `project_motif_id` (integer) : motif de l’opération (référence `config`).
 - `project_start`, `project_end` (date) : bornes temporelles.
 - `project_reception_init` / `actu`, `project_livraison_init` / `actu` : jalons.
-- `projet_devis_ht`, `project_commande_ht` (integer) : montants.
+- `project_devis_ht`, `project_commande_ht` (integer) : montants.
 - `project_uuid` (uuid) : identifiant technique complémentaire.
 - `lmod` (timestamptz) : dernière modification.
 
