@@ -21,6 +21,7 @@ export default async function ConfigsPage({
 
   const page = Number(params.page ?? "1");
   const pageSize = Number(params.pageSize ?? "10");
+  
   const configTypeId = params.configTypeId
     ? Number(params.configTypeId)
     : undefined;

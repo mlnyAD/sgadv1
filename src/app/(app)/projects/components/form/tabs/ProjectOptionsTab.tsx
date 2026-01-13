@@ -31,6 +31,7 @@ export function ProjectOptionsTab({
   project,
   onChange,
 }: Props) {
+  
   return (
     <div className="space-y-6">
       {/* Validation des études */}

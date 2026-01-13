@@ -50,11 +50,11 @@ export function ProjectMotifsTab({
       />
 
       <ProjectCommentairesField
-        value={project.project_valid_travaux_suppl_comments ?? null}
+        value={project.project_commentaires ?? null}
         onChange={(value) =>
           onChange({
             ...project,
-            project_valid_travaux_suppl_comments: value,
+            project_commentaires: value,
           })
         }
       />

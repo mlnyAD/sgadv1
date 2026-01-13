@@ -1,4 +1,6 @@
 
+import type { TaskStatusId } from "./task.catalog";
+
 export interface TaskView {
 	taskId: number;
 	taskNom: string;
@@ -8,10 +10,12 @@ export interface TaskView {
 	taskEnd: Date;
 	taskDuree: number;
 	taskAvancement: number;
-	taskEtatId: number;
+	taskEtatId: TaskStatusId;
 	nom: string;
 	lottravId: number;
 	lottravNom: string;
 	projectId: number;
 	projectIdent: string;
 }; 
+
+

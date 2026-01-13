@@ -17,17 +17,13 @@ export interface GenericListTableProps<T> {
   data: T[];
   columns: ColumnDef<T>[];
 
-  /** Colonnes sélectionnables */
   selectableColumns?: ColumnSelectorItem[];
-
-  /** Recherche / filtres */
   filterFn?: (row: T, search: string) => boolean;
   searchValue?: string;
   showSearch?: boolean;
   searchPlaceholder?: string;
   filtersSlot?: ReactNode;
 
-  /** Pagination (pilotée par le parent) */
   page: number;
   pageSize: number;
   totalPages: number;
@@ -55,13 +51,14 @@ export function GenericListTable<T>({
   totalPages,
   onPageChange,
   onPageSizeChange,
+
 }: GenericListTableProps<T>) {
   /* -------------------- Recherche locale (fallback) -------------------- */
   const [internalSearch, setInternalSearch] = useState("");
-// Force l’utilisation exclusive du searchValue externe
-// Résultat : filtrage dès le 1er caractère, exactement comme dans Configs  
- const effectiveSearch =
-  searchValue !== undefined ? searchValue : internalSearch;
+  // Force l’utilisation exclusive du searchValue externe
+  // Résultat : filtrage dès le 1er caractère, exactement comme dans Configs  
+  const effectiveSearch =
+    searchValue !== undefined ? searchValue : internalSearch;
 
   const filteredData = useMemo(() => {
     if (!filterFn || !effectiveSearch) return data;
@@ -72,8 +69,8 @@ export function GenericListTable<T>({
   const [visibleColumnKeys, setVisibleColumnKeys] = useState<string[]>(
     selectableColumns
       ? selectableColumns
-          .filter((c) => c.visible !== false)
-          .map((c) => c.key)
+        .filter((c) => c.visible !== false)
+        .map((c) => c.key)
       : []
   );
 
@@ -127,6 +124,7 @@ export function GenericListTable<T>({
           columns={columns}
           data={filteredData}
           columnVisibility={columnVisibility}
+
         />
       </div>
 

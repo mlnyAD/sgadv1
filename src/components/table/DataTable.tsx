@@ -23,15 +23,19 @@ interface DataTableProps<T> {
   columns: ColumnDef<T>[];
   data: T[];
   columnVisibility?: VisibilityState;
+
+  onRowClick?: (row: T) => void;
 }
 
 export function DataTable<T>({
   columns,
   data,
   columnVisibility,
+  onRowClick,
 }: DataTableProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,
@@ -72,20 +76,32 @@ export function DataTable<T>({
         ))}
       </TableHeader>
 
-      <TableBody>
-        {table.getRowModel().rows.map((row) => (
-          <TableRow key={row.id}>
-            {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id}>
-                {flexRender(
-                  cell.column.columnDef.cell,
-                  cell.getContext()
-                )}
-              </TableCell>
-            ))}
-          </TableRow>
-        ))}
-      </TableBody>
+<TableBody>
+  {table.getRowModel().rows.map((row) => (
+    <TableRow
+      key={row.id}
+      onClick={
+        onRowClick
+          ? () => onRowClick(row.original)
+          : undefined
+      }
+      className={
+        onRowClick
+          ? "cursor-pointer hover:bg-muted/40"
+          : undefined
+      }
+    >
+      {row.getVisibleCells().map((cell) => (
+        <TableCell key={cell.id}>
+          {flexRender(
+            cell.column.columnDef.cell,
+            cell.getContext()
+          )}
+        </TableCell>
+      ))}
+    </TableRow>
+  ))}
+</TableBody>
     </Table>
   );
 }
