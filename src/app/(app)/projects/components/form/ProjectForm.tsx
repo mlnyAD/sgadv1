@@ -5,7 +5,7 @@
 import { useState } from "react";
 
 import type { ProjectDbRow } from "@/domain/project/project.db";
-import type { SelectOption } from "@/app/(app)/components/fields/types";
+import type { SelectOption } from "@/components/fields/types";
 
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

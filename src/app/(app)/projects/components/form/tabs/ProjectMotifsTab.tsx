@@ -6,7 +6,7 @@ import { ProjectCommentairesField } from "../../fields/motifs/ProjectCommentaire
 import { ProjectMotifField } from "../../fields/motifs/ProjectMotifField";
 import { ProjectOuvrageField } from "../../fields/motifs/ProjectOuvrageField";
 import type { ProjectFormState } from "../project.form.types";
-import type { SelectOption } from "@/app/(app)/components/fields/types";
+import type { SelectOption } from "@/components/fields/types";
 
 interface Props {
   project: ProjectFormState;

@@ -8,7 +8,7 @@ import { mapProjectDbViewToDbRow } from "@/domain/project/project.mapper";
 import { getSocietesForSelect } from "@/domain/societe/societe.repository";
 import { getConfigsByType } from "@/domain/config/config.repository";
 
-import type { SelectOption } from "@/app/(app)/components/fields/types";
+import type { SelectOption } from "@/components/fields/types";
 import type { ConfigDbRow } from "@/domain/config/config.db";
 
 import { ProjectForm } from "../../components/form/ProjectForm";

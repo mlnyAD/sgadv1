@@ -4,13 +4,13 @@
 
 import { useRouter } from "next/navigation";
 import type { Row } from "@tanstack/react-table";
-import type { LotTravView } from "@/domain/lottrav/lottrav-view.interface";
+import type { LotTravView } from "@/domain/lottrav/lottrav-view";
 
 export function LotTravEditAction({
   projectId,
   row,
 }: {
-  projectId: string;
+  projectId: number;
   row: Row<LotTravView>;
 }) {
   const router = useRouter();

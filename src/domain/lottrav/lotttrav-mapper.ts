@@ -1,11 +1,11 @@
 
 
 
-import type { LotTravView } from "./lottrav-view.interface";
-import type { LotTravStatusId } from "./lottrav.catalog";
+import type { LotTravView } from "./lottrav-view";
+import type { LotTravStatusId } from "./lottrav-status";
 
 
-export interface DbLotTravWithOperatorView {
+interface DbLotTravRow {
   lottrav_id: number;
   lottrav_nom: string;
   lottrav_start: string | null;
@@ -18,7 +18,7 @@ export interface DbLotTravWithOperatorView {
 }
 
 export function mapDbLotTravToView(
-  row: DbLotTravWithOperatorView
+  row: DbLotTravRow
 ): LotTravView {
   return {
     id: row.lottrav_id,

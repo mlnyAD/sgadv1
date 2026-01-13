@@ -2,12 +2,11 @@
 
 import { notFound } from "next/navigation";
 
-import { listLotTravByProject } from "@/domain/lottrav/lottrav.repository";
-import { LottravToolbar } from "@/features/lottrav/LottravToolbar";
-import { LottravList } from "@/features/lottrav/LottravList";
-import { LottravFiltersClient } from "@/features/lottrav/LottravFiltersClient";
-import { getLotStatusLabel } from "@/domain/lottrav/lottrav.catalog";
-import type { LotTravStatusId } from "@/domain/lottrav/lottrav.catalog";
+import { listLotTravByProject } from "@/domain/lottrav/lottrav-repository";
+import { LotTravToolbar } from "@/ui/lottrav/LotTravToolbar";
+import { LotTravList } from "@/ui/lottrav/LotTravList";
+import { LotTravFiltersClient } from "@/ui/lottrav/LotTravFiltersClient";
+import { getLotTravStatusLabel, type LotTravStatusId } from "@/domain/lottrav/lottrav-status";
 
 /* ------------------------------------------------------------------ */
 /* Types */
@@ -76,14 +75,13 @@ const totalPages = Math.max(
   Math.ceil(total / pageSize)
 );
 
-console.log("PAGE DATA", data);
   /* -------------------- Status options -------------------- */
 
   const statusOptions = (
   [1, 2, 3, 4, 5, 6] as LotTravStatusId[]
 ).map((id) => ({
   id,
-  label: getLotStatusLabel(id),
+  label: getLotTravStatusLabel(id),
 }));
 
   /* -------------------- Render -------------------- */
@@ -91,15 +89,15 @@ console.log("PAGE DATA", data);
   return (
     <>
       {/* Header + actions */}
-      <LottravToolbar projectId={projectIdNum} />
+      <LotTravToolbar projectId={projectIdNum} />
 
       {/* Recherche + filtres */}
-      <LottravFiltersClient statuses={statusOptions} />
+      <LotTravFiltersClient statuses={statusOptions} />
 
    
 
       {/* Liste */}
-<LottravList
+<LotTravList
   projectId={projectIdNum}
   lots={data}
   page={page}

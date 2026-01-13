@@ -5,33 +5,14 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
-import type { LotTravView } from "@/domain/lottrav/lottrav-view.interface";
-import type { LotTravStatusId } from "@/domain/lottrav/lottrav.catalog";
-
-import { saveLotTrav } from "@/features/lottrav/lottrav.actions";
-
+import type { LotTravView } from "@/domain/lottrav/lottrav-view";
+import { saveLotTrav } from "@/features/lottrav/lottrav-actions";
 import { TransactionHeader } from "@/components/transaction/TransactionHeader";
 import { LotTravFormCard } from "@/ui/lottrav/LotTravFormCard";
 import { LotTravFormFields } from "@/ui/lottrav/LotTravFormFields";
 import type { LotTravFormErrors } from "@/ui/lottrav/LotTravForm.props";
+import type { LotTravFormValues, OperatorOption } from "@/ui/lottrav/lottrav-form.types";
 
-/* ------------------------------------------------------------------
-   Types
-   ------------------------------------------------------------------ */
-
-export type OperatorOption = {
-  id: number;
-  label: string;
-};
-
-type FormData = {
-  name: string;
-  startDate: string;
-  endDate: string;
-  statusId: LotTravStatusId;
-  responsableId: number | null;
-};
 
 /* ------------------------------------------------------------------
    Component
@@ -48,7 +29,7 @@ export function LotTravEditor({
 }) {
   const router = useRouter();
 
-  const [formData, setFormData] = useState<FormData | null>(null);
+  const [formData, setFormData] = useState<LotTravFormValues  | null>(null);
   const [errors, setErrors] = useState<LotTravFormErrors>({});
   const [saving, setSaving] = useState(false);
 
@@ -56,7 +37,7 @@ export function LotTravEditor({
      Form change handler
      ------------------------------ */
 
-  const handleChange = useCallback((data: FormData) => {
+  const handleChange = useCallback((data: LotTravFormValues) => {
     setFormData(data);
 
     const nextErrors: LotTravFormErrors = {};

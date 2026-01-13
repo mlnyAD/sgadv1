@@ -5,13 +5,13 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { LotTravFilters } from "@/ui/lottrav/LotTravFilters";
 import type { LotTravStatusOption } from "@/ui/lottrav/LotTravFilters";
-import type { LotTravStatusId } from "@/domain/lottrav/lottrav.catalog";
+import type { LotTravStatusId } from "@/domain/lottrav/lottrav-status";
 
 interface Props {
   statuses: LotTravStatusOption[];
 }
 
-export function LottravFiltersClient({ statuses }: Props) {
+export function LotTravFiltersClient({ statuses }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 

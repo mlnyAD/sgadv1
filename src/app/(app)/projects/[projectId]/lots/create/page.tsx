@@ -1,7 +1,8 @@
 
 
 import { LotTravEditor } from "@/ui/lottrav/LotTravEditor";
-import { listProjectContacts } from "@/domain/lottrav/lottrav.repository";
+import { listProjectContacts } from "@/domain/lottrav/lottrav-repository";
+import { notFound } from "next/navigation";
 
 
 type Props = {
@@ -14,16 +15,19 @@ export default async function CreateLotPage({ params }: Props) {
 
   const { projectId } = await params;
 
-  const projectIdNum  = Number(projectId)
+  const projectIdNum = Number(projectId);
+  if (!Number.isInteger(projectIdNum)) {
+    notFound();
+  }
 
-  const operators  = await listProjectContacts();
+  const operators = await listProjectContacts();
 
 
   return (
     <LotTravEditor
       projectId={projectIdNum}
       initialLot={null}
-	  operators={operators}
+      operators={operators}
     />
   );
 }

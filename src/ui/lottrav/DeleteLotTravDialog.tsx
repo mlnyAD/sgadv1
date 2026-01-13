@@ -12,11 +12,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { deleteLotTravAction } from "@/features/lottrav/lottrav.actions";
+import { deleteLotTravAction } from "@/features/lottrav/lottrav-actions";
 
 interface DeleteLotTravDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+    projectId: number;     
   lotId: number;
   lotName: string;
   onDeleted: () => void;
@@ -25,6 +26,7 @@ interface DeleteLotTravDialogProps {
 export default function DeleteLotTravDialog({
   open,
   onOpenChange,
+  projectId,
   lotId,
   lotName,
   onDeleted,
@@ -34,7 +36,7 @@ export default function DeleteLotTravDialog({
   function handleDelete() {
     startTransition(async () => {
       try {
-        await deleteLotTravAction(lotId);
+        await deleteLotTravAction(projectId, lotId);
         toast.success("Lot supprimé");
         onDeleted();
       } catch {

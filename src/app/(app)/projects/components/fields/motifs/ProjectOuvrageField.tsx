@@ -3,7 +3,7 @@
 "use client";
 
 import { useMemo } from "react";
-import type { SelectOption } from "@/app/(app)/components/fields/types";
+import type { SelectOption } from "@/components/fields/types";
 
 interface Props {
   value: string | null;

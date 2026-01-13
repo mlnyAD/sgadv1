@@ -3,7 +3,7 @@
 "use client";
 
 import type { ChangeEvent } from "react";
-import type { LotTravStatusId } from "@/domain/lottrav/lottrav.catalog";
+import type { LotTravStatusId } from "@/domain/lottrav/lottrav-status";
 
 export interface LotTravStatusOption {
   id: LotTravStatusId;

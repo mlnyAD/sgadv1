@@ -3,20 +3,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LotTravFormProps } from "./LotTravForm.props";
 import { LotTravNameField } from "./fields/LotTravNameField";
 import { LotTravStartDateField } from "./fields/LotTravStartDateField";
 import { LotTravEndDateField } from "./fields/LotTravEndDateField";
 import { LotTravStatusField } from "./fields/LotTravStatusField";
-import type { LotTravStatusId } from "@/domain/lottrav/lottrav.catalog";
+import type { LotTravStatusId } from "@/domain/lottrav/lottrav-status";
 import { LotTravResponsableField } from "./fields/LotTravResponsableField";
+import type { LotTravFormValues, OperatorOption } from "./lottrav-form.types";
+import type { LotTravFormErrors } from "./LotTravForm.props";
+import { LotTravView } from "@/domain/lottrav/lottrav-view";
+
+interface Props {
+  initialLot: LotTravView | null;
+  operators: OperatorOption[];
+  errors: LotTravFormErrors;
+  onChange?: (data: LotTravFormValues) => void;
+}
 
 export function LotTravFormFields({
   initialLot,
   operators,
   errors,
   onChange,
-}: LotTravFormProps) {
+}: Props) {
+
   const [name, setName] = useState(initialLot?.nom ?? "");
 
   const [startDate, setStartDate] = useState(

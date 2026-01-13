@@ -4,7 +4,7 @@ import { ProjectBudgetField } from "../../fields/finance/ProjectBudgetField";
 import { ProjectCommandeHtField } from "../../fields/finance/ProjectCommandeHtField";
 import { ProjectDevisHtField } from "../../fields/finance/ProjectDevisHtField";
 import type { ProjectFormState } from "../project.form.types";
-import type { SelectOption } from "@/app/(app)/components/fields/types";
+import type { SelectOption } from "@/components/fields/types";
 
 interface Props {
   project: ProjectFormState;

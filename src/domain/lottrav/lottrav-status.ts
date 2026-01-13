@@ -16,6 +16,6 @@ export type LotTravStatusId =
   (typeof LOTTRAV_STATUS_CATALOG)[number]["id"];
 
 
-export function getLotStatusLabel(id: LotTravStatusId): string {
+export function getLotTravStatusLabel(id: LotTravStatusId): string {
   return LOTTRAV_STATUS_CATALOG.find(s => s.id === id)?.label ?? "Inconnu";
 }

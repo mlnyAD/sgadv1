@@ -4,15 +4,15 @@
 
 import { useRouter } from "next/navigation";
 import { GenericListTable } from "@/components/table/GenericListTable";
-import type { LotTravView } from "@/domain/lottrav/lottrav-view.interface";
+import type { LotTravView } from "@/domain/lottrav/lottrav-view";
 import { toast } from "sonner";
-import { getLotTravColumns } from "@/ui/lottrav/lottrav.columns";
-import { lotTravSelectableColumns } from "@/ui/lottrav/lottrav.selectable-columns";
+import { getLotTravColumns } from "@/ui/lottrav/LotTravColumns";
+import { LotTravSelectableColumns } from "@/ui/lottrav/LotTravSelectableColumns";
 import { useState } from "react";
 import DeleteLotTravDialog from "@/ui/lottrav/DeleteLotTravDialog";
 
 
-interface LottravListProps {
+interface LotTravListProps {
   projectId: number;
   lots: LotTravView[];
   page: number;
@@ -20,11 +20,11 @@ interface LottravListProps {
   totalPages: number;
 }
 
-export function LottravList({ projectId, lots, page, pageSize, totalPages }: LottravListProps) {
+export function LotTravList({ projectId, lots, page, pageSize, totalPages }: LotTravListProps) {
 
   const router = useRouter();
 
-  const [visibleColumns] = useState(lotTravSelectableColumns);
+  const [visibleColumns] = useState(LotTravSelectableColumns);
   const [deleteTarget, setDeleteTarget] = useState<LotTravView | null>(null);
 
   const handleEdit = (lot: LotTravView) => {
@@ -41,8 +41,6 @@ export function LottravList({ projectId, lots, page, pageSize, totalPages }: Lot
     onPlanning: handlePlanning,
     onDelete: (lot) => setDeleteTarget(lot),
   });
-
-  console.log("LOTS", lots);
 
   return (
     <>
@@ -65,6 +63,7 @@ export function LottravList({ projectId, lots, page, pageSize, totalPages }: Lot
         <DeleteLotTravDialog
           open={true}
           onOpenChange={() => setDeleteTarget(null)}
+          projectId={projectId}      
           lotId={deleteTarget.id}
           lotName={deleteTarget.nom}
           onDeleted={() => {

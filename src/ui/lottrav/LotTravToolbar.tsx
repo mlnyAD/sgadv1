@@ -6,13 +6,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { TableHeader } from "@/components/transaction/TableHeader";
 
-interface LottravToolbarProps {
+interface LotTravToolbarProps {
   projectId: number;
 }
 
-export function LottravToolbar({
+export function LotTravToolbar({
   projectId,
-}: LottravToolbarProps) {
+}: LotTravToolbarProps) {
   return (
     <div className="mb-4 flex items-end justify-between gap-4">
       <TableHeader

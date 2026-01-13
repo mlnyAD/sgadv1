@@ -1,11 +1,10 @@
 
 
-import type { DbLotTrav } from "./lottrav-db.interface";
-import type { LotTravView } from "./lottrav-view.interface";
+
+import type { LotTravView } from "./lottrav-view";
 import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
 import { createSupabaseServerActionClient } from "@/lib/supabase/server-action";
-import { mapDbLotTravToView } from "./lotttrav.mapper";
-
+import { mapDbLotTravToView } from "./lotttrav-mapper";
 
 
 export async function listProjectContacts() {
@@ -127,39 +126,23 @@ export async function createLotTrav(
     lottrav_start: string | null;
     lottrav_end: string | null;
     lottrav_status_id: number;
+    lottrav_resp_id: number | null;
   }
-): Promise<DbLotTrav> {
+): Promise<void> {
   const supabase = await createSupabaseServerActionClient();
 
-  console.log("CREATE lottrav payload", {
-  projectId,
-
-  payload,
-});
-
-  console.log("Create lot payload ", payload);
-    console.log("Create lot projectId ", projectId)
-
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("lottrav")
     .insert({
       project_id: projectId,
       ...payload,
-    })
-    .select()
-    .single();
-
-  console.log("Create lot error ", error)
+    });
 
   if (error) {
-    
-  console.log("Create lot error ", error)
-     throw error;
-    }
-  console.log("Retour de create lot data ", data)
-
-  return data;
+    throw error;
+  }
 }
+
 /**********************************************************
  * Update d'un lot d'un projet
  **********************************************************/
@@ -173,7 +156,7 @@ export async function updateLotTrav(
     lottrav_end: string | null;
     lottrav_status_id: number;
   }
-): Promise<DbLotTrav> {
+): Promise<LotTravView> {
   const supabase = await createSupabaseServerActionClient();
 
   console.log(" UPDATE lottrav payload", {
@@ -193,7 +176,7 @@ export async function updateLotTrav(
     console.log("UpdateLottrav", error)
   if (error) throw error;
 
-  return data;
+  return mapDbLotTravToView(data);
 }
 
 
@@ -202,17 +185,19 @@ export async function updateLotTrav(
  * Delete d'un lot d'un projet
  **********************************************************/
 export async function deleteLotTrav(
+  projectId: number,
   lottravId: number
 ): Promise<void> {
-  
   const supabase = await createSupabaseServerActionClient();
 
   const { error } = await supabase
     .from("lottrav")
     .delete()
-    .eq("lottrav_id", lottravId);
+    .eq("lottrav_id", lottravId)
+    .eq("project_id", projectId); // 🔒 garde métier
 
   if (error) {
     throw error;
   }
 }
+

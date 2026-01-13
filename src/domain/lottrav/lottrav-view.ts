@@ -2,7 +2,7 @@
 
 // domain/lottrav/lottrav-view.interface.ts
 
-import { LotTravStatusId } from "./lottrav.catalog";
+import { LotTravStatusId } from "./lottrav-status";
 
 
 export interface LotTravView {

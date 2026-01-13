@@ -1,7 +1,7 @@
 
 
 import { notFound } from "next/navigation";
-import { getLotTravById, listProjectContacts } from "@/domain/lottrav/lottrav.repository";
+import { getLotTravById, listProjectContacts } from "@/domain/lottrav/lottrav-repository";
 import { LotTravEditor } from "@/ui/lottrav/LotTravEditor";
 
 
@@ -26,7 +26,11 @@ export default async function EditLotPage({ params }: Props) {
     notFound();
   }
 
-   const projectIdNum = Number(projectId)
+   
+const projectIdNum = Number(projectId);
+if (!Number.isInteger(projectIdNum)) {
+  notFound();
+}
 
 const operators = await listProjectContacts();
 

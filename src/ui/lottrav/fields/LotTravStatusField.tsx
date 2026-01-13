@@ -3,7 +3,7 @@
 // ui/lottrav/fields/LotTravStatusField.tsx
 "use client";
 
-import { LOTTRAV_STATUS_CATALOG, LotTravStatusId } from "@/domain/lottrav/lottrav.catalog";
+import { LOTTRAV_STATUS_CATALOG, LotTravStatusId } from "@/domain/lottrav/lottrav-status";
 
 type Props = {
   value: LotTravStatusId;
@@ -21,6 +21,9 @@ export function LotTravStatusField({ value, onChange, error }: Props) {
       <div className="md:col-span-5">
 
         <select
+         className={`border rounded px-3 py-2 ${
+    error ? "border-red-500" : ""
+  }`}
           value={String(value)}
           onChange={(e) => {
             const v = Number(e.target.value);

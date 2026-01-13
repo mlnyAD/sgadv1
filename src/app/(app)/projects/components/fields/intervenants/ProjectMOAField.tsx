@@ -2,7 +2,7 @@
 
 "use client";
 
-import type { SelectOption } from "@/app/(app)/components/fields/types";
+import type { SelectOption } from "@/components/fields/types";
 
 /* ------------------------------------------------------------------
    Props

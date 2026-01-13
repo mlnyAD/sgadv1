@@ -1,12 +1,12 @@
 
 
 import { NextResponse } from "next/server";
-import { createSupabaseServerActionClient  } from "@/lib/supabase/server-action";
+import { createLotTrav } from "@/domain/lottrav/lottrav-repository";
+
 
 /* ------------------------------------------------------------------ */
 /* POST — Création d’un lot                                           */
 /* ------------------------------------------------------------------ */
-
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -23,42 +23,13 @@ export async function POST(
 
   const body = await request.json();
 
-  const {
-    name,
-    startDate,
-    endDate,
-    statusId,
-    responsableId,
-  } = body;
-
-  if (!name || !statusId) {
-    return NextResponse.json(
-      { error: "Missing required fields" },
-      { status: 400 }
-    );
-  }
-
-  const supabase = await createSupabaseServerActionClient();
-
-  const { error } = await supabase
-    .from("lottrav")
-    .insert({
-      project_id: projectId,              // 🔑 JAMAIS depuis le client
-      lottrav_nom: name,
-      lottrav_start: startDate || null,
-      lottrav_end: endDate || null,
-      lottrav_status_id: statusId,
-      lottrav_resp_id: responsableId ?? null,
-    });
-
-  if (error) {
-    console.error("POST lottrav error:", error);
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
-  }
+  await createLotTrav(projectId, {
+    lottrav_nom: body.name,
+    lottrav_start: body.startDate || null,
+    lottrav_end: body.endDate || null,
+    lottrav_status_id: body.statusId,
+    lottrav_resp_id: body.responsableId ?? null,
+  });
 
   return NextResponse.json({ success: true });
 }
-

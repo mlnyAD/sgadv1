@@ -3,9 +3,9 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Pencil, Calendar } from "lucide-react";
 import { Trash2 } from "lucide-react";
-import type { LotTravView } from "@/domain/lottrav/lottrav-view.interface";
+import type { LotTravView } from "@/domain/lottrav/lottrav-view";
 import { formatDateFR } from "@/helpers/date";
-import { getLotStatusLabel, LotTravStatusId } from "@/domain/lottrav/lottrav.catalog";
+import { getLotTravStatusLabel, LotTravStatusId } from "@/domain/lottrav/lottrav-status";
 
 export function getLotTravColumns(
   options: {
@@ -17,7 +17,7 @@ export function getLotTravColumns(
 
   return [
     {
-      accessorKey: "lottravId",
+      accessorKey: "id",
       header: "Id",
     },
     {
@@ -34,7 +34,7 @@ export function getLotTravColumns(
       accessorKey: "statusId",
       header: "Statut",
       cell: ({ getValue }) =>
-        getLotStatusLabel(getValue<LotTravStatusId>()),
+        getLotTravStatusLabel(getValue<LotTravStatusId>()),
     },
     {
       accessorKey: "start",
