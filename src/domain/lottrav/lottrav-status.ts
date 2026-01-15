@@ -2,6 +2,7 @@
 
 // Etats d'un lot de travaux 
 
+
 export const LOTTRAV_STATUS_CATALOG = [
   { id: 1, label: "A venir" },
   { id: 2, label: "En cours" },
@@ -19,3 +20,8 @@ export type LotTravStatusId =
 export function getLotTravStatusLabel(id: LotTravStatusId): string {
   return LOTTRAV_STATUS_CATALOG.find(s => s.id === id)?.label ?? "Inconnu";
 }
+
+export const LOTTRAV_STATUS_OPTIONS = LOTTRAV_STATUS_CATALOG.map(s => ({
+  id: s.id,
+  label: s.label,
+}));

@@ -8,11 +8,11 @@ type Props = {
   error?: string; // 👈 AJOUT ICI
 };
 
-export function LotTravNameField({ value, onChange, error }: Props) {
+export function TaskNameField({ value, onChange, error }: Props) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center border-b border-muted pb-2">
       <label className="md:col-span-1 text-sm font-medium">
-        Nom du lot
+        Nom de la tâche
       </label>
 
       <div className="md:col-span-5">

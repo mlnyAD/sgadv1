@@ -1,29 +1,33 @@
+import { deleteTask, updateTask } from "@/domain/task/task-repository";
+import { NextRequest, NextResponse } from "next/server";
 
-
-import { deleteLotTrav, updateLotTrav } from "@/domain/lottrav/lottrav-repository";
-import { NextResponse } from "next/server";
 
 type Context = {
   params: Promise<{
     id: string;
     lottravid: string;
+    taskid: string;
   }>;
 };
 
-
 /* ------------------------------------------------------------------ */
-/* PUT — Modification d’un lot                                        */
+/* PUT — Modification d’une tâche                                     */
 /* ------------------------------------------------------------------ */
 export async function PUT(
-  request: Request,
+  request: NextRequest,
   { params }: Context
 ) {
-  const { id, lottravid } = await params;
+  const { id, lottravid, taskid } = await params;
 
   const projectId = Number(id);
   const lotId = Number(lottravid);
+  const taskId = Number(taskid);
 
-  if (!Number.isInteger(projectId) || !Number.isInteger(lotId)) {
+  if (
+    !Number.isInteger(projectId) ||
+    !Number.isInteger(lotId) ||
+    !Number.isInteger(taskId)
+  ) {
     return NextResponse.json(
       { error: "Invalid parameters" },
       { status: 400 }
@@ -32,32 +36,36 @@ export async function PUT(
 
   const body = await request.json();
 
-   await updateLotTrav(projectId, lotId, body);
+  await updateTask(projectId, lotId, taskId, body);
 
   return NextResponse.json({ success: true });
 }
 
 /* ------------------------------------------------------------------ */
-/* DELETE — Suppression d’un lot                                      */
+/* DELETE — Suppression d’une tâche                                   */
 /* ------------------------------------------------------------------ */
-
 export async function DELETE(
-  _request: Request,
+  _request: NextRequest,
   { params }: Context
 ) {
-  const { id, lottravid } = await params;
+  const { id, lottravid, taskid } = await params;
 
   const projectId = Number(id);
   const lotId = Number(lottravid);
+  const taskId = Number(taskid);
 
-  if (!Number.isInteger(projectId) || !Number.isInteger(lotId)) {
+  if (
+    !Number.isInteger(projectId) ||
+    !Number.isInteger(lotId) ||
+    !Number.isInteger(taskId)
+  ) {
     return NextResponse.json(
       { error: "Invalid parameters" },
       { status: 400 }
     );
   }
 
-  await deleteLotTrav(projectId, lotId);
+  await deleteTask(projectId, lotId, taskId);
 
   return NextResponse.json({ success: true });
 }

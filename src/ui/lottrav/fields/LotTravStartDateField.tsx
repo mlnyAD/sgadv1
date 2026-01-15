@@ -18,10 +18,9 @@ export function LotTravStartDateField({ value, onChange, error }: Props) {
       </label>
 
       <div className="md:col-span-5">
-
       <input
         type="date"
-        className={`border rounded px-3 py-2 ${
+        className={`h-9 w-full rounded-md border px-3 text-sm ${
           error ? "border-red-500" : ""
         }`}
         value={value}

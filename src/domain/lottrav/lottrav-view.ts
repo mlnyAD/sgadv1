@@ -1,6 +1,6 @@
 
 
-// domain/lottrav/lottrav-view.interface.ts
+// domain/lottrav/lottrav-view.ts
 
 import { LotTravStatusId } from "./lottrav-status";
 

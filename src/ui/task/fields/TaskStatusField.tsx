@@ -3,15 +3,15 @@
 // ui/lottrav/fields/LotTravStatusField.tsx
 "use client";
 
-import { LOTTRAV_STATUS_CATALOG, LotTravStatusId } from "@/domain/lottrav/lottrav-status";
+import { TASK_STATUS_CATALOG, TaskStatusId } from "@/domain/task/task-status";
 
 type Props = {
-  value: LotTravStatusId;
-  onChange: (value: LotTravStatusId) => void;
+  value: TaskStatusId;
+  onChange: (value: TaskStatusId) => void;
   error?: string;
 };
 
-export function LotTravStatusField({ value, onChange, error }: Props) {
+export function TaskStatusField({ value, onChange, error }: Props) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center border-b border-muted pb-2">
       <label className="md:col-span-1 text-sm font-medium">
@@ -27,11 +27,11 @@ export function LotTravStatusField({ value, onChange, error }: Props) {
           onChange={(e) => {
             const v = Number(e.target.value);
             if (!Number.isNaN(v)) {
-              onChange(v as LotTravStatusId);
+              onChange(v as TaskStatusId);
             }
           }}
         >
-          {LOTTRAV_STATUS_CATALOG.map((s) => (
+          {TASK_STATUS_CATALOG.map((s) => (
             <option key={s.id} value={s.id}>
               {s.label}
             </option>

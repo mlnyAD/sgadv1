@@ -1,14 +1,15 @@
 
 
 
-import type { LotTravView } from "./lottrav-view";
+import type { TaskView } from "./task-view";
 import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
 import { createSupabaseServerActionClient } from "@/lib/supabase/server-action";
-import { mapDbLotTravToView } from "./lotttrav-mapper";
+import { mapDbTaskToView } from "./task-mapper";
+import { CreateTaskInput, TaskPersistencePayload } from "./task-types";
 
 
 /* ------------------------------------------------------------------
-   Lecture – vue vw_operator_view
+   Lecture – vue vw_operator_view  --> A factoriser
    ------------------------------------------------------------------ */
 
 export async function listProjectContacts() {
@@ -18,7 +19,7 @@ export async function listProjectContacts() {
   const { data, error } = await supabase
     .from("vw_operator_view")
     .select("operator_id, email")
-    
+
     .order("email");
 
   if (error) {
@@ -31,59 +32,48 @@ export async function listProjectContacts() {
   }));
 }
 
+
 /**********************************************************
- * Liste paginée des lots d'un projet
+ * Liste paginée des tâches d'un lot
  **********************************************************/
-export async function listLotTravByProject(
-  params: {
-    projectId: number;
-    page: number;
-    pageSize: number;
-    search?: string;
-    statusId?: number;
-  }
-): Promise<{
-  data: LotTravView[];
+/**********************************************************
+ * Liste paginée des tâches d'un lot
+ **********************************************************/
+export async function listTaskByLotTrav(params: {
+  lotTravId: number;
+  page: number;
+  pageSize: number;
+  search?: string;
+  etatId?: number;
+}): Promise<{
+  data: TaskView[];
   total: number;
 }> {
-  const {
-    projectId,
-    page,
-    pageSize,
-    search,
-    statusId,
-  } = params;
+  const { lotTravId, page, pageSize, search, etatId } = params;
 
   const supabase = await createSupabaseServerReadClient();
 
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
+  // 🔒 Initialisation unique
   let query = supabase
-    .from("vw_lottrav_with_operator")
+    .from("vw_task_with_operator")
     .select("*", { count: "exact" })
-    .eq("project_id", projectId);
+    .eq("lottrav_id", lotTravId);
 
-  /* -------------------- Filtres -------------------- */
-
+  // 🔎 Recherche
   if (search) {
-    query = query.ilike(
-      "lottrav_nom",
-      `%${search}%`
-    );
+    query = query.ilike("task_nom", `%${search}%`);
   }
 
-  if (typeof statusId === "number") {
-    query = query.eq(
-      "lottrav_status_id",
-      statusId
-    );
+  // 🔽 Filtre état
+  if (typeof etatId === "number") {
+    query = query.eq("task_etat_id", etatId);
   }
-
-  /* -------------------- Pagination & tri -------------------- */
 
   const { data, error, count } = await query
-    .order("lottrav_start", { ascending: true })
+    .order("task_start", { ascending: true })
     .range(from, to);
 
   if (error) {
@@ -91,55 +81,52 @@ export async function listLotTravByProject(
   }
 
   return {
-    data: (data ?? []).map(
-      mapDbLotTravToView
-    ),
+    data: (data ?? []).map(mapDbTaskToView),
     total: count ?? 0,
   };
 }
 
-/**********************************************************
- * Lecture d'un lot d'un projet
- **********************************************************/
-export async function getLotTravById(
-  lottravId: number
-): Promise<LotTravView | null> {
+
+/* ------------------------------------------------------------------
+   Lecture – vue d'une tâche
+   ------------------------------------------------------------------ */
+
+export async function getTaskById(
+  taskId: number
+): Promise<TaskView | null> {
   const supabase = await createSupabaseServerReadClient();
 
   const { data, error } = await supabase
-    .from("vw_lottrav_with_operator")
+    .from("vw_task_with_operator")
     .select("*")
-    .eq("lottrav_id", lottravId)
+    .eq("task_id", taskId)
     .single();
 
-  if (error) {
+  if (error || !data) {
     return null;
   }
 
-  return mapDbLotTravToView(data);
+  return mapDbTaskToView(data);
 }
 
 
-/**********************************************************
- * Création d'un lot d'un projet
- **********************************************************/
-export async function createLotTrav(
+/* ------------------------------------------------------------------
+    Création d'une tâche
+   ------------------------------------------------------------------ */
+export async function createTask(
   projectId: number,
-  payload: {
-    lottrav_nom: string;
-    lottrav_start: string | null;
-    lottrav_end: string | null;
-    lottrav_status_id: number;
-    lottrav_resp_id: number | null;
-  }
+  lottravId: number,
+  task: CreateTaskInput
 ): Promise<void> {
+
   const supabase = await createSupabaseServerActionClient();
 
   const { error } = await supabase
-    .from("lottrav")
+    .from("task")
     .insert({
-      project_id: projectId,
-      ...payload,
+  project_id: projectId,
+  lottrav_id: lottravId,
+      ...task,
     });
 
   if (error) {
@@ -147,51 +134,52 @@ export async function createLotTrav(
   }
 }
 
-/**********************************************************
- * Update d'un lot d'un projet
- **********************************************************/
 
-export async function updateLotTrav(
+/**********************************************************
+ * Update d'une tâche d'un projet
+ **********************************************************/
+export async function updateTask(
   projectId: number,
   lottravId: number,
-  payload: {
-    lottrav_nom: string;
-    lottrav_start: string | null;
-    lottrav_end: string | null;
-    lottrav_status_id: number;
-  }
-): Promise<LotTravView> {
-
+  taskId: number,
+  payload: TaskPersistencePayload
+): Promise<TaskView> {
+ 
   const supabase = await createSupabaseServerActionClient();
 
   const { data, error } = await supabase
-    .from("lottrav")
+    .from("task")
     .update(payload)
+    .eq("task_id", taskId)
     .eq("lottrav_id", lottravId)
     .eq("project_id", projectId) 
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 
-  return mapDbLotTravToView(data);
+  return mapDbTaskToView(data);
 }
 
-
 /**********************************************************
- * Delete d'un lot d'un projet
+ * Delete d'une tâche d'un projet
  **********************************************************/
-export async function deleteLotTrav(
+export async function deleteTask(
   projectId: number,
-  lottravId: number
+  lottravId: number,
+  taskId: number
 ): Promise<void> {
+
   const supabase = await createSupabaseServerActionClient();
 
   const { error } = await supabase
-    .from("lottrav")
+    .from("task")
     .delete()
     .eq("lottrav_id", lottravId)
-    .eq("project_id", projectId); // 🔒 garde métier
+    .eq("project_id", projectId)
+    .eq("task_id", taskId);
 
   if (error) {
     throw error;
