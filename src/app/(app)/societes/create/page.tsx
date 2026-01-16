@@ -7,7 +7,7 @@ import { SocieteNameField } from "../components/fields/SocieteNameField";
 import { SocieteAdresse1Field } from "../components/fields/SocieteAdresse1Field";
 import { SocieteAdresse2Field } from "../components/fields/SocieteAdresse2Field";
 import { SocieteAdresse3Field } from "../components/fields/SocieteAdresse3Field";
-import { SocieteVilleField } from "../components/fields/SocieteVilleField ";
+import { SocieteVilleField } from "../components/fields/SocieteVilleField";
 import { SocieteCodePostalField } from "../components/fields/SocieteCodePostalField";
 import { SocieteForm, SocieteFormValues } from "../components/form/SocieteForm";
 import { SocieteFormCard } from "../components/form/SocieteFormCard";

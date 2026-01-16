@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import AppSidebar from "@/components/Sidebar/AppSidebar";
+import AppSidebar from "@/components/sidebar/AppSidebar";
 import { UserContextProvider, useUser } from "@/contexts/UserContext";
-import Header from "@/components/Header/Header";
+import Header from "@/components/header/Header";
 import { Separator } from "@/components/ui/separator";
 import { PanelLeft } from "lucide-react";
 
