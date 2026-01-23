@@ -20,7 +20,7 @@ export default function SidebarUserIdentity({ compact = false }: { compact?: boo
     user.displayName
       ?.split(" ")
       .map((p) => p[0]?.toUpperCase())
-      .join("") || user.email?.[0]?.toUpperCase() || "?";
+      .join("") || user.server.email?.[0]?.toUpperCase() || "?";
 
   return (
     <div className="flex items-center gap-2">

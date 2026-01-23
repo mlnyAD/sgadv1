@@ -1,17 +1,16 @@
 "use client";
 
 import {
-  FolderKanban,
-  Users,
-  Settings2,
   Building2,
   Contact,
   FileStack,
   ListTodo,
-  AlertTriangle,
-  KanbanSquare,      // Icône pour "Opérations"
+  Settings2,
+  Users,
+  Presentation,
+  KeyRound,
+  KanbanSquare,
 } from "lucide-react";
-import { KeyRound } from "lucide-react"; // ou un autre pictogramme
 
 import {
   SidebarGroup,
@@ -19,77 +18,70 @@ import {
 } from "@/components/ui/sidebar";
 
 import SidebarMenuItems from "./SidebarMenuItems";
-
 import type { NavItem } from "./Types";
-import { USER_ROLES } from "@/shared/catalogs/user-role.constants";
-import type { UserRoleId } from "@/domain/user/roles/user-role.type";
 import { useSidebar } from "@/components/ui/sidebar";
 
 interface NavMainProps {
-  roleId: UserRoleId;
+  isAdmin: boolean;
 }
 
-// Rôles autorisés pour certains menus
-const ADMIN = [
-  USER_ROLES.SYSTEM_ADMIN.id,
-  USER_ROLES.CLIENT_ADMIN.id,
-  USER_ROLES.PROJECT_ADMIN.id,
-];
-
-// Menu principal
+/**
+ * Menu principal
+ */
 const ITEMS: NavItem[] = [
+  // --- Admin only ---
   {
-    id: "projects",
-    title: "Projets",
-    href: "/projects",
-    icon: FolderKanban,
-  },
-  {
-    id: "clients",
+    id: "client",
     title: "Clients",
     href: "/clients",
     icon: Building2,
-    roles: [USER_ROLES.SYSTEM_ADMIN.id],
+    adminOnly: true,
   },
   {
-    id: "licences",
-    title: "Licences",
-    href: "/licences",
+    id: "utilisateur",
+    title: "Utilisateurs",
+    href: "/utilisateurs",
+    icon: Contact,
+    adminOnly: true,
+  },
+  {
+    id: "plan_comptable",
+    title: "Plan comptable",
+    href: "/plan-comptable",
+    icon: FileStack,
+    adminOnly: true,
+  },
+
+  // --- Accessible à tous ---
+  {
+    id: "fournisseur",
+    title: "Fournisseurs",
+    href: "/fournisseurs",
+    icon: Presentation,
+  },
+  {
+    id: "facture_fournisseur",
+    title: "Factures fournisseurs",
+    href: "/factures-fournisseurs",
     icon: KeyRound,
-    roles: ADMIN,
   },
   {
-    id: "teams",
-    title: "Équipes",
-    href: "/teams",
+    id: "client_facture",
+    title: "Factures clients",
+    href: "/factures-clients",
     icon: Users,
   },
   {
-    id: "configs",
-    title: "Configurations",
-    href: "/configs",
+    id: "operation_bancaire",
+    title: "Opérations bancaires",
+    href: "/operations-bancaires",
     icon: Settings2,
-    roles: ADMIN,
   },
   {
-    id: "societes",
-    title: "Sociétés",
-    href: "/societes",
+    id: "exercice_comptable",
+    title: "Exercices",
+    href: "/exercices",
     icon: Building2,
-    roles: ADMIN,
-  },
-  {
-    id: "contacts",
-    title: "Contacts",
-    href: "/operators",
-    icon: Contact,
-  },
-  {
-    id: "ged",
-    title: "Critères GED",
-    href: "/ged",
-    icon: FileStack,
-    roles: ADMIN,
   },
   {
     id: "todo",
@@ -97,38 +89,32 @@ const ITEMS: NavItem[] = [
     href: "/todos",
     icon: ListTodo,
   },
-  {
-    id: "risks",
-    title: "Risques",
-    href: "/risks",
-    icon: AlertTriangle,
-  },
 ];
 
-// Filtrage automatique des menus selon le rôle
-function filterByRole(roleId: UserRoleId): NavItem[] {
-  return ITEMS.filter((i) => !i.roles || i.roles.includes(roleId));
+/**
+ * Filtrage selon capacité admin
+ */
+function filterByAdmin(isAdmin: boolean): NavItem[] {
+  return ITEMS.filter(
+    (item) => !item.adminOnly || isAdmin
+  );
 }
 
-export default function NavMain({ roleId }: NavMainProps) {
-  const items = filterByRole(roleId);
+export default function NavMain({ isAdmin }: NavMainProps) {
+  const items = filterByAdmin(isAdmin);
 
-  // Lecture collapsed du sidebar (shadcn)
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
 
   return (
     <SidebarGroup>
-
-      {/* Titre "Opérations" AVEC ICÔNE, compatible collapsed */}
       <SidebarGroupLabel>
-        <div className="flex items-center gap-2 px-2 py-1">
-          <KanbanSquare className="h-4 w-4" />
+        <div className="flex items-center gap-2 px-2 py-1 text-lg font-bold">
+          <KanbanSquare className="h-4 w-4 " />
           {!collapsed && "Opérations"}
         </div>
       </SidebarGroupLabel>
 
-      {/* Menu principal dynamique */}
       <SidebarMenuItems items={items} />
     </SidebarGroup>
   );

@@ -1,30 +1,16 @@
+
+
 // src/domain/user/authenticated-user.interface.ts
+
+import type { ServerUser } from "./server-user.type";
+
 export interface AuthenticatedUser {
-  id: string;
-  email: string;
+  server: ServerUser;
 
-  // Rôles
-  isSystemAdmin: boolean;
-  isClientAdmin: boolean;
-  isProjectAdmin: boolean;
-  isUser: boolean;
-
-  // Affectations
-  clientIds: number[];
-  projectIds: number[];
-
-  // Informations supplémentaires UI
   displayName: string;
-  welcomeMessage: string;
+  functionLabel: string;
 
-  functionLabel: string;   // <= AJOUT ICI
-      // --- flags métier ---
-  //  isActive: true,
-  //  isExternal: false,
-  
-    // --- collections ---
-  //  roles: [],
-  //  permissions: [],
-
-
+  isAdmin: boolean;
+  isClient: boolean;
 }
+

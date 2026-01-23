@@ -2,6 +2,7 @@
 // src/utils/types.ts
 
 import { UUID } from "crypto";
+import type { User } from "@supabase/supabase-js";
 
 export type ActiviteType = {
 	activId: number;
@@ -11,16 +12,16 @@ export type ActiviteType = {
 	activMessage: string;
 	activUser: string;
 };
-/*
+
 export type AuthenticatedUser = {
   id: string;
   email: string;
   firstname: string;
   lastname: string;
-  supabaseUser: any;
+  supabaseUser: User;
 };
 
-*/
+
 /*
 export interface PaginatedResult<T> {
   data: T[];

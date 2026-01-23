@@ -1,3 +1,5 @@
+
+
 import 'server-only'
 import { createSupabaseServerReadClient } from '@/lib/supabase/server-read'
 import type { AuthenticatedUser } from '@/domain/user/authenticated-user.interface'
@@ -15,28 +17,19 @@ export async function getAuthenticatedUser(): Promise<AuthenticatedUser | null> 
     return null
   }
 
-  if (!user) return null
+  if (!user || !user.email) return null
 
   return {
-    // --- identité ---
-    id: user.id,
-    email: user.email ?? '',
+    server: {
+      id: user.id,
+      email: user.email,
+      role: 'client', // valeur par défaut ici
+    },
 
-    // --- rôles / permissions ---
-    isSystemAdmin: false,
-    isClientAdmin: false,
-    isProjectAdmin: false,
-    isUser: true,
+    displayName: user.email.split('@')[0],
+    functionLabel: 'Utilisateur',
 
-    // --- rattachements (valeurs neutres) ---
-    clientIds: [],
-    projectIds: [],
-
-  // Informations supplémentaires UI
-  displayName: "",
-  welcomeMessage: "",
-
-  functionLabel: "",   // <= AJOUT ICI
-
-    }
+    isAdmin: false,
+    isClient: true,
+  }
 }

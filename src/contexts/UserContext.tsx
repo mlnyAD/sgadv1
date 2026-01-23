@@ -1,8 +1,10 @@
+
+
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-
 import type { AuthenticatedUser } from "@/domain/user/authenticated-user.interface";
+import { mapServerUserToAuthenticatedUser } from "@/domain/user/map-server-user";
 
 interface UserContextType {
   user: AuthenticatedUser | null;
@@ -24,8 +26,7 @@ export function UserContextProvider({ children }: { children: React.ReactNode })
       const json = await res.json();
 
       if (json.user) {
-        // COPIE EXACTEMENT L’OBJET RETOURNÉ PAR L’API
-        setUser(json.user);
+        setUser(mapServerUserToAuthenticatedUser(json.user));
       } else {
         setUser(null);
       }

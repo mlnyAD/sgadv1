@@ -2,7 +2,7 @@
 "use client";
 
 export default function HeaderProject() {
-  const projectName = process.env.NEXT_PUBLIC_PROJECTNAME ?? "EasyProject V2";
+  const projectName = process.env.NEXT_PUBLIC_PROJECTNAME ?? "SGAD V1";
 
   return (
     <h1 className="text-lg font-bold tracking-tight text-foreground">

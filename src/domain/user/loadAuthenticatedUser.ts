@@ -1,9 +1,14 @@
+
+
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
+
 import type { AuthenticatedUser } from "./authenticated-user.interface";
+import type { ServerUser, UserRoleKey } from "./server-user.type";
+import { mapServerUserToAuthenticatedUser } from "./map-server-user";
 
 async function createClient() {
-  const cookieStore = await cookies(); // ← IMPORTANT : await obligatoire
+  const cookieStore = await cookies();
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -26,65 +31,48 @@ async function createClient() {
 export async function loadAuthenticatedUser(): Promise<AuthenticatedUser | null> {
   const supabase = await createClient();
 
+  /* ------------------------------------------------------------------ */
+  /* Auth                                                               */
+  /* ------------------------------------------------------------------ */
+
   const {
     data: { user },
     error: authError,
   } = await supabase.auth.getUser();
 
   if (authError || !user?.email) {
-    console.error("loadAuthenticatedUser: getUser error", authError);
     return null;
   }
+
+  /* ------------------------------------------------------------------ */
+  /* Vue métier                                                         */
+  /* ------------------------------------------------------------------ */
 
   const { data: row, error } = await supabase
     .from("vw_operator_view")
-    .select("*")
+    .select("email, role, prenom, nom")
     .eq("email", user.email)
     .maybeSingle();
 
-  if (error) {
-    console.error("loadAuthenticatedUser: error loading operator", error);
+  if (error || !row) {
     return null;
   }
 
-  if (!row) return null;
+  /* ------------------------------------------------------------------ */
+  /* ServerUser                                                         */
+  /* ------------------------------------------------------------------ */
 
-  const displayName =
-    `${row.first_name ?? ""} ${row.last_name ?? ""}`.trim() ||
-    user.email.split("@")[0] ||
-    "Utilisateur";
-
-  let functionLabel = row.metier_label || "Utilisateur";
-
-  switch (row.role_id) {
-    case 1:
-      functionLabel = "Administrateur système";
-      break;
-    case 2:
-      functionLabel = "Administrateur client";
-      break;
-    case 3:
-      functionLabel = "Administrateur projet";
-      break;
-  }
-
-  const result: AuthenticatedUser = {
+  const serverUser: ServerUser = {
     id: user.id,
     email: row.email,
-    displayName,
-    welcomeMessage: "Bienvenue",
-
-    isSystemAdmin: row.role_id === 1,
-    isClientAdmin: row.role_id === 2,
-    isProjectAdmin: row.role_id === 3,
-    isUser: true,
-
-    clientIds: [],
-    projectIds: [],
-
-    functionLabel,
+    role: (row.role as UserRoleKey) ?? "client",
+    firstName: row.prenom ?? undefined,
+    lastName: row.nom ?? undefined,
   };
 
-  //console.log("loadAuthenticatedUser ", result)
-  return result;
+  /* ------------------------------------------------------------------ */
+  /* Mapping UI                                                         */
+  /* ------------------------------------------------------------------ */
+
+  return mapServerUserToAuthenticatedUser(serverUser);
 }

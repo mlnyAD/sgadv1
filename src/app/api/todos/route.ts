@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       return new Response('Unauthorized', { status: 401 })
     }
 
-    const userId = user.id;
+    const userId = user.server.id;
     const body = await req.json();
 
     const { titre, text, urgent, important, etatId, cloture } = body;

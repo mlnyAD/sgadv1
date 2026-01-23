@@ -1,66 +1,78 @@
 
 
-import { listClients } from "@/domain/client";
-import { ClientsTable } from "./ClientsTable";
-import { ClientsToolbar } from "./ClientsToolbar";
+import { listClients } from "@/domain/client/client-repository";
+import { ClientToolbar } from "@/ui/client/list/ClientToolbar";
+import { ClientList } from "@/ui/client/list/ClientList";
 
-interface ClientsPageProps {
-  searchParams: Promise<{
-    page?: string;
-    pageSize?: string;
-    search?: string;
-    status?: string;
-  }>;
-};
+/* ------------------------------------------------------------------ */
+/* Types                                                              */
+/* ------------------------------------------------------------------ */
+
+interface ClientsProps {
+	searchParams: Promise<{
+		page?: string;
+		pageSize?: string;
+		search?: string;
+		actif?: string;
+	}>;
+}
 
 /* ------------------------------------------------------------------ */
 /* Page */
 /* ------------------------------------------------------------------ */
 
 export default async function ClientsPage({
-  searchParams,
-}: ClientsPageProps) {
-  const params = await searchParams;
+	searchParams,
+}: ClientsProps) {
+	/* -------------------- Params -------------------- */
 
-  const page = Number(params.page ?? "1");
-  const pageSize = Number(params.pageSize ?? "10");
+	const query = await searchParams;
 
-  const status =
-    typeof params.status === "string"
-      ? params.status
-      : undefined;
+	/* -------------------- Query params -------------------- */
 
-  const search =
-    typeof params.search === "string"
-      ? params.search
-      : undefined;
+	const page = Number(query.page ?? "1");
+	const pageSize = Number(query.pageSize ?? "10");
 
-  /* ------------------------------------------------------------------
-     Data
-     ------------------------------------------------------------------ */
+	const search =
+		typeof query.search === "string"
+			? query.search
+			: undefined;
 
-  const { data, total } = await listClients({
-    page,
-    pageSize,
-    search,
-    status,
-  });
+const actif =
+  typeof query.actif === "string"
+    ? query.actif === "true"
+    : undefined;
 
-  const totalPages = Math.ceil(total / pageSize);
 
-  /* ------------------------------------------------------------------
-     Render
-     ------------------------------------------------------------------ */
+	/* -------------------- Data -------------------- */
 
-  return (
-    <>
-      <ClientsToolbar />
-      <ClientsTable
-        data={data}
-        page={page}
-        pageSize={pageSize}
-        totalPages={totalPages}
-      />
-    </>
-  );
+	const { data, total } = await listClients({
+		page,
+		pageSize,
+		search,
+		actif,
+	});
+
+	const totalPages = Math.max(
+		1,
+		Math.ceil(total / pageSize)
+	);
+
+
+	/* -------------------- Render -------------------- */
+
+	return (
+		<>
+			{/* Header + actions */}
+			<ClientToolbar />
+
+			{/* Liste */}
+			<ClientList
+				clients={data}
+				page={page}
+				pageSize={pageSize}
+				totalPages={totalPages}
+			/>
+		</>
+	);
 }

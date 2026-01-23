@@ -2,6 +2,5 @@
 
 // src/domain/client/index.ts
 
-export * from "./client.ui";
-export * from "./client.catalog";
-export * from "./client.repository";
+export * from "./client-types";
+export * from "./client-repository";

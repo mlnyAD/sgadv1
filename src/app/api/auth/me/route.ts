@@ -1,7 +1,11 @@
+
+
+// src/api/auth/route.ts
+
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { USER_ROLES } from "@/shared/catalogs/user-role.constants";
+import type { ServerUser, UserRoleKey } from "@/domain/user/server-user.type";
 
 export async function GET() {
   const cookieStore = await cookies();
@@ -18,27 +22,37 @@ export async function GET() {
           cookiesToSet.forEach(({ name, value, options }) => {
             cookieStore.set(name, value, options);
           });
-        }
-      }
+        },
+      },
     }
   );
 
-  // 1) Lecture utilisateur Supabase
+  /* ------------------------------------------------------------------ */
+  /* 1) Auth Supabase                                                    */
+  /* ------------------------------------------------------------------ */
+
   const {
     data: { user },
-    error,
+    error: authError,
   } = await supabase.auth.getUser();
 
-  if (error || !user) {
+  if (authError || !user) {
     return NextResponse.json({ user: null }, { status: 200 });
   }
 
-  //console.log("Get Auth by email in vw_operator_view ", user)
-  
-  // 2) Lecture dans ta vue vw_operator_view
+  /* ------------------------------------------------------------------ */
+  /* 2) Lecture vue métier                                               */
+  /* ------------------------------------------------------------------ */
+
   const { data: op, error: opError } = await supabase
     .from("vw_operator_view")
-    .select("*")
+    .select(`
+      role,
+      prenom,
+      nom,
+      email,
+      actif
+    `)
     .eq("email", user.email)
     .maybeSingle();
 
@@ -46,36 +60,22 @@ export async function GET() {
     console.error("vw_operator_view error:", opError);
   }
 
-  // 3) Construction displayName
-  const displayName =
-    op?.first_name && op?.last_name
-      ? `${op.first_name} ${op.last_name}`
-      : user.email?.split("@")[0] ?? "Utilisateur";
+  const role: UserRoleKey = op?.role === "admin" ? "admin" : "client";
 
-  // 4) Détermination du rôle
-  const roleId = op?.role_id ?? USER_ROLES.USER.id;
+  /* ------------------------------------------------------------------ */
+  /* 3) Construction ServerUser                                         */
+  /* ------------------------------------------------------------------ */
 
-  const functionLabel =
-    Object.values(USER_ROLES).find((r) => r.id === roleId)?.label ??
-    "Utilisateur";
+  const result: ServerUser = {
+  id: user.id,
+  email: user.email ?? "",
 
-  // 5) Construction de ton AuthenticatedUser
-  const result = {
-    id: user.id,
-    email: user.email,
-    displayName,
-    welcomeMessage: "Bienvenue",
+  role, // ← clé fonctionnelle directe
 
-    isSystemAdmin: roleId === USER_ROLES.SYSTEM_ADMIN.id,
-    isClientAdmin: roleId === USER_ROLES.CLIENT_ADMIN.id,
-    isProjectAdmin: roleId === USER_ROLES.PROJECT_ADMIN.id,
-    isUser: true,
+  firstName: op?.prenom ?? undefined,
+  lastName: op?.nom ?? undefined,
 
-    clientIds: [],   // en attente de ta future table
-    projectIds: [],  // idem
-
-    functionLabel,
-  };
+};
 
   return NextResponse.json({ user: result });
 }

@@ -1,7 +1,7 @@
 import LoginForm from "./LoginForm";
 
 export const metadata = {
-  title: "Connexion | EasyProject",
+  title: "Connexion | SGAD V1",
 };
 
 export default function LoginPage() {

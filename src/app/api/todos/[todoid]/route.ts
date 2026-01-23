@@ -32,7 +32,7 @@ export async function GET(
   );
 }
 
-  const todo = await getTodoById(todoId, user.id);
+  const todo = await getTodoById(todoId, user.server.id);
 
   if (!todo) {
     return NextResponse.json(
@@ -73,7 +73,7 @@ export async function PUT(
   );
 }
 
-  await updateTodo(todoId, user.id, body);
+  await updateTodo(todoId, user.server.id, body);
 
   return NextResponse.json({ success: true });
 }
@@ -105,7 +105,7 @@ export async function DELETE(
     { status: 401 }
   );
 }
-  await deleteTodo(todoId, user.id);
+  await deleteTodo(todoId, user.server.id);
 
   return NextResponse.json({ success: true });
 }

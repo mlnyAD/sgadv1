@@ -1,25 +1,26 @@
+
+
 "use client";
 
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-
 import {
   Sidebar,
   SidebarHeader,
   SidebarContent,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-
 import NavMain from "./NavMain";
-import NavSoutien from "./NavSoutien";
 import NavUser from "./NavUser";
-
 import { useUser } from "@/contexts/UserContext";
-import { getRoleIdFromUser } from "@/domain/user/roles/user-role.type";
 
 export default function AppSidebar({ collapsed }: { collapsed: boolean }) {
-  const { user } = useUser();
-  const roleId = getRoleIdFromUser(user);
+
+  const { user, loading } = useUser();
+
+  if (loading || !user) {
+    return null; // ou Skeleton
+  }
 
   return (
     <Sidebar
@@ -29,7 +30,6 @@ export default function AppSidebar({ collapsed }: { collapsed: boolean }) {
         collapsed ? "w-[72px]" : "w-[260px]"
       )}
     >
-      {/* HEADER (logo uniquement) */}
       <SidebarHeader className="border-b px-4 py-4 flex items-center justify-center">
         <Image
           src="/images/axcio_data.png"
@@ -41,8 +41,7 @@ export default function AppSidebar({ collapsed }: { collapsed: boolean }) {
       </SidebarHeader>
 
       <SidebarContent className="flex-1 overflow-y-auto px-2 pt-4 space-y-6">
-        <NavMain roleId={roleId} />
-        <NavSoutien />
+        <NavMain isAdmin={user.isAdmin} />
       </SidebarContent>
 
       <SidebarFooter className="border-t px-2 py-4">

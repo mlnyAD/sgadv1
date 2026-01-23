@@ -7,8 +7,8 @@ export function NavTop() {
     <div className="flex items-center justify-center border-b border-gray-200 p-2">
       <Image
         src="/images/axcio.png"
-        width={100}
-        height={100}
+        width={80}
+        height={80}
         alt="logo client"
         priority
       />

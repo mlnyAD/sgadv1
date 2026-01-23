@@ -13,7 +13,12 @@ export async function GET(req: Request) {
   const page = Number(searchParams.get("page") ?? "1");
   const pageSize = Number(searchParams.get("pageSize") ?? "10");
   const search = searchParams.get("search") ?? undefined;
-  const status = searchParams.get("status") ?? undefined;
+  const actifParam = searchParams.get("actif");
+
+const actif =
+  actifParam === null
+    ? undefined
+    : actifParam === "true";
 
   if (
     Number.isNaN(page) ||
@@ -31,7 +36,7 @@ export async function GET(req: Request) {
     page,
     pageSize,
     search,
-    status,
+    actif,
   });
 
   return NextResponse.json(result);
@@ -68,7 +73,7 @@ export async function POST(req: Request) {
     /* ------------------------------------------------------------------
        Create
        ------------------------------------------------------------------ */
-    const id = await createClient(body, user.id);
+    const id = await createClient(body);
 
     return NextResponse.json({ id }, { status: 201 });
 
