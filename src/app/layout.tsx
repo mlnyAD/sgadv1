@@ -1,26 +1,21 @@
+
+
 import "@/app/globals.css";
 import { ThemeProvider } from "@/theme/theme-provider";
 import { Toaster } from "sonner";
+import Providers from "@/app/providers";
 
-export const metadata = {
-  title: "Axcio App",
-  description: "Votre application Axcio",
-};
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <body>
+      <body className="min-h-screen bg-background text-foreground">
         <ThemeProvider attribute="class">
-          {children}
+          <Providers>
+            {children}
+          </Providers>
           <Toaster richColors position="bottom-right" />
         </ThemeProvider>
       </body>
     </html>
   );
 }
-

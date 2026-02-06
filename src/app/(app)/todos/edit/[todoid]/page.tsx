@@ -36,7 +36,7 @@ export default function EditTodoPage() {
 
         const data: TodoUI = await res.json();
 
-        console.log("recherche article todo ", data);
+        //console.log("recherche article todo ", data);
 
         // 🔁 Mapping API → Form
         setInitialValues(mapTodoUIToForm(data));
@@ -49,7 +49,7 @@ export default function EditTodoPage() {
     }
 
     if (id) {
-      console.log("Chargement des données à modifier")
+      //console.log("Chargement des données à modifier")
       loadTodo();
     }
   }, [id]);
@@ -63,7 +63,7 @@ export default function EditTodoPage() {
 
       const payload = mapTodoFormToUI(values);
 
-      console.log("Sauvegarde Todo payload ", payload)
+      //console.log("Sauvegarde Todo payload ", payload)
 
       const res = await fetch(`/api/todos/${id}`, {
         method: "PUT",

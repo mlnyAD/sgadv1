@@ -1,25 +1,28 @@
 
-import { createTodo } from "@/domain/todo/todo.repository";
-import { getAuthenticatedUser } from '@/lib/auth/get-authenticated-user'
-import { revalidatePath } from "next/cache";
+//import { createTodo } from "@/domain/todo/todo.repository";
+//import { getAuthenticatedOperateur } from '@/lib/auth/get-authenticated-operateur'
+//import { revalidatePath } from "next/cache";
 
 
-export async function POST(req: Request) {
+export async function POST() {
+}
+/*export async function POST(req: Request) {
   try {
-    const user = await getAuthenticatedUser()
+    const operateur = await getAuthenticatedOperateur()
 
-    if (!user) {
+    if (!operateur) {
       return new Response('Unauthorized', { status: 401 })
     }
-
-    const userId = user.server.id;
+    
+/*
+    const operateurId = operateur.server.id;
     const body = await req.json();
 
     const { titre, text, urgent, important, etatId, cloture } = body;
 
-    console.log("Create TODO entrée body ", body);
+    //console.log("Create TODO entrée body ", body);
 
-    console.log("Create TODO entrée ", titre, text, urgent, important, etatId, cloture);
+    //console.log("Create TODO entrée ", titre, text, urgent, important, etatId, cloture);
 
      if (
       typeof titre !== 'string' ||
@@ -39,14 +42,16 @@ export async function POST(req: Request) {
         etatId,
         cloture,
       },
-      userId
+      operateurId
     )
 
   revalidatePath("/todos"); // ✅ force le refresh serveur
-
+*/
+/*
   return new Response(null, { status: 201 });
   } catch (err) {
     console.error('POST /api/todos error', err)
     return new Response('Server error', { status: 500 })
   }
 }
+*/

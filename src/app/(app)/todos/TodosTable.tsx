@@ -74,7 +74,7 @@ export function TodosTable({
 		// 🔴 TRÈS IMPORTANT
 		params.set("page", "1");
 
-		console.log("Filtres changés", params);
+		//console.log("Filtres changés", params);
 
 		router.push(`/todos?${params.toString()}`);
 	}
@@ -85,7 +85,7 @@ export function TodosTable({
 	   ------------------------------------------------------------------ */
 
 	function onPageChange(newPage: number) {
-		 console.log("onPageChange called with", newPage);
+		 //console.log("onPageChange called with", newPage);
 		const params = new URLSearchParams(searchParams.toString());
 		params.set("page", String(newPage));
 		params.set("pageSize", String(pageSize));

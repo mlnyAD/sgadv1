@@ -12,13 +12,15 @@ import {
 } from "@/components/ui/sidebar";
 import NavMain from "./NavMain";
 import NavUser from "./NavUser";
-import { useUser } from "@/contexts/UserContext";
+import { useOperateur } from "@/contexts/OperateurContext";
 
 export default function AppSidebar({ collapsed }: { collapsed: boolean }) {
 
-  const { user, loading } = useUser();
+  const { operateur, loading } = useOperateur();
+  
+  //console.log("Appsidebar, operateur = ", operateur);
 
-  if (loading || !user) {
+  if (loading || !operateur) {
     return null; // ou Skeleton
   }
 
@@ -41,7 +43,7 @@ export default function AppSidebar({ collapsed }: { collapsed: boolean }) {
       </SidebarHeader>
 
       <SidebarContent className="flex-1 overflow-y-auto px-2 pt-4 space-y-6">
-        <NavMain isAdmin={user.isAdmin} />
+        <NavMain isAdmin={operateur.isAdminSys} />
       </SidebarContent>
 
       <SidebarFooter className="border-t px-2 py-4">

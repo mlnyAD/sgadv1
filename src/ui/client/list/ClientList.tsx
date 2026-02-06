@@ -29,7 +29,7 @@ export function ClientList({
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
-	console.log("CLIENT ROW", clients?.[0]);
+	//console.log("CLIENT ROW clients = ", clients);
 
 	const actifParam = searchParams.get("actif");
 	const actifFilter =
@@ -43,7 +43,7 @@ export function ClientList({
 
 	const handleEdit = (client: ClientView) => {
 
-		console.log("Edit client ", client)
+		//console.log("Edit client ", client)
 		router.push(`/clients/${client.id}`);
 	};
 

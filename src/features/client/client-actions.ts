@@ -8,37 +8,24 @@ import {
   deleteClient,
   updateClient,
 } from "@/domain/client/client-repository";
-import { ClientPersistencePayload } from "@/domain/client/client-types"
 import { ClientFormValues } from "@/ui/client/client-form.types";
+import { mapClientFormToUI } from "@/ui/client/client-form.mapper";
+import { mapClientUIToDbUpdate } from "@/domain/client/client-mapper";
 
 
 /* ------------------------------------------------------------------ */
 /* Action                                                              */
 /* ------------------------------------------------------------------ */
-
 export async function saveClient(
   data: ClientFormValues,
   clientId?: string
 ): Promise<void> {
-
-  const payload: ClientPersistencePayload = {
-	client_nom: data.nom,
-	client_code: data.code,
-	adresse: data.adresse,
-	code_postal: data.codePostal,
-	ville: data.ville,
-	pays: data.pays,
-	email: data.email,
-	telephone: data.telephone,
-	actif: data.actif,
-  };
+  const clientUI = mapClientFormToUI(data);
 
   if (clientId) {
-	// ✏️ UPDATE
-	await updateClient(clientId.toString(), payload);
+    await updateClient(clientId, mapClientUIToDbUpdate(clientUI));
   } else {
-	// ➕ CREATE
-	await createClient(payload);
+    await createClient(clientUI);
   }
 }
 

@@ -46,11 +46,11 @@ export async function signupAction(formData: FormData) {
 		return { error: "Création Supabase Auth impossible." };
 	}
 
-	// 2) Création dans la table public.user
-	const { error: dbError } = await supabase.from("utilisateur")
+	// 2) Création dans la table public.operateur
+	const { error: dbError } = await supabase.from("operateur")
 		.insert({
-			utilisateur_id: authUser.id,
-			email,
+			oper_id: authUser.id,
+			oper_email: authUser.email,
 			is_active: true,
 			prenom: firstName,
 			nom: lastName,

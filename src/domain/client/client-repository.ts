@@ -3,9 +3,11 @@
 // src/domain/client/client-repository.ts
 
 import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
-import { createSupabaseServerActionClient } from "@/lib/supabase/server-action";
-import { mapClientDbToUI } from "./client-mapper";
+import { mapClientViewRowToUI } from "@/domain/client/client-view-mapper";
 import { ClientPersistencePayload, ClientView } from "./client-types";
+import { ClientUI } from "./client-types";
+import { mapClientUIToDbCreate } from "./client-mapper";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 
 /* ------------------------------------------------------------------ */
@@ -17,51 +19,45 @@ export async function getClientById(
 
   const supabase = await createSupabaseServerReadClient();
 
-  console.log("GetClientById id = ", id)
+  //console.log("GetClientById id = ", id);
 
   const { data, error } = await supabase
     .from("vw_client_view")
-    .select(`
-      client_id,
-      client_nom,
-      client_code,
-      adresse,
-      code_postal,
-      ville,
-      pays,
-      email,
-      telephone,
-      actif
-    `)
-    .eq("client_id", id)
+    .select("*")
+    .eq("clt_id", id)
     .single();
 
-    
-  console.log("Après GetClientById error, client = ", error, data)
+  //console.log("Après GetClientById error, client = ", error, data);
 
   if (error || !data) {
     return null;
   }
 
-  return mapClientDbToUI(data);
+  return mapClientViewRowToUI(data);
 }
+
 
 /* ------------------------------------------------------------------ */
 /* CREATE */
 /* ------------------------------------------------------------------ */
-export async function createClient(
-  payload: ClientPersistencePayload
-): Promise<void> {
-  const supabase = await createSupabaseServerReadClient();
+
+export async function createClient(client: ClientUI): Promise<void> {
+
+  const supabase = await createSupabaseAdminClient();
+
+  const payloadDb = mapClientUIToDbCreate(client);
+
+  console.log("SERVICE KEY PRESENT:", Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY));
 
   const { error } = await supabase
     .from("client")
-    .insert(payload);
+    .insert(payloadDb);
 
   if (error) {
     throw new Error(error.message);
   }
 }
+
 
 /* ------------------------------------------------------------------
    UPDATE
@@ -70,12 +66,12 @@ export async function updateClient(
   clientId: string,
   payload: ClientPersistencePayload
 ): Promise<void> {
-  const supabase = await createSupabaseServerReadClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { error } = await supabase
     .from("client")
     .update(payload)
-    .eq("client_id", clientId);
+    .eq("clt_id", clientId);
 
   if (error) {
     throw new Error(error.message);
@@ -100,11 +96,11 @@ export async function listClients(params: {
     .select("*", { count: "exact" });
 
   if (search) {
-    query = query.ilike("client_nom", `%${search}%`);
+    query = query.ilike("clt_nom", `%${search}%`);
   }
 
   if (actif !== undefined) {
-    query = query.eq("actif", actif);
+    query = query.eq("clt_actif", actif);
   }
 
   const from = (page - 1) * pageSize;
@@ -116,8 +112,12 @@ export async function listClients(params: {
     throw new Error(error.message);
   }
 
+//console.log("RAW CLIENT ROW =", data?.[0]);
+//console.log("RAW CLIENT KEYS =", data?.[0] && Object.keys(data[0]));
+
+
   return {
-    data: (data ?? []).map(mapClientDbToUI), // ⭐⭐⭐ FIX
+    data:  (data ?? []).map(mapClientViewRowToUI), 
     total: count ?? 0,
   };
 }
@@ -129,12 +129,12 @@ export async function deleteClient(
   clientId: string
 ): Promise<void> {
 
-  const supabase = await createSupabaseServerActionClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { error } = await supabase
     .from("client")
     .delete()
-    .eq("client_id", clientId)
+    .eq("clt_id", clientId)
 
   if (error) {
     throw error;

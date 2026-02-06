@@ -2,12 +2,18 @@
 
 import { NextResponse } from "next/server";
 import { listClients, createClient } from "@/domain/client";
-import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
+import { requireApiAdmin } from "@/lib/auth/require-api-admin";
 
 /* ------------------------------------------------------------------ */
-/* GET /api/clients */
+/* GET /api/clients (ADMIN ONLY) */
 /* ------------------------------------------------------------------ */
 export async function GET(req: Request) {
+
+  const operateur = await requireApiAdmin();
+  if (operateur instanceof NextResponse) {
+    return operateur;
+  }
+
   const { searchParams } = new URL(req.url);
 
   const page = Number(searchParams.get("page") ?? "1");
@@ -15,10 +21,10 @@ export async function GET(req: Request) {
   const search = searchParams.get("search") ?? undefined;
   const actifParam = searchParams.get("actif");
 
-const actif =
-  actifParam === null
-    ? undefined
-    : actifParam === "true";
+  const actif =
+    actifParam === null
+      ? undefined
+      : actifParam === "true";
 
   if (
     Number.isNaN(page) ||
@@ -42,39 +48,20 @@ const actif =
   return NextResponse.json(result);
 }
 
-
-/* ============================================================================
-   POST /api/clients
-   ============================================================================ */
+/* ------------------------------------------------------------------ */
+/* POST /api/clients (ADMIN ONLY) */
+/* ------------------------------------------------------------------ */
 export async function POST(req: Request) {
+  
+  const operateur = await requireApiAdmin();
+  if (operateur instanceof NextResponse) {
+    return operateur;
+  }
+
   try {
-    const supabase = await createSupabaseServerReadClient();
-
-    /* ------------------------------------------------------------------
-       Auth
-       ------------------------------------------------------------------ */
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
-
-    /* ------------------------------------------------------------------
-       Payload
-       ------------------------------------------------------------------ */
+    
     const body = await req.json();
-
-    /* ------------------------------------------------------------------
-       Create
-       ------------------------------------------------------------------ */
     const id = await createClient(body);
-
     return NextResponse.json({ id }, { status: 201 });
 
   } catch (e) {

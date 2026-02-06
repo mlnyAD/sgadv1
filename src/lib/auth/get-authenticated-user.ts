@@ -1,35 +1,44 @@
 
 
-import 'server-only'
-import { createSupabaseServerReadClient } from '@/lib/supabase/server-read'
-import type { AuthenticatedUser } from '@/domain/user/authenticated-user.interface'
+// src/lib/auth/get-authenticated-user.ts
 
-export async function getAuthenticatedUser(): Promise<AuthenticatedUser | null> {
-  const supabase = await createSupabaseServerReadClient()
+import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
+
+export interface AuthUser {
+  id: string;
+  email: string;
+}
+
+export async function getAuthenticatedUser(): Promise<AuthUser | null> {
+  const cookieStore = await cookies();
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => cookieStore.getAll(),
+        setAll: (cookiesToSet) => {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options);
+          });
+        },
+      },
+    }
+  );
 
   const {
     data: { user },
     error,
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
-  if (error) {
-    console.error('[auth] getUser error:', error)
-    return null
+  if (error || !user?.email) {
+    return null;
   }
-
-  if (!user || !user.email) return null
 
   return {
-    server: {
-      id: user.id,
-      email: user.email,
-      role: 'client', // valeur par défaut ici
-    },
-
-    displayName: user.email.split('@')[0],
-    functionLabel: 'Utilisateur',
-
-    isAdmin: false,
-    isClient: true,
-  }
+    id: user.id,
+    email: user.email,
+  };
 }

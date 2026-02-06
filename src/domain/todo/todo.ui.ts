@@ -1,7 +1,9 @@
+
+
 // Décrire ce que l’IHM consomme (colonnes UI)
 // domain/todo/todo.ui.ts
 
-import type { UserRef } from "@/domain/user/user.ref";
+//import type { UserRef } from "@/domain/user/user.ref";
 
 // ----------------------------
 // Todo affiché (lecture)
@@ -15,7 +17,7 @@ export interface TodoUI {
   urgent: boolean;
   important: boolean;
   etatId: number;
-  user: UserRef;
+  //user: UserRef;
 }
 
 // ----------------------------

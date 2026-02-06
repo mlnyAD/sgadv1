@@ -4,7 +4,7 @@ import {
   updateTodo,
   deleteTodo,
 } from "@/domain/todo";
-import { loadAuthenticatedUser } from "@/domain/user/loadAuthenticatedUser";
+import { getAuthenticatedOperateur } from "@/lib/auth/get-authenticated-operateur";
 
 /* ============================================================================
    GET /api/todos/[id]
@@ -23,16 +23,16 @@ export async function GET(
     );
   }
 
-  const user = await loadAuthenticatedUser();
+  const operateur = await getAuthenticatedOperateur();
 
-  if (!user) {
+  if (!operateur) {
   return NextResponse.json(
     { error: "Unauthorized" },
     { status: 401 }
   );
 }
 
-  const todo = await getTodoById(todoId, user.server.id);
+  const todo = await getTodoById(todoId, operateur.operId);
 
   if (!todo) {
     return NextResponse.json(
@@ -64,16 +64,16 @@ export async function PUT(
 
   const body = await req.json();
 
-  const user = await loadAuthenticatedUser();
+  const operateur = await getAuthenticatedOperateur();
 
-  if (!user) {
+  if (!operateur) {
   return NextResponse.json(
     { error: "Unauthorized" },
     { status: 401 }
   );
 }
 
-  await updateTodo(todoId, user.server.id, body);
+  await updateTodo(todoId, operateur.operId, body);
 
   return NextResponse.json({ success: true });
 }
@@ -97,15 +97,15 @@ export async function DELETE(
     );
   }
 
-  const user = await loadAuthenticatedUser();
+  const operateur = await getAuthenticatedOperateur();
 
-  if (!user) {
+  if (!operateur) {
   return NextResponse.json(
     { error: "Unauthorized" },
     { status: 401 }
   );
 }
-  await deleteTodo(todoId, user.server.id);
+  await deleteTodo(todoId, operateur.operId);
 
   return NextResponse.json({ success: true });
 }

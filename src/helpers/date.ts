@@ -37,3 +37,8 @@ export function toDateInputValue(value?: string | Date | null): string {
 
   return d.toISOString().slice(0, 10); // YYYY-MM-DD
 }
+
+export function dateInputToUtcDate(value: string): Date {
+  const [y, m, d] = value.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d));
+}

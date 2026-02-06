@@ -2,16 +2,20 @@
 
 "use client";
 
-import { useProjectContextStore } from "@/store/sessionStore";
+//import { useProjectContextStore } from "@/store/sessionStore";
 
 export default function HeaderInfo() {
-  const { projectNom, projectIdent } =
+
+  // Temporaire
+  const projectNom = "TBD"
+  const projectIdent = "TBD"
+/*  const { projectNom, projectIdent } =
     useProjectContextStore();
 
   if (!projectNom) {
     return null; // pas dans un projet
   }
-
+*/
   return (
     <div className="hidden md:flex flex-1 items-center text-sm text-muted-foreground">
       <span className="font-medium text-foreground">

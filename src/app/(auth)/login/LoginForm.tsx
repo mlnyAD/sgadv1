@@ -62,7 +62,7 @@ export default function LoginForm() {
         {isPending ? "Connexion…" : "Se connecter"}
       </button>
 
-      {/* Lien création de compte */}
+      {/* Lien création de compte 
       <div className="text-center text-sm">
         Vous n’avez pas de compte ?{" "}
         <a
@@ -71,7 +71,7 @@ export default function LoginForm() {
         >
           Créez votre compte
         </a>
-      </div>
+      </div>  */}
 
       {/* Lien mot de passe oublié */}
       <div className="text-center text-sm">

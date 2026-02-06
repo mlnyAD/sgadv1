@@ -1,9 +1,16 @@
 
-// src/app/(app)/layout.tsx
-import type { ReactNode } from "react";
-import AppShell from "../AppShell";
 
-export default function AppSectionLayout({ children }: { children: ReactNode }) {
-  // Pas de user ici
-  return <AppShell>{children}</AppShell>;
+import AppShell from "@/app/AppShell";
+import Providers from "@/app/providers";
+import { requireOperateur } from "@/lib/auth/require-operateur";
+
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
+
+  await requireOperateur();
+  
+  return (
+    <Providers>
+      <AppShell>{children}</AppShell>
+    </Providers>
+  );
 }

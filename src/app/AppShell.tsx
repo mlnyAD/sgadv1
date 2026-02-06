@@ -1,62 +1,72 @@
+
+
 "use client";
 
 import { useState } from "react";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/sidebar/AppSidebar";
-import { UserContextProvider, useUser } from "@/contexts/UserContext";
 import Header from "@/components/header/Header";
 import { Separator } from "@/components/ui/separator";
 import { PanelLeft } from "lucide-react";
 
+import { OperateurContextProvider } from "@/contexts/OperateurContext";
+import { ClientContextProvider } from "@/contexts/ClientContext";
+
+/* ------------------------------------------------------------------
+ * AppShellInner : UI pure (sidebar + header + contenu)
+ * ------------------------------------------------------------------ */
+
 function AppShellInner({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useUser();
   const [collapsed, setCollapsed] = useState(false);
 
-  if (loading) {
-    return <div className="p-4">Chargement de l’utilisateur…</div>;
-  }
-
-  if (!user) {
-    return <div className="p-4 text-red-600">User not loaded</div>;
-  }
-
+ 
   return (
     <SidebarProvider>
-      {/* Notre sidebar avec collapsed custom */}
-      <AppSidebar collapsed={collapsed} />
+      <div className="flex h-screen w-full">
+        {/* Sidebar */}
+        <AppSidebar collapsed={collapsed} />
 
-      <SidebarInset>
-        {/* HEADER */}
-        <header className="flex h-16 items-center gap-2 border-b bg-background dark:bg-black">
-          <div className="m-2 flex h-full w-full items-center gap-2">
+        {/* Zone principale */}
+        <SidebarInset className="flex flex-col flex-1 min-w-0">
+          {/* HEADER */}
+          <header className="flex h-16 items-center gap-2 border-b bg-background dark:bg-black">
+            <div className="m-2 flex h-full w-full items-center gap-2">
+              <div
+                onClick={() => setCollapsed(prev => !prev)}
+                className="p-2 rounded cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
+              >
+                <PanelLeft className="h-6 w-6" />
+              </div>
 
-            {/* Toggle sidebar → utiliser un div : pas de button imbriqué */}
-            <div
-              onClick={() => setCollapsed(prev => !prev)}
-              className="p-2 rounded cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
-            >
-              <PanelLeft className="h-6 w-6" />
+              <Separator orientation="vertical" className="mr-2 h-4" />
+              <Header />
             </div>
+          </header>
 
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <Header />
+          {/* CONTENU */}
+          <div className="flex-1 overflow-auto bg-gray-100 p-4 dark:bg-black">
+            {children}
           </div>
-        </header>
-
-        {/* CONTENU */}
-        <div className="size-full overflow-x-auto bg-gray-100 p-4 dark:bg-black">
-          {children}
-        </div>
-      </SidebarInset>
-
+        </SidebarInset>
+      </div>
     </SidebarProvider>
   );
 }
 
-export default function AppShell({ children }: { children: React.ReactNode }) {
+/* ------------------------------------------------------------------
+ * AppShell : Providers + UI
+ * ------------------------------------------------------------------ */
+
+export default function AppShell({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <UserContextProvider>
-      <AppShellInner>{children}</AppShellInner>
-    </UserContextProvider>
+    <OperateurContextProvider>
+      <ClientContextProvider>
+        <AppShellInner>{children}</AppShellInner>
+      </ClientContextProvider>
+    </OperateurContextProvider>
   );
 }

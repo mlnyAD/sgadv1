@@ -13,9 +13,9 @@ export function mapTodoDbToUI(row: TodoDbRow): TodoUI {
     important: row.todo_important ?? false,
     urgent: row.todo_urgent ?? false,
     etatId: row.todo_etat_id!,
-  user: {
-    id: row.todo_user_id!,
-  }    
+ // user: {
+ //   id: row.todo_user_id!,
+  //}    
   };
 }
 

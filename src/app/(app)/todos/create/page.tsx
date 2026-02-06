@@ -30,7 +30,7 @@ export default function CreateTodoPage() {
     setSaving(true);
     const payload = mapTodoFormToUI(values);
 
-    console.log("Todo CREATE payload", payload);
+    //console.log("Todo CREATE payload", payload);
 
  const res = await fetch("/api/todos", {
       method: "POST",
@@ -39,7 +39,7 @@ export default function CreateTodoPage() {
     });
 
     
-      console.log("Todo Retour create", res);
+      //console.log("Todo Retour create", res);
 
     if (!res.ok) {
       throw new Error();

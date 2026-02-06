@@ -1,5 +1,8 @@
+
+
 "use server";
 
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -40,4 +43,19 @@ export async function loginAction(formData: FormData) {
 
   // Connexion OK
   redirect("/dashboard");
+}
+
+export async function requestPasswordReset(email: string) {
+  const supabase = await createSupabaseServerClient();
+
+  const origin =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
+  const redirectTo = `${origin}/auth/callback?next=/reset-password`;
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo,
+  });
+
+  if (error) throw new Error(error.message);
 }

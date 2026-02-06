@@ -38,21 +38,27 @@ const ITEMS: NavItem[] = [
     adminOnly: true,
   },
   {
-    id: "utilisateur",
-    title: "Utilisateurs",
-    href: "/utilisateurs",
+    id: "operateur",
+    title: "Opérateurs",
+    href: "/operateurs",
     icon: Contact,
     adminOnly: true,
   },
   {
-    id: "plan_comptable",
-    title: "Plan comptable",
-    href: "/plan-comptable",
-    icon: FileStack,
+    id: "operclient",
+    title: "Opérateurs/Clients",
+    href: "/operclients",
+    icon: Contact,
     adminOnly: true,
   },
 
   // --- Accessible à tous ---
+  {
+    id: "centres_cout",
+    title: "Centres coût",
+    href: "/centres-cout",
+    icon: FileStack,
+  },
   {
     id: "fournisseur",
     title: "Fournisseurs",
@@ -94,14 +100,17 @@ const ITEMS: NavItem[] = [
 /**
  * Filtrage selon capacité admin
  */
-function filterByAdmin(isAdmin: boolean): NavItem[] {
-  return ITEMS.filter(
-    (item) => !item.adminOnly || isAdmin
+function filterByRole(isAdmin: boolean): NavItem[] {
+  return ITEMS.filter((item) =>
+    isAdmin ? item.adminOnly === true : item.adminOnly !== true
   );
 }
 
 export default function NavMain({ isAdmin }: NavMainProps) {
-  const items = filterByAdmin(isAdmin);
+
+  //console.log("NavMain isAdmin = ", isAdmin);
+
+  const items = filterByRole(isAdmin);
 
   const { state } = useSidebar();
   const collapsed = state === "collapsed";

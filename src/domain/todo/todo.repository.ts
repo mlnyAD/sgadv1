@@ -2,9 +2,9 @@
 
 
 import { createSupabaseServerReadClient } from '@/lib/supabase/server-read'
-import { createSupabaseServerActionClient } from '@/lib/supabase/server-action'
 import { mapTodoDbToUI } from '@/domain/todo/todo.mapper'
 import { CreateTodoUI, TodoUI } from "./todo.ui";
+import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 
 export type PagedResult<T> = {
   items: T[];
@@ -22,6 +22,7 @@ export async function listTodosForUser(params: {
   important?: boolean;
   etatId?: number;
 }): Promise<PagedResult<TodoUI>> {
+
   const supabase = await createSupabaseServerReadClient();
 
   let query = supabase
@@ -92,7 +93,7 @@ export async function createTodo(
   input: CreateTodoUI,
   userId: string
 ): Promise<void> {
-  const supabase = await createSupabaseServerActionClient();
+  const supabase = await createSupabaseAdminClient();
 
   const {
     titre,
@@ -133,7 +134,7 @@ export async function updateTodo(
   userId: string,
   input: TodoUI
 ): Promise<void> {
-  const supabase = await createSupabaseServerActionClient();
+  const supabase = await createSupabaseAdminClient();
 
   const {
     titre,
@@ -169,7 +170,7 @@ export async function deleteTodo(
   id: number,
   userId: string
 ): Promise<void> {
-  const supabase = await createSupabaseServerActionClient();
+  const supabase = await createSupabaseAdminClient();
 
   const { error } = await supabase
     .from("todo")

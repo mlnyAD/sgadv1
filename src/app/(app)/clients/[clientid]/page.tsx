@@ -15,7 +15,7 @@ export default async function EditClientPage({ params }: Props) {
 
 	const { clientid } = await params;
 
-	console.log("EditClientPage", clientid)
+	//console.log("EditClientPage", clientid)
 
 	const client = await getClientById(clientid);
 	if (!client) {

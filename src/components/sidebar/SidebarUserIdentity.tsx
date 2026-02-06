@@ -1,42 +1,54 @@
+
+
 "use client";
 
-import { useUser } from "@/contexts/UserContext";
+import { useOperateur } from "@/contexts/OperateurContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function SidebarUserIdentity({ compact = false }: { compact?: boolean }) {
-  const { user, loading } = useUser();
 
-  if (loading || !user) {
-    return (
-      <div className="flex items-center gap-2">
-        <Avatar className="h-8 w-8 rounded-lg">
-          <AvatarFallback>...</AvatarFallback>
-        </Avatar>
-      </div>
-    );
-  }
+	const { operateur, loading } = useOperateur();
 
-  const initials =
-    user.displayName
-      ?.split(" ")
-      .map((p) => p[0]?.toUpperCase())
-      .join("") || user.server.email?.[0]?.toUpperCase() || "?";
+	if (loading || !operateur) {
+		return (
+			<div className="flex items-center gap-2">
+				<Avatar className="h-8 w-8 rounded-lg">
+					<AvatarFallback>...</AvatarFallback>
+				</Avatar>
+			</div>
+		);
+	}
 
-  return (
-    <div className="flex items-center gap-2">
-      <Avatar className="h-8 w-8 rounded-lg">
-        <AvatarImage src="" alt={initials} />
-        <AvatarFallback>{initials}</AvatarFallback>
-      </Avatar>
+	//console.log("SidebarUserIdentity operateur = ", operateur)
 
-      {!compact && (
-        <div className="flex flex-col leading-tight">
-          <span className="text-sm font-semibold">{user.displayName}</span>
-          <span className="text-xs text-muted-foreground">
-            {user.functionLabel}
-          </span>
-        </div>
-      )}
-    </div>
-  );
+	const displayName = `${operateur?.prenom} ${operateur?.nom}`.trim()
+		|| operateur?.email;
+
+	const roleLabel = operateur?.isAdminSys
+		? "Administrateur système"
+		: "Utilisateur";
+
+	const initials =
+		displayName
+			?.split(" ")
+			.map((p) => p[0]?.toUpperCase())
+			.join("") || operateur.email?.[0]?.toUpperCase() || "?";
+
+	return (
+		<div className="flex items-center gap-2">
+			<Avatar className="h-8 w-8 rounded-lg">
+				<AvatarImage src="" alt={initials} />
+				<AvatarFallback>{initials}</AvatarFallback>
+			</Avatar>
+
+			{!compact && (
+				<div className="flex flex-col leading-tight">
+					<span className="text-sm font-semibold">{displayName}</span>
+					<span className="text-xs text-muted-foreground">
+						{roleLabel}
+					</span>
+				</div>
+			)}
+		</div>
+	);
 }
