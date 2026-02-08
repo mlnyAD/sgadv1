@@ -29,7 +29,7 @@ export function CentreCoutList({
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
-	//console.log("CENTRE COUT ROW", centreCouts?.[0]);
+	console.log("CENTRE COUT ROW", centreCouts);
 
 	const actifParam = searchParams.get("actif");
 	const actifFilter =

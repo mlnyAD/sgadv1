@@ -10,6 +10,7 @@ import { createOperateurWithAuth, rollbackOperateurAuth } from "@/lib/operateur/
 export async function createOperateurAction(
   operateur: OperateurView
 ): Promise<{ tempPassword: string }> {
+  
   const { operId, tempPassword } = await createOperateurWithAuth(operateur.email);
 
   try {

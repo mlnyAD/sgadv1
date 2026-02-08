@@ -1,7 +1,7 @@
 // src/components/Header/Header.tsx
 "use client";
 
-import HeaderProjet from "./HeaderProject";
+
 import HeaderSearch from "./HeaderSearch";
 import HeaderTheme from "./HeaderTheme";
 import HeaderInfo from "./HeaderInfo";
@@ -10,11 +10,6 @@ export default function Header() {
   return (
     <div className="flex h-16 w-full items-center gap-4 border-b bg-muted/40 px-4 backdrop-blur-sm supports-backdrop-filter:bg-muted/60">
       
-      {/* Projet (gauche) */}
-      <div className="flex flex-none items-center">
-        <HeaderProjet />
-      </div>
-
       {/* Info projet (centre gauche) */}
       <HeaderInfo />
 

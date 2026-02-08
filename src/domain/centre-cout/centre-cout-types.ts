@@ -2,12 +2,14 @@
 /* DB row (table ou vue brute)                                         */
 /* ------------------------------------------------------------------ */
 
+import { CentreCoutFamilleId } from "./centre-cout-familles.catalog";
+
 export interface CentreCoutDbRow {
 	cc_id: string;
 	clt_id: string;
 	clt_nom?: string;
 
-	famille_id: number;
+	famille_id: CentreCoutFamilleId;
 	cc_code: string;
 	cc_libelle: string;
 	cc_actif: boolean;
@@ -28,7 +30,7 @@ export interface CentreCoutView {
 	clientId: string;
 	clientNom?: string | null;
 
-	familleId: number;
+	familleId: CentreCoutFamilleId;
 	familleLibelle?: string;
 
 	commentaires?: string | null;
@@ -44,7 +46,7 @@ export interface CentreCoutFormValues {
 	libelle: string;
 
 	clientId: string;
-	familleId: number;
+	familleId: CentreCoutFamilleId;
 
 	commentaires?: string | null;
 	actif: boolean;
@@ -59,7 +61,7 @@ export interface CentreCoutPersistencePayload {
 	cc_libelle: string;
 
 	clt_id: string;
-	famille_id: number;
+	famille_id: CentreCoutFamilleId;
 
 	cc_commentaires?: string | null;
 	cc_actif: boolean;

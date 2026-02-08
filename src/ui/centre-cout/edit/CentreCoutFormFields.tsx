@@ -8,7 +8,7 @@ import { z } from "zod";
 import type { CentreCoutFormValues } from "@/ui/centre-cout/centre-cout-form.types";
 import type { CentreCoutFormErrors } from "@/ui/centre-cout/edit/CentreCoutForm.props";
 import type { CentreCoutView } from "@/domain/centre-cout/centre-cout-types";
-import type { CentreCoutFamilleId } from "@/domain/centre-cout/centre-cout-familles.catalog";
+import { toCentreCoutFamilleId, type CentreCoutFamilleId } from "@/domain/centre-cout/centre-cout-familles.catalog";
 
 import { CentreCoutCodeField } from "@/ui/centre-cout/fields/CentreCoutCodeField";
 import { CentreCoutLibelleField } from "@/ui/centre-cout/fields/CentreCoutLibelleField";
@@ -146,35 +146,13 @@ export function CentreCoutFormFields({
 
   /* -------------------- Propagation -------------------- */
 
-  /*console.log("[CentreCoutFormFields] STATE SNAPSHOT", {
-  code,
-  libelle,
-  clientId,
-  familleId,
-  commentaires,
-  actif,
-});*/
-
   useEffect(() => {
-
-  /*console.log("[CentreCoutFormFields] onChange payload", {
-    code,
-    libelle,
-    clientId,
-    familleId,
-    commentaires,
-    actif,
-    types: {
-      clientId: typeof clientId,
-      familleId: typeof familleId,
-    },
-  });*/
 
     onChange?.({
       code,
       libelle,
       clientId,
-      familleId,
+      familleId: toCentreCoutFamilleId(familleId) ,
       commentaires,
       actif,
     });

@@ -19,3 +19,8 @@ export type CentreCoutFamilleId =
 export function getFamilleById(id: CentreCoutFamilleId) {
   return CENTRE_COUT_FAMILLES.find(f => f.id === id);
 }
+
+export function toCentreCoutFamilleId(id: number): CentreCoutFamilleId {
+  const found = CENTRE_COUT_FAMILLES.find((f) => f.id === id);
+  return (found?.id ?? 8) as CentreCoutFamilleId; // fallback "Autres"
+}
