@@ -21,6 +21,14 @@ export function getSocieteColumns(options: {
 			},
 		},
 		{
+			accessorKey: "ville",
+			header: "Ville",
+			cell: ({ row }) => {
+				const { ville } = row.original;
+				return `${ville ?? ""}`.trim() || "—";
+			},
+		},
+		{
 			id: "adresse",
 			header: "Adresse",
 			cell: ({ row }) => {
@@ -28,6 +36,7 @@ export function getSocieteColumns(options: {
 				return `${adresse ?? ""}`.trim() || "—";
 			},
 		},
+
 		{
 			accessorKey: "siren",
 			header: "SIREN",

@@ -73,7 +73,6 @@ export function ExerciceFormFields({
 	/* -------------------- State values -------------------- */
 
 	const [code, setCode] = useState(initialExercice?.code ?? "");
-	const [cltId] = useState<string>(initialExercice?.cltId ?? ""); //non modifiable
 	const [debut, setDebut] = useState<string>(toDateInputValue(initialExercice?.debut));
 	const [fin, setFin] = useState<string>(toDateInputValue(initialExercice?.fin));
 	const [commentaires, setCommentaires] = useState(initialExercice?.commentaires ?? "");
@@ -91,7 +90,6 @@ export function ExerciceFormFields({
 
 	useEffect(() => {
 		onChange?.({
-			 cltId,
 			code,
 			debut,
 			fin,
@@ -99,7 +97,6 @@ export function ExerciceFormFields({
 			actif,
 		});
 	}, [
-		cltId,
 		code,
 		debut,
 		fin,

@@ -1,61 +1,46 @@
 
 
-// src/domain/client/client.mapper.ts
+// src/domain/client/client-mapper.ts
 
-import { ClientUI } from "./client-types";
-import { ClientDbRow } from "./client-types";
+import type { ClientRow, ClientInsert, ClientUpdate } from "@/domain/_db/rows";
+import type { ClientView } from "./client-types";
+import type { ClientFormValues } from "@/ui/client/client-form.types";
+import { reqStr, reqBool } from "@/helpers/row-guards";
 
+const VIEW_NAME = "vw_client_view";
 
-/* ------------------------------------------------------------------
-   CREATE
-   ------------------------------------------------------------------ */
-export function mapClientUIToDbCreate(ui: ClientUI) {
+export function mapClientRowToView(row: ClientRow): ClientView {
   return {
-    clt_nom: ui.nom,
-    clt_code: ui.code,
-    clt_adresse: ui.adresse,
-    clt_code_postal: ui.codePostal,
-    clt_ville: ui.ville,
-    clt_pays: ui.pays,
-    clt_email: ui.email,
-    clt_telephone: ui.telephone,
-    clt_actif: ui.actif,
+    id: reqStr(row.clt_id, "clt_id", VIEW_NAME),
+    nom: reqStr(row.clt_nom, "clt_nom", VIEW_NAME),
+    code: reqStr(row.clt_code, "clt_code", VIEW_NAME),
+
+    adresse: row.clt_adresse ?? null,
+    codePostal: row.clt_code_postal ?? null,
+    ville: row.clt_ville ?? null,
+    pays: row.clt_pays ?? null,
+    email: row.clt_email ?? null,
+    telephone: row.clt_telephone ?? null,
+
+    actif: reqBool(row.clt_actif, "clt_actif", VIEW_NAME),
+    lmod: row.lmod ?? "",
   };
 }
 
-/* ------------------------------------------------------------------
-   UPDATE
-   ------------------------------------------------------------------ */
-export function mapClientUIToDbUpdate(ui: ClientUI) {
+export function mapClientFormToInsert(form: ClientFormValues): ClientInsert {
   return {
-    clt_nom: ui.nom,
-    clt_code: ui.code,
-    clt_adresse: ui.adresse,
-    clt_code_postal: ui.codePostal,
-    clt_ville: ui.ville,
-    clt_pays: ui.pays,
-    clt_email: ui.email,
-    clt_telephone: ui.telephone,
-    clt_actif: ui.actif,
+    clt_nom: form.nom,
+    clt_code: form.code,
+    clt_adresse: form.adresse || null,
+    clt_code_postal: form.codePostal || null,
+    clt_ville: form.ville || null,
+    clt_pays: form.pays || null,
+    clt_email: form.email || null,
+    clt_telephone: form.telephone || null,
+    clt_actif: form.actif,
   };
 }
 
-/* ------------------------------------------------------------------
-   DB -> UI (lecture)
-   ------------------------------------------------------------------ */
-export function mapClientDbToUI(row: ClientDbRow): ClientUI {
-  return {
-    id: row.client_id,
-    nom: row.client_nom,
-    code: row.client_code,
-    adresse: row.adresse,
-    codePostal: row.code_postal,
-    ville: row.ville,
-    pays: row.pays,
-    email: row.email,
-    telephone: row.telephone,
-    actif: row.actif,
-  };
+export function mapClientFormToUpdate(form: ClientFormValues): ClientUpdate {
+  return mapClientFormToInsert(form);
 }
-
-

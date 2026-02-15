@@ -3,8 +3,14 @@
 // src/app/(session)/select-client/page.tsx
 
 import { requireOperateur } from "@/lib/auth/require-operateur";
-import { listClientsForCurrentOperateur } from "@/domain/session/operateur-client.repository";
+import { listClientsForCurrentOperateur } from "@/features/session/current-operateur-client-action";
 import SelectClientList from "./select-client-list";
+
+type AllowedRow = { clt_id: string | null; clt_nom: string | null };
+
+function hasClientIdAndNom(c: AllowedRow): c is { clt_id: string; clt_nom: string } {
+  return c.clt_id !== null && c.clt_nom !== null;
+}
 
 export default async function SelectClientPage({
   searchParams,
@@ -13,7 +19,7 @@ export default async function SelectClientPage({
 }) {
   await requireOperateur();
 
-  const allowed = await listClientsForCurrentOperateur();
+  const allowed = (await listClientsForCurrentOperateur()) as AllowedRow[];
 
   const sp = await searchParams;
   const next = sp?.next && sp.next.startsWith("/") ? sp.next : "/dashboard";
@@ -31,7 +37,9 @@ export default async function SelectClientPage({
 
       <SelectClientList
         next={next}
-        clients={allowed.map((c) => ({ id: c.clt_id, nom: c.clt_nom }))}
+        clients={allowed
+          .filter(hasClientIdAndNom)
+          .map((c) => ({ id: c.clt_id, nom: c.clt_nom }))}
       />
     </div>
   );

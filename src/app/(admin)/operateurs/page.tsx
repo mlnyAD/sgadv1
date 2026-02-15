@@ -1,8 +1,9 @@
 
 
-import { listOperateurs } from "@/domain/operateur/operateur.repository";
+
 import { OperateurToolbar } from "@/ui/operateur/list/OperateurToolbar";
 import { OperateurList } from "@/ui/operateur/list/OperateurList";
+import { listOperateurs } from "@/domain/operateur/operateur.repository";
 
 /* ------------------------------------------------------------------ */
 /* Types                                                              */

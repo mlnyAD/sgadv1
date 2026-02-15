@@ -2,142 +2,80 @@
 
 // src/domain/client/client-repository.ts
 
+import "server-only";
+
 import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
-import { mapClientViewRowToUI } from "@/domain/client/client-view-mapper";
-import { ClientPersistencePayload, ClientView } from "./client-types";
-import { ClientUI } from "./client-types";
-import { mapClientUIToDbCreate } from "./client-mapper";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { SELECT_CLIENT_VIEW } from "./client.select";
 
+import type { ClientView } from "./client-types";
+import type { ClientRow, ClientInsert, ClientUpdate } from "@/domain/_db/rows";
+import { mapClientRowToView } from "./client-mapper";
 
-/* ------------------------------------------------------------------ */
-/* Read */
-/* ------------------------------------------------------------------ */
-export async function getClientById(
-  id: string
-): Promise<ClientView | null> {
-
+export async function getClientById(id: string): Promise<ClientView | null> {
   const supabase = await createSupabaseServerReadClient();
-
-  //console.log("GetClientById id = ", id);
 
   const { data, error } = await supabase
     .from("vw_client_view")
-    .select("*")
+    .select(SELECT_CLIENT_VIEW)
     .eq("clt_id", id)
-    .single();
+    .returns<ClientRow>()
+    .maybeSingle();
 
-  //console.log("Après GetClientById error, client = ", error, data);
+  if (error || !data) return null;
 
-  if (error || !data) {
-    return null;
-  }
-
-  return mapClientViewRowToUI(data);
+  return mapClientRowToView(data);
 }
 
-
-/* ------------------------------------------------------------------ */
-/* CREATE */
-/* ------------------------------------------------------------------ */
-
-export async function createClient(client: ClientUI): Promise<void> {
-
+export async function createClient(payload: ClientInsert): Promise<void> {
   const supabase = await createSupabaseAdminClient();
 
-  const payloadDb = mapClientUIToDbCreate(client);
-
-  console.log("SERVICE KEY PRESENT:", Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY));
-
-  const { error } = await supabase
-    .from("client")
-    .insert(payloadDb);
-
-  if (error) {
-    throw new Error(error.message);
-  }
+  const { error } = await supabase.from("client").insert(payload);
+  if (error) throw new Error(error.message);
 }
 
-
-/* ------------------------------------------------------------------
-   UPDATE
-   ------------------------------------------------------------------ */
-export async function updateClient(
-  clientId: string,
-  payload: ClientPersistencePayload
-): Promise<void> {
+export async function updateClient(clientId: string, payload: ClientUpdate): Promise<void> {
   const supabase = await createSupabaseAdminClient();
 
-  const { error } = await supabase
-    .from("client")
-    .update(payload)
-    .eq("clt_id", clientId);
-
-  if (error) {
-    throw new Error(error.message);
-  }
+  const { error } = await supabase.from("client").update(payload).eq("clt_id", clientId);
+  if (error) throw new Error(error.message);
 }
 
-/* ------------------------------------------------------------------ */
-/* LIST */
-/* ------------------------------------------------------------------ */
+export async function deleteClient(clientId: string): Promise<void> {
+  const supabase = await createSupabaseAdminClient();
+
+  const { error } = await supabase.from("client").delete().eq("clt_id", clientId);
+  if (error) throw new Error(error.message);
+}
+
 export async function listClients(params: {
   page: number;
   pageSize: number;
   search?: string;
   actif?: boolean;
-}) {
-  const { page, pageSize, search, actif } = params;
-
+}): Promise<{ data: ClientView[]; total: number }> {
   const supabase = await createSupabaseServerReadClient();
+  const { page, pageSize, search, actif } = params;
 
   let query = supabase
     .from("vw_client_view")
-    .select("*", { count: "exact" });
+    .select(SELECT_CLIENT_VIEW, { count: "exact" })
+    .order("clt_nom");
 
-  if (search) {
-    query = query.ilike("clt_nom", `%${search}%`);
-  }
-
-  if (actif !== undefined) {
-    query = query.eq("clt_actif", actif);
-  }
+  if (search) query = query.ilike("clt_nom", `%${search}%`);
+  if (actif !== undefined) query = query.eq("clt_actif", actif);
 
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
-  const { data, error, count } = await query.range(from, to);
+  const { data, error, count } = await query
+    .returns<ClientRow[]>()
+    .range(from, to);
 
-  if (error) {
-    throw new Error(error.message);
-  }
-
-//console.log("RAW CLIENT ROW =", data?.[0]);
-//console.log("RAW CLIENT KEYS =", data?.[0] && Object.keys(data[0]));
-
+  if (error) throw new Error(error.message);
 
   return {
-    data:  (data ?? []).map(mapClientViewRowToUI), 
+    data: (data ?? []).map(mapClientRowToView),
     total: count ?? 0,
   };
 }
-
-/**********************************************************
- * Delete d'un client
- **********************************************************/
-export async function deleteClient(
-  clientId: string
-): Promise<void> {
-
-  const supabase = await createSupabaseAdminClient();
-
-  const { error } = await supabase
-    .from("client")
-    .delete()
-    .eq("clt_id", clientId)
-
-  if (error) {
-    throw error;
-  }
-}
-

@@ -17,7 +17,6 @@ import { useOperateur } from "@/contexts/OperateurContext";
 export default function AppSidebar({ collapsed }: { collapsed: boolean }) {
 
   const { operateur, loading } = useOperateur();
-  
   //console.log("Appsidebar, operateur = ", operateur);
 
   if (loading || !operateur) {

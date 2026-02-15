@@ -60,9 +60,9 @@ const ITEMS: NavItem[] = [
     icon: FileStack,
   },
   {
-    id: "fournisseur",
-    title: "Fournisseurs",
-    href: "/fournisseurs",
+    id: "societes",
+    title: "Sociétés",
+    href: "/societes",
     icon: Presentation,
   },
   {

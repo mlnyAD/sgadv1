@@ -1,5 +1,7 @@
 
 
+// src/domain/operclient/operclient-types.ts
+
 export interface OperClientView {
   id: string;
 
@@ -12,5 +14,5 @@ export interface OperClientView {
   clientNom: string;
   clientActif: boolean;
 
-  createdAt: string;
+  lmod: string;
 }

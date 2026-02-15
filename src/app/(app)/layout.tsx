@@ -8,8 +8,11 @@ import { getCurrentClient } from "@/domain/session/current-client";
 import { redirect } from "next/navigation";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
+
   const operateur = await requireOperateur();
 
+    //console.log("requireOperateur op =", operateur)
+    
   if (operateur.isAdminSys) {
     redirect("/dashboard-admin");
   }
@@ -18,7 +21,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   // si pas de client courant, on passe par ensure + retour vers dashboard
   if (!current) {
-    console.log("AppLayout avant appel dashboard current = ", current )
+    //console.log("AppLayout avant appel dashboard current = ", current )
     redirect("/api/client/ensure?next=/dashboard");
   }
 

@@ -1,78 +1,49 @@
 
 
+import { notFound } from "next/navigation";
+import { getCurrentClient } from "@/domain/session/current-client";
 import { listExercices } from "@/domain/exercice/exercice-repository";
 import { ExerciceToolbar } from "@/ui/exercice/list/ExerciceToolbar";
 import { ExerciceList } from "@/ui/exercice/list/ExerciceList";
 
-/* ------------------------------------------------------------------ */
-/* Types                                                              */
-/* ------------------------------------------------------------------ */
-
 interface ExercicesProps {
-	searchParams: Promise<{
-		page?: string;
-		pageSize?: string;
-		search?: string;
-		actif?: string;
-	}>;
+  searchParams: Promise<{
+    page?: string;
+    pageSize?: string;
+    search?: string;
+    actif?: string;
+  }>;
 }
 
-/* ------------------------------------------------------------------ */
-/* Page */
-/* ------------------------------------------------------------------ */
+export default async function ExercicesPage({ searchParams }: ExercicesProps) {
+  
+  const { current } = await getCurrentClient();
+  if (!current?.cltId) notFound();
 
-export default async function ExercicesPage({
-	searchParams,
-}: ExercicesProps) {
-	/* -------------------- Params -------------------- */
+  const cltId = current.cltId;
 
-	const query = await searchParams;
+  const query = await searchParams;
 
-	/* -------------------- Query params -------------------- */
+  const page = Number(query.page ?? "1");
+  const pageSize = Number(query.pageSize ?? "10");
 
-	const page = Number(query.page ?? "1");
-	const pageSize = Number(query.pageSize ?? "10");
+  const search = typeof query.search === "string" ? query.search : undefined;
+  const actif = typeof query.actif === "string" ? query.actif === "true" : undefined;
 
-	const search =
-		typeof query.search === "string"
-			? query.search
-			: undefined;
+  const { data, total } = await listExercices({
+    cltId,
+    page,
+    pageSize,
+    search,
+    actif,
+  });
 
-const actif =
-  typeof query.actif === "string"
-    ? query.actif === "true"
-    : undefined;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
-
-	/* -------------------- Data -------------------- */
-
-	const { data, total } = await listExercices({
-		page,
-		pageSize,
-		search,
-		actif,
-	});
-
-	const totalPages = Math.max(
-		1,
-		Math.ceil(total / pageSize)
-	);
-
-
-	/* -------------------- Render -------------------- */
-
-	return (
-		<>
-			{/* Header + actions */}
-			<ExerciceToolbar />
-
-			{/* Liste */}
-			<ExerciceList
-				exercices={data}
-				page={page}
-				pageSize={pageSize}
-				totalPages={totalPages}
-			/>
-		</>
-	);
+  return (
+    <>
+      <ExerciceToolbar />
+      <ExerciceList exercices={data} page={page} pageSize={pageSize} totalPages={totalPages} />
+    </>
+  );
 }

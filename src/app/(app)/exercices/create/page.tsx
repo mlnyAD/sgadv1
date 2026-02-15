@@ -12,6 +12,5 @@ export default function CreateExercicePage() {
 
      <ExerciceEditor initialExercice={null} />
 
-
   );
 }

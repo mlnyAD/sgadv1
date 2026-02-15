@@ -1,24 +1,21 @@
 
 
-"use server";
+// src/domain/session/operateur-client.repository.ts
+
+import "server-only";
 
 import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
+import type { OperClientRow } from "@/domain/_db/rows";
 
-export type OperateurClientRow = {
-  oper_id: string;
-  clt_id: string;
-  clt_nom: string;
-  oper_actif: boolean;
-  clt_actif: boolean;
-};
+export type CurrentOperateurClientRow = Pick<
+  OperClientRow,
+  "oper_id" | "oper_actif" | "clt_id" | "clt_nom" | "clt_actif"
+>;
 
-export async function listClientsForCurrentOperateur(): Promise<OperateurClientRow[]> {
+export async function listClientsForOperateur(
+  operId: string
+): Promise<CurrentOperateurClientRow[]> {
   const supabase = await createSupabaseServerReadClient();
-
-  const { data: userRes, error: userErr } = await supabase.auth.getUser();
-  if (userErr || !userRes.user) throw new Error("Non authentifié");
-
-  const operId = userRes.user.id;
 
   const { data, error } = await supabase
     .from("vw_operateur_client_view")
@@ -28,5 +25,6 @@ export async function listClientsForCurrentOperateur(): Promise<OperateurClientR
     .eq("clt_actif", true);
 
   if (error) throw new Error(error.message);
-  return (data ?? []) as OperateurClientRow[];
+
+  return (data ?? []) as CurrentOperateurClientRow[];
 }

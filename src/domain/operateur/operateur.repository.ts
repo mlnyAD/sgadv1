@@ -8,75 +8,85 @@ import { mapOperateurRowToView } from "./operateur.mapper";
 import type { AuthenticatedOperateur } from "./authenticated-operateur.interface";
 import { mapOperateurDbRowToAuthenticated } from "./operateur.mapper";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { SELECT_OPERATEUR_VIEW } from "./operateur.select";
+import type { OperateurRow } from "@/domain/_db/rows";
 
 
 /* ------------------------------------------------------------------ */
 /* LIST                                                               */
 /* ------------------------------------------------------------------ */
-export async function listOperateurs(params: {
-  page: number;
+ export async function listOperateurs(params: {
+	page: number;
   pageSize: number;
-  actif?: boolean;
+  search?: string;
+  actif?: boolean;   // ✅ ajouter
 }) {
-  const { page, pageSize, actif } = params;
+  const { page, pageSize, search, actif } = params;
+	const supabase = await createSupabaseServerReadClient();
 
-  const supabase = await createSupabaseServerReadClient();
+	let q = supabase
+		.from("vw_operateur_view")
+		.select(SELECT_OPERATEUR_VIEW, { count: "exact" });
 
-  let query = supabase
-    .from("vw_operateur_view")
-    .select("*", { count: "exact" })
-    .order("oper_nom");
+	if (search) {
+		q = q.ilike("oper_nom", `%${search}%`);
+	}
+	if (actif !== undefined) {
+		q = q.eq("oper_actif", actif);
+	}
 
-  if (actif !== undefined) {
-    query = query.eq("oper_actif", actif);
-  }
+	const from = (page - 1) * pageSize;
+	const to = from + pageSize - 1;
 
-  const from = (page - 1) * pageSize;
-  const to = from + pageSize - 1;
+	const { data, error, count } = await q.range(from, to);
+	if (error) throw new Error(error.message);
 
-  const { data, error, count } = await query.range(from, to);
-  if (error) throw new Error(error.message);
+	const rows = (data ?? []) as unknown as OperateurRow[];
 
-  return {
-    data: (data ?? []).map(mapOperateurRowToView),
-    total: count ?? 0,
-  };
+	//console.log("ListOperateur rows ", rows)
+	return {
+		data: rows.map(mapOperateurRowToView),
+		total: count ?? 0,
+	};
 }
 
 /* ------------------------------------------------------------------ */
 /* READ                                                               */
 /* ------------------------------------------------------------------ */
-export async function getOperateurById(operId: string): Promise<OperateurView | null> {
+export async function getOperateurById(id: string): Promise<OperateurView | null> {
+	const supabase = await createSupabaseServerReadClient();
 
-  const supabase = await createSupabaseServerReadClient();
+	const { data, error } = await supabase
+		.from("vw_operateur_view")
+		.select(SELECT_OPERATEUR_VIEW)
+		.eq("oper_id", id)
+		.single();
 
-  const { data, error } = await supabase
-    .from("vw_operateur_view")
-    .select("*")
-    .eq("oper_id", operId)
-    .maybeSingle();
+	if (error || !data) return null;
 
-  if (error) throw new Error(error.message);
-
-  return data ? mapOperateurRowToView(data) : null;
+	const row = data as unknown as OperateurRow;
+	return mapOperateurRowToView(row);
 }
 
 /* ------------------------------------------------------------------ */
 /* READ by email (optionnel)                                           */
 /* ------------------------------------------------------------------ */
 export async function getOperateurByEmail(email: string): Promise<OperateurView | null> {
-  
-  const supabase = await createSupabaseServerReadClient();
 
-  const { data, error } = await supabase
-    .from("vw_operateur_view")
-    .select("*")
-    .eq("oper_email", email)
-    .maybeSingle();
+	const supabase = await createSupabaseServerReadClient();
 
-  if (error) throw new Error(error.message);
+	const { data, error } = await supabase
+		.from("vw_operateur_view")
+		.select(SELECT_OPERATEUR_VIEW)
+		.eq("oper_email", email)
+		.maybeSingle();
 
-  return data ? mapOperateurRowToView(data) : null;
+	if (error) throw new Error(error.message);
+
+	if (!data) return null;
+
+	const row = data as unknown as OperateurRow;
+	return mapOperateurRowToView(row);
 }
 
 /* ------------------------------------------------------------------ */
@@ -84,19 +94,19 @@ export async function getOperateurByEmail(email: string): Promise<OperateurView 
 /* ------------------------------------------------------------------ */
 export async function createOperateur(operateur: OperateurView): Promise<void> {
 
-  const supabase = await createSupabaseAdminClient();
+	const supabase = await createSupabaseAdminClient();
 
-  const { error } = await supabase.from("operateur").insert({
-    oper_id: operateur.id,
-    oper_email: operateur.email,
-    oper_nom: operateur.nom,
-    oper_prenom: operateur.prenom,
-    oper_admin_sys: operateur.isAdminSys,          // ✅ nom DB
-    oper_actif: operateur.actif,                   // ✅ nom DB
-    must_change_pwd: operateur.mustChangePassword, // ✅ nom DB
-  });
+	const { error } = await supabase.from("operateur").insert({
+		oper_id: operateur.id,
+		oper_email: operateur.email,
+		oper_nom: operateur.nom,
+		oper_prenom: operateur.prenom,
+		oper_admin_sys: operateur.isAdminSys,          // ✅ nom DB
+		oper_actif: operateur.actif,                   // ✅ nom DB
+		must_change_pwd: operateur.mustChangePassword, // ✅ nom DB
+	});
 
-  if (error) throw new Error(error.message);
+	if (error) throw new Error(error.message);
 }
 
 /* ------------------------------------------------------------------ */
@@ -105,53 +115,59 @@ export async function createOperateur(operateur: OperateurView): Promise<void> {
 /* ------------------------------------------------------------------ */
 export async function updateOperateur(operateurId: string, operateur: OperateurView): Promise<void> {
 
-  const supabase = await createSupabaseAdminClient();
+	const supabase = await createSupabaseAdminClient();
 
-  const { error } = await supabase
-    .from("operateur")
-    .update({
-      oper_email: operateur.email,
-      oper_nom: operateur.nom,
-      oper_prenom: operateur.prenom,
-      oper_admin_sys: operateur.isAdminSys,
-      oper_actif: operateur.actif,
-      // must_change_pwd volontairement NON modifié ici
-    })
-    .eq("oper_id", operateurId);
+	const { error } = await supabase
+		.from("operateur")
+		.update({
+			oper_email: operateur.email,
+			oper_nom: operateur.nom,
+			oper_prenom: operateur.prenom,
+			oper_admin_sys: operateur.isAdminSys,
+			oper_actif: operateur.actif,
+			// must_change_pwd volontairement NON modifié ici
+		})
+		.eq("oper_id", operateurId);
 
-  if (error) throw new Error(error.message);
+	if (error) throw new Error(error.message);
 }
 
 // --- SESSION / AUTHENTICATED OPERATEUR --------------------------------
 
 export async function getAuthenticatedOperateurByUserId(
-  userId: string
+	userId: string
 ): Promise<AuthenticatedOperateur | null> {
-  const supabase = await createSupabaseServerReadClient();
+	const supabase = await createSupabaseServerReadClient();
 
-  const { data: operRow, error: opError } = await supabase
-    .from("vw_operateur_view")
-    .select("*")
-    .eq("oper_id", userId)
-    .maybeSingle();
+	const { data: operRowRaw, error: opError } = await supabase
+		.from("vw_operateur_view")
+		.select(SELECT_OPERATEUR_VIEW)
+		.eq("oper_id", userId)
+		.maybeSingle();
 
-  if (opError || !operRow) return null;
-  if (!operRow.oper_actif) return null;
+		//console.log("getAuthenticatedOperateurByUserId data, error", operRowRaw, opError)
 
-  let clientIds: string[] = [];
+	if (opError || !operRowRaw) return null;
 
-  if (!operRow.oper_admin_sys) {
-    const { data: links, error: linksError } = await supabase
-      .from("operateur_client")
-      .select("clt_id")
-      .eq("oper_id", operRow.oper_id);
+	const operRow = operRowRaw as unknown as OperateurRow;
 
-    if (linksError) return null;
+	// boolean | null => test strict
+	if (operRow.oper_actif !== true) return null;
 
-    clientIds = (links ?? []).map((l) => l.clt_id);
-  }
+	let clientIds: string[] = [];
 
-  return mapOperateurDbRowToAuthenticated(operRow, clientIds);
+	if (operRow.oper_admin_sys !== true) {
+		const { data: links, error: linksError } = await supabase
+			.from("operateur_client")
+			.select("clt_id")
+			.eq("oper_id", operRow.oper_id as string);
+
+		if (linksError) return null;
+
+		clientIds = (links ?? []).map((l) => l.clt_id);
+	}
+
+	return mapOperateurDbRowToAuthenticated(operRow, clientIds);
 }
 
 

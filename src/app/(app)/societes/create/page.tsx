@@ -12,7 +12,6 @@ export default function CreateSocietePage() {
 
 	 <SocieteEditor 
       initialSociete={null}
-      cltId={""} 
    />
 
   );

@@ -1,59 +1,50 @@
 
 
-// src/domain/centre-cout/centre-cout-mapper.ts
+// src/domain/exercice/exercice-mapper.ts
 
-import { dateInputToUtcDate } from "@/helpers/date";
-import type {
-	ExerciceDbRow,
-	ExerciceView,
-	ExerciceFormValues,
-	ExercicePersistencePayload,
-} from "./exercice-types";
+import type { ExerciceRow, ExerciceInsert, ExerciceUpdate } from "@/domain/_db/rows";
+import type { ExerciceView } from "./exercice-types";
+import type { ExerciceFormValues } from "@/ui/exercice/exercice-form.types";
+import { reqStr, reqBool } from "@/helpers/row-guards";
 
+export function mapExerciceRowToView(row: ExerciceRow): ExerciceView {
+  return {
+    id: reqStr(row.exer_id, "exer_id", "vw_exercice_view"),
 
-/* ------------------------------------------------------------------
-   UI (form) -> DB (CREATE / UPDATE)
-   ------------------------------------------------------------------ */
+    clientId: reqStr(row.clt_id, "clt_id", "vw_exercice_view"),
+    clientNom: row.clt_nom ?? null,
 
-export function mapExerciceFormToDb(
-	ui: ExerciceFormValues
-): ExercicePersistencePayload {
-	return {
-				
-		exer_code: ui.code,
+    code: reqStr(row.exer_code, "exer_code", "vw_exercice_view"),
 
-		clt_id: ui.cltId,
+    debut: reqStr(row.exer_debut, "exer_debut", "vw_exercice_view"),
+    fin: reqStr(row.exer_fin, "exer_fin", "vw_exercice_view"),
 
-		exer_debut: dateInputToUtcDate(ui.debut),
-		exer_fin: dateInputToUtcDate(ui.fin),
-
-		exer_actif: ui.actif,
-		exer_commentaires: ui.commentaires ?? null,
-	};
+    actif: reqBool(row.exer_actif, "exer_actif", "vw_exercice_view"),
+    commentaires: row.exer_commentaires ?? null,
+    lmod: row.lmod ?? "",
+  };
 }
 
-/* ------------------------------------------------------------------
-   DB -> VIEW (lecture)
-   ------------------------------------------------------------------ */
-
-export function mapExerciceDbToView(
-	row: ExerciceDbRow
-): ExerciceView {
-
-	//console.log("mapExerciceDbToView " ,row )
-
-	return {
-		id: row.exer_id,
-
-		code: row.exer_code,
-		cltId: row.clt_id,
-
-		debut: row.exer_debut,
-		fin: row.exer_fin,
-
-		actif: row.exer_actif,
-		commentaires: row.exer_commentaires ?? null,
-
-	};
+export function mapExerciceFormToInsert(
+  form: ExerciceFormValues,
+  cltId: string
+): ExerciceInsert {
+  return {
+    clt_id: cltId,
+    exer_code: form.code,
+    exer_debut: form.debut,
+    exer_fin: form.fin,
+    exer_actif: form.actif,
+    exer_commentaires: form.commentaires ?? null,
+  };
 }
 
+export function mapExerciceFormToUpdate(form: ExerciceFormValues): ExerciceUpdate {
+  return {
+    exer_code: form.code,
+    exer_debut: form.debut,
+    exer_fin: form.fin,
+    exer_actif: form.actif,
+    exer_commentaires: form.commentaires ?? null,
+  };
+}

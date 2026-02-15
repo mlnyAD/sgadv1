@@ -2,39 +2,34 @@
 
 "use server";
 
-import {
-  createCentreCout,
-  updateCentreCout,
-} from "@/domain/centre-cout/centre-cout-repository";
-
-import { mapCentreCoutFormToDb } from "@/domain/centre-cout/centre-cout-mapper";
-
+import { getCurrentClient } from "@/domain/session/current-client";
+import { createCentreCout, updateCentreCout } from "@/domain/centre-cout/centre-cout-repository";
+import { mapCentreCoutFormToInsert, mapCentreCoutFormToUpdate } from "@/domain/centre-cout/centre-cout-mapper";
 import type { CentreCoutFormValues } from "@/ui/centre-cout/centre-cout-form.types";
 
+
 export async function saveCentreCout(
-  data: CentreCoutFormValues,
-  centreCoutId?: string
+	data: CentreCoutFormValues,
+	centreCoutId?: string
 ): Promise<void> {
 
-  //console.log("🟡 [ACTION] saveCentreCout called", data);
+const { current } = await getCurrentClient();
+  if (!current) throw new Error("Aucun client sélectionné");
 
-  try {
-    const payload = mapCentreCoutFormToDb(data);
+  const cltId = current.cltId;
+  if (!cltId) throw new Error("Client courant invalide");	
 
-    //console.log("🟡 [ACTION] payload", payload);
+	if (centreCoutId) {
+		await updateCentreCout({
+			cltId,
+			centreCoutId,
+			payload: mapCentreCoutFormToUpdate(data),
+		});
+		return;
+	}
 
-    if (centreCoutId) {
-      //console.log("🟡 [ACTION] updateCentreCout", centreCoutId);
-      await updateCentreCout(centreCoutId, payload);
-    } else {
-      //console.log("🟡 [ACTION] createCentreCout");
-      await createCentreCout(payload);
-    }
-
-    //console.log("🟢 [ACTION] saveCentreCout success");
-
-  } catch (error) {
-    //console.error("🔴 [ACTION] saveCentreCout error", error);
-    throw error;
-  }
+	await createCentreCout({
+		cltId,
+		payload: mapCentreCoutFormToInsert(data),
+	});
 }

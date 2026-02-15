@@ -1,92 +1,64 @@
 
 
-// src/domain/centre-cout/centre-cout-mapper.ts
+// src/domain/societe/societe-mapper.ts
 
-import type {
-	SocieteDbRow,
-	SocieteView,
-	SocieteFormValues,
-	SocietePersistencePayload,
-} from "./societe-types";
+import type { SocieteRow, SocieteInsert, SocieteUpdate } from "@/domain/_db/rows";
+import type { SocieteView } from "./societe-types";
+import type { SocieteFormValues } from "@/ui/societe/societe-form.types";
+import { reqStr } from "@/helpers/row-guards";
 
-
-/* ------------------------------------------------------------------
-   UI (form) -> DB (CREATE / UPDATE)
-   ------------------------------------------------------------------ */
-
-export function mapSocieteFormToDb(
-	ui: SocieteFormValues
-): SocietePersistencePayload {
-	return {
-		clt_id: ui.cltId,
-
-		soc_nom: ui.nom,
-		soc_code: ui.code,
-		soc_adresse: ui.adresse,
-		soc_ville: ui.ville,
-		soc_pays: ui.pays,
-		soc_code_postal: ui.codePostal,
-		soc_telephone: ui.telephone,
-
-		soc_siren: ui.siren,
-
-		soc_client: ui.client,
-		soc_fournisseur: ui.fournisseur,
-	};
-}
-
-/* ------------------------------------------------------------------
-   DB -> VIEW (lecture)
-   ------------------------------------------------------------------ */
-
-export function mapSocieteDbToView(
-	row: SocieteDbRow
-): SocieteView {
-
-	//console.log("mapSocieteDbToView " ,row )
-
-	return {
-		id: row.soc_id,
-
-		cltId: row.clt_id,
-
-		nom: row.soc_nom,
-		code: row.soc_code,
-
-		adresse: row.soc_adresse,
-		ville: row.soc_ville,
-		pays: row.soc_pays,
-		codePostal: row.soc_code_postal,
-		telephone: row.soc_telephone,
-
-		siren: row.soc_siren,
-
-		client: row.soc_client,
-		fournisseur: row.soc_fournisseur,
-
-	};
-}
-
-
-/* ------------------------------------------------------------------ */
-/* Form → View                                                         */
-/* ------------------------------------------------------------------ */
-export function mapFormToSocieteView(
-  form: SocieteFormValues,
-  societeId?: string
-): SocieteView {
+export function mapSocieteRowToView(row: SocieteRow): SocieteView {
   return {
-	id: societeId ?? "",
-	cltId: form.cltId,
-	nom: form.nom,
-	code: form.code,
-	adresse: form.adresse,
-	ville: form.ville,
-	codePostal: form.codePostal,
-	pays: form.pays,
-	telephone: form.telephone,
-	siren: form.siren,
-	client: form.client,
-	fournisseur: form.fournisseur,
+    id: reqStr(row.soc_id, "soc_id", "vw_societe_view"),
+
+    cltId: reqStr(row.clt_id, "clt_id", "vw_societe_view"),
+    cltNom: row.clt_nom ?? null,
+
+    nom: reqStr(row.soc_nom, "soc_nom", "vw_societe_view"),
+    code: reqStr(row.soc_code, "soc_code", "vw_societe_view"),
+
+    adresse: row.soc_adresse ?? null,
+    ville: row.soc_ville ?? null,
+    codePostal: row.soc_code_postal ?? null,
+    pays: row.soc_pays ?? null,
+    telephone: row.soc_telephone ?? null,
+
+    siren: row.soc_siren ?? null,
+
+    client: row.soc_client ?? false,
+    fournisseur: row.soc_fournisseur ?? false,
+
+    lmod: row.lmod ?? "",
+  };
+}
+
+export function mapSocieteFormToInsert(form: SocieteFormValues, cltId: string): SocieteInsert {
+  return {
+    clt_id: cltId,
+    soc_nom: form.nom,
+    soc_code: form.code,
+    soc_adresse: form.adresse ?? null,
+    soc_ville: form.ville ?? null,
+    soc_pays: form.pays ?? null,
+    soc_code_postal: form.codePostal ?? null,
+    soc_telephone: form.telephone ?? null,
+    soc_siren: form.siren ?? null,
+    soc_client: form.client,
+    soc_fournisseur: form.fournisseur,
+  };
+}
+
+export function mapSocieteFormToUpdate(form: SocieteFormValues): SocieteUpdate {
+  return {
+    soc_nom: form.nom,
+    soc_code: form.code,
+    soc_adresse: form.adresse ?? null,
+    soc_ville: form.ville ?? null,
+    soc_pays: form.pays ?? null,
+    soc_code_postal: form.codePostal ?? null,
+    soc_telephone: form.telephone ?? null,
+    soc_siren: form.siren ?? null,
+    soc_client: form.client,
+    soc_fournisseur: form.fournisseur,
   };
 }

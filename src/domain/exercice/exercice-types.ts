@@ -1,71 +1,22 @@
 
 
-/* ------------------------------------------------------------------ */
-/* DB row (table ou vue brute)                                        */
-/* ------------------------------------------------------------------ */
-
-export interface ExerciceDbRow {
-	exer_id: string;
-
-	clt_id: string;
-
-	exer_code: string;
-	exer_debut: Date;
-	exer_fin: Date;
-	exer_actif: boolean;
-	exer_commentaires?: string | null;
-}
+// src/domain/exercice/exercice-types.ts
 
 /* ------------------------------------------------------------------ */
 /* View model (projection UI)                                         */
 /* ------------------------------------------------------------------ */
-
 export interface ExerciceView {
-	id: string;
+  id: string;
 
-	cltId: string;
-	cltNom?: string | null;
+  clientId: string;
+  clientNom: string | null;
 
-	code: string;
+  code: string;
 
-	debut: Date;
-	fin: Date;
+  debut: string; // YYYY-MM-DD (ou ISO)
+  fin: string;   // YYYY-MM-DD (ou ISO)
 
-	actif: boolean;
-	commentaires?: string | null;
-
-}
-
-/* ------------------------------------------------------------------ */
-/* UI form model                                                       */
-/* ------------------------------------------------------------------ */
-
-export interface ExerciceFormValues {
-
-	cltId: string;
-
-	code: string;
-
-	debut: string; // YYYY-MM-DD
-  	fin: string;   // YYYY-MM-DD
-
-	actif: boolean;
-	commentaires?: string | null;
-}
-
-/* ------------------------------------------------------------------ */
-/* Persistence payload (table strict)                                  */
-/* ------------------------------------------------------------------ */
-
-export interface ExercicePersistencePayload {
-
-	clt_id: string;
-
-	exer_code: string;
-
-	exer_debut: Date;
-	exer_fin: Date;
-
-	exer_actif: boolean;
-	exer_commentaires?: string | null;
+  actif: boolean;
+  commentaires: string | null;
+  lmod: string;
 }

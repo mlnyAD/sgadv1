@@ -25,20 +25,14 @@ export function CentreCoutEditor({
 
 	const router = useRouter();
 
-	//console.log("CentreCoutEditor clients = ", clients)
-
-	const [formData, setFormData] =
-		useState<CentreCoutFormValues | null>(null);
-	const [errors, setErrors] =
-		useState<CentreCoutFormErrors>({});
+	const [formData, setFormData] = useState<CentreCoutFormValues | null>(null);
+	const [errors, setErrors] = useState<CentreCoutFormErrors>({});
 	const [saving, setSaving] = useState(false);
 
 	const handleSubmit = async (
 		data: CentreCoutFormValues,
 		centreCoutId?: string
 	) => {
-
-		//console.log("HandleSubmit data ", data)
 
 		setSaving(true);
 		setErrors({});
@@ -47,20 +41,18 @@ export function CentreCoutEditor({
 			await saveCentreCout(data, centreCoutId);
 			router.push("/centres-cout");
 		} catch (e) {
-			const message =
-				e instanceof Error
-					? e.message
-					: "Erreur lors de l’enregistrement";
+			const message = e instanceof Error ? e.message : "Erreur lors de l’enregistrement";
+
+			const isDuplicateCode = message.includes("Ce code de centre de coût existe déjà");
 
 			setErrors({
-				global: [message],
-				fields: {},
+				global: isDuplicateCode ? [] : [message],
+				fields: isDuplicateCode ? { code: message } : {},
 			});
 		} finally {
 			setSaving(false);
 		}
 	};
-
 
 	return (
 		<>
@@ -80,13 +72,11 @@ export function CentreCoutEditor({
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
-					 if (!formData) {
-      console.warn("No form data");
-      return;
-    }
-
-   // console.log("✅ CentreCoutEditor submit", formData);
-					handleSubmit(formData, initialCentreCout?.id.toString());
+					if (!formData) {
+						console.warn("No form data");
+						return;
+					}
+					handleSubmit(formData, initialCentreCout?.id);
 				}}
 			>
 				<CentreCoutFormCard

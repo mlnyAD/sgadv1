@@ -1,7 +1,7 @@
 
 
 import { NextResponse, type NextRequest } from "next/server";
-import { getClientById, updateClient, deleteClient } from "@/domain/client";
+import { getClientById, updateClient, deleteClient } from "@/domain/client/client-repository";
 import { requireApiAdmin } from "@/lib/auth/require-api-admin";
 
 export async function GET(

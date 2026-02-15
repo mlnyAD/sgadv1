@@ -5,6 +5,7 @@
 import { notFound } from "next/navigation";
 import { getSocieteById } from "@/domain/societe/societe-repository";
 import { SocieteEditor } from "@/ui/societe/edit/SocieteEditor";
+import { getCurrentClient } from "@/domain/session/current-client";
 
 
 type Props = {
@@ -19,7 +20,17 @@ export default async function EditSocietePage({ params }: Props) {
 
 	//console.log("EditSocietePage", societeid)
 
-	const societe = await getSocieteById(societeid);
+	const { current } = await getCurrentClient();
+
+	if (!current) notFound();
+	const cltId = current.cltId;
+	if (!cltId) notFound();
+
+
+	const societe = await getSocieteById({
+		cltId,
+		societeId: societeid,
+	});
 	if (!societe) {
 		notFound();
 	}
@@ -27,7 +38,6 @@ export default async function EditSocietePage({ params }: Props) {
 	return (
 		<SocieteEditor
 			initialSociete={societe}
-			cltId={""}  
 		/>
 	);
 }

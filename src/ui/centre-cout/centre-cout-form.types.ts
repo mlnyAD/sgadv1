@@ -9,7 +9,6 @@ import { CentreCoutFamilleId } from "@/domain/centre-cout/centre-cout-familles.c
 export interface CentreCoutFormValues {
   code: string;
   libelle: string;
-  clientId: string;
   familleId: CentreCoutFamilleId;
   commentaires?: string;
   actif: boolean;

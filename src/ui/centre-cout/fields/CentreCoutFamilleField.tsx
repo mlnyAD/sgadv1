@@ -37,7 +37,7 @@ export function CentreCoutFamilleField({
 
           {CENTRE_COUT_FAMILLES.map((famille) => (
             <option key={famille.id} value={famille.id}>
-              {famille.code} — {famille.libelle}
+              {famille.libelle}
             </option>
           ))}
         </select>

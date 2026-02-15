@@ -1,20 +1,15 @@
 
 
-/* ------------------------------------------------------------------ */
-/* Societe form values                                                  */
-/* ------------------------------------------------------------------ */
-
+// src/ui/societe/societe-form.types.ts
 export interface SocieteFormValues {
-  id: string;
-  cltId: string;
-  nom: string;
-  code: string;
-  adresse: string;
-  ville: string;
-  codePostal: string;
-  pays: string;
-  telephone: string;
-  siren: string;
-  client: boolean;
-  fournisseur: boolean;
+	nom: string;
+	code: string;
+	adresse?: string | null;
+	ville?: string | null;
+	codePostal?: string | null;
+	pays?: string | null;
+	telephone?: string | null;
+	siren?: string | null;
+	client: boolean;
+	fournisseur: boolean;
 }

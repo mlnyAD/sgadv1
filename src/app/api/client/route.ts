@@ -6,6 +6,7 @@ import { requireOperateur } from "@/lib/auth/require-operateur";
 import { getCurrentClient } from "@/domain/session/current-client";
 
 export async function GET() {
+  
   await requireOperateur();
 
   const cur = await getCurrentClient();

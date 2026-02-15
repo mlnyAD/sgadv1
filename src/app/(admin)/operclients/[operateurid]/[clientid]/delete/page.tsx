@@ -1,6 +1,6 @@
 
 
-import { deleteOperClientAssociationAction } from "@/domain/operclient/operclient.actions";
+import { deleteOperClient } from "@/features/operclient/operclient-action";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -19,7 +19,7 @@ export default async function DeleteOperClientPage({
 
   async function onConfirm() {
     "use server";
-    await deleteOperClientAssociationAction(operateurid, clientid);
+    await deleteOperClient({ operateurId: operateurid, clientId: clientid });
     redirect("/operclients");
   }
 

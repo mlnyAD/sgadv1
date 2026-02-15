@@ -48,7 +48,7 @@ export function CentreCoutList({
 		onEdit: handleEdit,
 	});
 
-	console.log("CentreCoutList data sample =", centreCouts?.[0]);
+	//console.log("CentreCoutList data sample =", centreCouts?.[0]);
 
 	return (
 		<>
@@ -61,34 +61,32 @@ export function CentreCoutList({
 				totalPages={totalPages}
 				onPageChange={(nextPage) => {
 					router.push(
-						`?page=${nextPage}&pageSize=${pageSize}${
-							actifParam ? `&actif=${actifParam}` : ""
+						`?page=${nextPage}&pageSize=${pageSize}${actifParam ? `&actif=${actifParam}` : ""
 						}`
 					);
 				}}
 				onPageSizeChange={(nextPageSize) => {
 					router.push(
-						`?page=1&pageSize=${nextPageSize}${
-							actifParam ? `&actif=${actifParam}` : ""
+						`?page=1&pageSize=${nextPageSize}${actifParam ? `&actif=${actifParam}` : ""
 						}`
 					);
 				}}
 				filtersSlot={
 					<CentreCoutFiltersClient
-    actif={actifFilter}
-    onChange={(next) => {
-      const params = new URLSearchParams(searchParams.toString());
+						actif={actifFilter}
+						onChange={(next) => {
+							const params = new URLSearchParams(searchParams.toString());
 
-      if (next === null) {
-        params.delete("actif");
-      } else {
-        params.set("actif", String(next));
-      }
+							if (next === null) {
+								params.delete("actif");
+							} else {
+								params.set("actif", String(next));
+							}
 
-      params.set("page", "1");
-      router.push(`?${params.toString()}`);
-    }}
-  />
+							params.set("page", "1");
+							router.push(`?${params.toString()}`);
+						}}
+					/>
 				}
 			/>
 		</>

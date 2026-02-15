@@ -59,6 +59,8 @@ export function ClientContextProvider({ children }: { children: ReactNode }) {
         credentials: "same-origin",
       });
 
+      console.log("ClientContextProvider res ", res)
+
       if (!res.ok) {
         setCurrentClient(null);
         setMulti(false);
@@ -84,7 +86,10 @@ export function ClientContextProvider({ children }: { children: ReactNode }) {
     // (cela peut déclencher des redirections/ensure selon ton implémentation)
     if (pathname === "/select-client") return;
 
-    void refreshClient();
+    setTimeout(() => {
+      void refreshClient();
+    }, 0);
+    
   }, [pathname, refreshClient]);
 
   const value = useMemo(

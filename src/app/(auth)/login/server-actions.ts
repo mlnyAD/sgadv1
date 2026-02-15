@@ -8,6 +8,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export async function loginAction(formData: FormData) {
+
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
@@ -36,11 +37,13 @@ export async function loginAction(formData: FormData) {
     password,
   });
 
+
   if (error) {
     // Mauvais email ou mauvais mot de passe
     return { success: false, error: "Identifiants invalides." };
   }
 
+  console.log("Login error, email, ", error, email )
   // Connexion OK
   redirect("/dashboard");
 }

@@ -2,54 +2,55 @@
 
 // src/domain/centre-cout/centre-cout-mapper.ts
 
-import type {
-  CentreCoutDbRow,
-  CentreCoutView,
-  CentreCoutFormValues,
-  CentreCoutPersistencePayload,
-} from "./centre-cout-types";
-
-import { getFamilleById, toCentreCoutFamilleId } from "./centre-cout-familles.catalog";
+import type { CentreCoutView } from "./centre-cout-types";
+import type { CentreCoutFormValues } from "@/ui/centre-cout/centre-cout-form.types";
+import type { CentreCoutRow, CentreCoutInsert, CentreCoutUpdate } from "@/domain/_db/rows";
+import { reqStr } from "@/helpers/row-guards";
+import { toCentreCoutFamilleId } from "./centre-cout-familles.catalog";
 
 /* ------------------------------------------------------------------
-   UI (form) -> DB (CREATE / UPDATE)
+   Form -> DB (Update)
    ------------------------------------------------------------------ */
-
-export function mapCentreCoutFormToDb(
-  ui: CentreCoutFormValues
-): CentreCoutPersistencePayload {
+export function mapCentreCoutFormToUpdate(ui: CentreCoutFormValues): CentreCoutUpdate {
   return {
     cc_code: ui.code,
     cc_libelle: ui.libelle,
-
-    clt_id: ui.clientId,
-    famille_id: ui.familleId,
-
+    famille_id: ui.familleId, // OK: CentreCoutFamilleId est un number union
     cc_commentaires: ui.commentaires ?? null,
     cc_actif: ui.actif,
   };
 }
 
 /* ------------------------------------------------------------------
-   DB -> VIEW (lecture)
+   Form -> DB (Insert)
    ------------------------------------------------------------------ */
-
-export function mapCentreCoutDbToView(row: CentreCoutDbRow): CentreCoutView {
-  const familleId = toCentreCoutFamilleId(row.famille_id);
-  const famille = getFamilleById(familleId);
-
+export function mapCentreCoutFormToInsert(ui: CentreCoutFormValues): Omit<CentreCoutInsert, "clt_id"> {
   return {
-    id: row.cc_id,
-    code: row.cc_code,
-    libelle: row.cc_libelle,
+    cc_code: ui.code,
+    cc_libelle: ui.libelle,
+    famille_id: ui.familleId,
+    cc_commentaires: ui.commentaires ?? null,
+    cc_actif: ui.actif,
+  };
+}
 
-    clientId: row.clt_id,
+/* ------------------------------------------------------------------
+   DB (view row) -> View
+   ------------------------------------------------------------------ */
+export function mapCentreCoutRowToView(row: CentreCoutRow): CentreCoutView {
+  return {
+    id: reqStr(row.cc_id, "cc_id", "vw_centre_cout_view"),
+    clientId: reqStr(row.clt_id, "clt_id", "vw_centre_cout_view"),
     clientNom: row.clt_nom ?? null,
 
-    familleId,
-    familleLibelle: famille?.libelle ?? "—",
+    // ✅ conversion number|null -> CentreCoutFamilleId (1..8)
+    familleId: toCentreCoutFamilleId(row.famille_id ?? 8),
 
+    code: reqStr(row.cc_code, "cc_code", "vw_centre_cout_view"),
+    libelle: reqStr(row.cc_libelle, "cc_libelle", "vw_centre_cout_view"),
+
+    actif: row.cc_actif ?? false,
     commentaires: row.cc_commentaires ?? null,
-    actif: row.cc_actif,
+    lmod: row.lmod ?? "",
   };
 }

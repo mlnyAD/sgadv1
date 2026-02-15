@@ -4,7 +4,7 @@
 
 import { NextResponse } from "next/server";
 import { requireOperateur } from "@/lib/auth/require-operateur";
-import { listClientsForCurrentOperateur } from "@/domain/session/operateur-client.repository";
+import { listClientsForCurrentOperateur } from "@/features/session/current-operateur-client-action";
 
 const COOKIE_NAME = "current_clt_id";
 

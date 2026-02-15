@@ -69,7 +69,6 @@ function getFieldError(
 
 interface Props {
 	initialSociete: SocieteView | null;
-	cltId: string;
 	errors: SocieteFormErrors;
 	onChange?: (data: SocieteFormValues) => void;
 }
@@ -80,7 +79,6 @@ interface Props {
 
 export function SocieteFormFields({
   initialSociete,
-  cltId: cltIdProp,
   errors,
   onChange,
 }: Props) {
@@ -89,8 +87,6 @@ export function SocieteFormFields({
 
 	/* -------------------- State values -------------------- */
 
-	const [id] = useState<string>(initialSociete?.id ?? "");
-	const [cltId] = useState<string>(initialSociete?.cltId ?? cltIdProp);
 	const [nom, setNom] = useState(initialSociete?.nom ?? "");
 	const [code, setCode] = useState(initialSociete?.code ?? "");
 	const [adresse, setAdresse] = useState(initialSociete?.adresse ?? "");
@@ -120,8 +116,6 @@ export function SocieteFormFields({
 	useEffect(() => {
 
 		onChange?.({
-			id,
-			cltId,
 			nom,
 			code,
 			adresse,
@@ -134,8 +128,6 @@ export function SocieteFormFields({
 			fournisseur,
 		});
 	}, [
-		id,
-		cltId,
 		nom,
 		code,
 		adresse,

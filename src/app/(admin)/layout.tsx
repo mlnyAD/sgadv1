@@ -9,6 +9,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     
   const operateur = await requireOperateur();
 
+  //console.log("Passage dans Admlin layout op =", operateur)
+
   if (!operateur.isAdminSys) {
     redirect("/dashboard");
   }

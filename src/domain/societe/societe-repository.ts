@@ -1,119 +1,80 @@
 
 
+import "server-only";
+
 import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
-import {
-	SocietePersistencePayload,
-	SocieteView,
-} from "./societe-types";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { SELECT_SOCIETE_VIEW } from "./societe.select";
 
-/* ------------------------------------------------------------------ */
-/* READ                                                               */
-/* ------------------------------------------------------------------ */
-export async function getSocieteById(
-	id: string
-): Promise<SocieteView | null> {
+import type { SocieteView } from "./societe-types";
+import type { SocieteRow, SocieteInsert, SocieteUpdate } from "@/domain/_db/rows";
+import { mapSocieteRowToView } from "./societe-mapper";
 
-	const supabase = await createSupabaseServerReadClient();
+export async function getSocieteById(params: {
+  cltId: string;
+  societeId: string;
+}): Promise<SocieteView | null> {
 
-	const { data, error } = await supabase
-		.from("vw_societe_view")
-		.select("*")
-		.eq("soc_id", id)
-		.single();
+  const supabase = await createSupabaseServerReadClient();
 
-	if (error || !data) {
-		return null;
-	}
+  const { data, error } = await supabase
+    .from("vw_societe_view")
+    .select(SELECT_SOCIETE_VIEW)
+    .eq("soc_id", params.societeId)
+    .eq("clt_id", params.cltId)
+    .maybeSingle();
 
-	//console.log("getSocieteById data ", data)
-	return data as SocieteView;
+    //console.log("getSocieteById error, data, societeId", error, data, params.societeId)
+
+  if (error || !data) return null;
+
+  return mapSocieteRowToView(data as unknown as SocieteRow);
 }
 
-/* ------------------------------------------------------------------ */
-/* CREATE                                                             */
-/* ------------------------------------------------------------------ */
-export async function createSociete(
-	payload: SocietePersistencePayload
-): Promise<void> {
-
-	const supabase = await createSupabaseAdminClient();
-
-	const { error } = await supabase
-		.from("societe")
-		.insert(payload);
-
-	if (error) {
-		console.error("🔥 [REPO] Supabase error", error);
-		throw new Error(error.message);
-	}
+export async function createSociete(payload: SocieteInsert): Promise<void> {
+  const supabase = await createSupabaseAdminClient();
+  const { error } = await supabase.from("societe").insert(payload);
+  if (error) throw new Error(error.message);
 }
 
-/* ------------------------------------------------------------------
-   UPDATE
-   ------------------------------------------------------------------ */
-export async function updateSociete(
-	societeId: string,
-	payload: SocietePersistencePayload
-): Promise<void> {
-	const supabase = await createSupabaseAdminClient();
-
-	//console.log("SaveCenreCout, payload = ", payload)
-
-	const { data, error } = await supabase
-		.from("societe")
-		.update(payload)
-		.eq("soc_id", societeId)
-		.select("*");
-
-	console.log("UPDATE DEBUG", { data, error });
-
-	if (error) {
-		throw new Error(error.message);
-	}
+export async function updateSociete(societeId: string, payload: SocieteUpdate): Promise<void> {
+  const supabase = await createSupabaseAdminClient();
+  const { error } = await supabase.from("societe").update(payload).eq("soc_id", societeId);
+  if (error) throw new Error(error.message);
 }
 
-/* ------------------------------------------------------------------ */
-/* LIST                                                               */
-/* ------------------------------------------------------------------ */
 export async function listSocietes(params: {
-	page: number;
-	pageSize: number;
-	search?: string;
-	client?: boolean;
-	fournisseur?: boolean;
-}) {
-	const { page, pageSize, search, client, fournisseur } = params;
+  cltId: string;
+  page: number;
+  pageSize: number;
+  search?: string;
+  client?: boolean;
+  fournisseur?: boolean;
+}): Promise<{ data: SocieteView[]; total: number }> {
+  const { cltId, page, pageSize, search, client, fournisseur } = params;
 
-	const supabase = await createSupabaseServerReadClient();
+  const supabase = await createSupabaseServerReadClient();
 
-	let query = supabase
-		.from("vw_societe_view")
-		.select("*", { count: "exact" });
+  let query = supabase
+    .from("vw_societe_view")
+    .select(SELECT_SOCIETE_VIEW, { count: "exact" })
+    .eq("clt_id", cltId)
+    .order("soc_nom");
 
-	if (search) {
-		query = query.ilike("soc_code", `%${search}%`);
-	}
+  if (search) query = query.ilike("soc_nom", `%${search}%`);
+  if (client !== undefined) query = query.eq("soc_client", client);
+  if (fournisseur !== undefined) query = query.eq("soc_fournisseur", fournisseur);
 
-	if (client !== undefined) {
-		query = query.eq("soc_client", client);
-	}
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
 
-	if (fournisseur !== undefined) {
-		query = query.eq("soc_fournisseur", fournisseur);
-	}
+  const { data, error, count } = await query.range(from, to);
+  if (error) throw new Error(error.message);
 
-	const from = (page - 1) * pageSize;
-	const to = from + pageSize - 1;
+  const rows = (data ?? []) as unknown as SocieteRow[];
 
-	const { data, error, count } = await query.range(from, to);
-
-	if (error) {
-		throw new Error(error.message);
-	}
-
-	return {
-		data: data,
-		total: count ?? 0,
-	};
+  return {
+    data: rows.map(mapSocieteRowToView),
+    total: count ?? 0,
+  };
 }

@@ -1,77 +1,49 @@
 
 
+import { notFound } from "next/navigation";
+import { getCurrentClient } from "@/domain/session/current-client";
 import { listCentreCouts } from "@/domain/centre-cout/centre-cout-repository";
 import { CentreCoutToolbar } from "@/ui/centre-cout/list/CentreCoutToolbar";
 import { CentreCoutList } from "@/ui/centre-cout/list/CentreCoutList";
 
-/* ------------------------------------------------------------------ */
-/* Types                                                              */
-/* ------------------------------------------------------------------ */
-
 interface CentreCoutsProps {
-	searchParams: Promise<{
-		page?: string;
-		pageSize?: string;
-		search?: string;
-		actif?: string;
-	}>;
+  searchParams: Promise<{
+    page?: string;
+    pageSize?: string;
+    search?: string;
+    actif?: string;
+  }>;
 }
 
-/* ------------------------------------------------------------------ */
-/* Page                                                               */
-/* ------------------------------------------------------------------ */
+export default async function CentreCoutsPage({ searchParams }: CentreCoutsProps) {
+  const { current } = await getCurrentClient();
+  if (!current) notFound();
+  if (!current.cltId) notFound();
 
-export default async function CentreCoutsPage({
-	searchParams,
-}: CentreCoutsProps) {
-	/* -------------------- Params -------------------- */
+  const cltId = current.cltId;
 
-	const query = await searchParams;
+  const query = await searchParams;
 
-	/* -------------------- Query params -------------------- */
+  const page = Number(query.page ?? "1");
+  const pageSize = Number(query.pageSize ?? "10");
 
-	const page = Number(query.page ?? "1");
-	const pageSize = Number(query.pageSize ?? "10");
+  const search = typeof query.search === "string" ? query.search : undefined;
+  const actif = typeof query.actif === "string" ? query.actif === "true" : undefined;
 
-	const search =
-		typeof query.search === "string"
-			? query.search
-			: undefined;
+  const { data, total } = await listCentreCouts({
+    cltId,
+    page,
+    pageSize,
+    search,
+    actif,
+  });
 
-	const actif =
-		typeof query.actif === "string"
-			? query.actif === "true"
-			: undefined;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
-	/* -------------------- Data -------------------- */
-
-	const { data, total } = await listCentreCouts({
-		page,
-		pageSize,
-		search,
-		actif,
-	});
-
-	const totalPages = Math.max(
-		1,
-		Math.ceil(total / pageSize)
-	);
-
-	/* -------------------- Render -------------------- */
-	//console.log("centrecoutPage data = ", data)
-	
-	return (
-		<>
-			{/* Header + actions */}
-			<CentreCoutToolbar />
-
-			{/* Liste */}
-			<CentreCoutList
-				centreCouts={data}
-				page={page}
-				pageSize={pageSize}
-				totalPages={totalPages}
-			/>
-		</>
-	);
+  return (
+    <>
+      <CentreCoutToolbar />
+      <CentreCoutList centreCouts={data} page={page} pageSize={pageSize} totalPages={totalPages} />
+    </>
+  );
 }

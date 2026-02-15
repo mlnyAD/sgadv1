@@ -1,16 +1,11 @@
 
 
-/* ------------------------------------------------------------------ */
-/* Exercice form values                                               */
-/* ------------------------------------------------------------------ */
+// src/ui/exercice/exercice-form.types.ts
 
 export interface ExerciceFormValues {
-  cltId: string;
   code: string;
-
   debut: string; // YYYY-MM-DD
   fin: string;   // YYYY-MM-DD
-
   actif: boolean;
   commentaires?: string | null;
 }

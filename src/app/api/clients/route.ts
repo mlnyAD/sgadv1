@@ -1,7 +1,7 @@
 
 
 import { NextResponse } from "next/server";
-import { listClients, createClient } from "@/domain/client";
+import { listClients, createClient } from "@/domain/client/client-repository";
 import { requireApiAdmin } from "@/lib/auth/require-api-admin";
 
 /* ------------------------------------------------------------------ */

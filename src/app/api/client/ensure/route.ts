@@ -3,7 +3,7 @@
 // src/app/api/client/ensure/route.ts
 import { NextResponse } from "next/server";
 import { requireOperateur } from "@/lib/auth/require-operateur";
-import { listClientsForCurrentOperateur } from "@/domain/session/operateur-client.repository";
+import { listClientsForCurrentOperateur } from "@/features/session/current-operateur-client-action";
 import { getCurrentClient } from "@/domain/session/current-client";
 
 const COOKIE_NAME = "current_clt_id";
@@ -32,8 +32,13 @@ export async function GET(request: Request) {
 
   // mono-client : auto-select + redirect
   if (allowed.length === 1) {
+    const cltId = allowed[0].clt_id;
+    if (!cltId) {
+      return NextResponse.redirect(new URL("/logout", request.url));
+    }
+
     const res = NextResponse.redirect(new URL(next, request.url));
-    res.cookies.set(COOKIE_NAME, allowed[0].clt_id, {
+    res.cookies.set(COOKIE_NAME, cltId, {
       path: "/",
       httpOnly: true,
       sameSite: "lax",
@@ -41,7 +46,6 @@ export async function GET(request: Request) {
     });
     return res;
   }
-
   // multi : selection
   return NextResponse.redirect(
     new URL(`/select-client?next=${encodeURIComponent(next)}`, request.url)

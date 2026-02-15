@@ -17,11 +17,14 @@ import { ClientContextProvider } from "@/contexts/ClientContext";
  * ------------------------------------------------------------------ */
 
 function AppShellInner({ children }: { children: React.ReactNode }) {
+
   const [collapsed, setCollapsed] = useState(false);
 
+ // console.log("passage dans appShell ") 
  
   return (
-    <SidebarProvider>
+    <SidebarProvider> 
+    
       <div className="flex h-screen w-full">
         {/* Sidebar */}
         <AppSidebar collapsed={collapsed} />
@@ -62,6 +65,9 @@ export default function AppShell({
 }: {
   children: React.ReactNode;
 }) {
+
+  //console.log("Passage dans AppShell")
+
   return (
     <OperateurContextProvider>
       <ClientContextProvider>
