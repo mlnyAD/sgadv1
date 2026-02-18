@@ -11,7 +11,9 @@ export async function listClientsForCurrentOperateur() {
   const supabase = await createSupabaseServerReadClient();
 
   const { data: userRes, error: userErr } = await supabase.auth.getUser();
-  if (userErr || !userRes.user) throw new Error("Non authentifié");
+
+  // si pas auth, on renvoie vide (la page gère l’état)
+  if (userErr || !userRes.user) return [];
 
   return listClientsForOperateur(userRes.user.id);
 }

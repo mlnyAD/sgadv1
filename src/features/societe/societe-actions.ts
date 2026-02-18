@@ -10,12 +10,11 @@ import type { SocieteFormValues } from "@/ui/societe/societe-form.types";
 export async function saveSociete(data: SocieteFormValues, societeId?: string): Promise<void> {
   const { current } = await getCurrentClient();
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
-  const cltId = current.cltId;
 
   if (societeId) {
     await updateSociete(societeId, mapSocieteFormToUpdate(data));
     return;
   }
 
-  await createSociete(mapSocieteFormToInsert(data, cltId));
+  await createSociete(mapSocieteFormToInsert(data));
 }

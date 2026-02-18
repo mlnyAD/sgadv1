@@ -9,6 +9,7 @@ import { SELECT_EXERCICE_VIEW } from "./exercice.select";
 import type { ExerciceView } from "./exercice-types";
 import type { ExerciceRow, ExerciceInsert, ExerciceUpdate } from "@/domain/_db/rows";
 import { mapExerciceRowToView } from "./exercice-mapper";
+import { getCurrentClient } from "../session/current-client";
 
 export async function getExerciceById(params: {
   cltId: string;
@@ -28,15 +29,26 @@ export async function getExerciceById(params: {
   return mapExerciceRowToView(data as unknown as ExerciceRow);
 }
 
-export async function createExercice(payload: ExerciceInsert): Promise<void> {
+export async function createExercice(payload: Omit<ExerciceInsert, "clt_id">): Promise<void> {
+  const { current } = await getCurrentClient();
+  if (!current?.cltId) throw new Error("Aucun client sélectionné");
+
   const supabase = await createSupabaseAdminClient();
-  const { error } = await supabase.from("exercice").insert(payload);
+  const { error } = await supabase.from("exercice").insert({ ...payload, clt_id: current.cltId });
   if (error) throw new Error(error.message);
 }
 
 export async function updateExercice(exerciceId: string, payload: ExerciceUpdate): Promise<void> {
+  const { current } = await getCurrentClient();
+  if (!current?.cltId) throw new Error("Aucun client sélectionné");
+
   const supabase = await createSupabaseAdminClient();
-  const { error } = await supabase.from("exercice").update(payload).eq("exer_id", exerciceId);
+  const { error } = await supabase
+    .from("exercice")
+    .update(payload)
+    .eq("exer_id", exerciceId)
+    .eq("clt_id", current.cltId);
+
   if (error) throw new Error(error.message);
 }
 
@@ -72,4 +84,24 @@ export async function listExercices(params: {
     data: rows.map(mapExerciceRowToView),
     total: count ?? 0,
   };
+}
+
+export async function listExerciceOptions(params: {
+  cltId: string;
+  actifOnly?: boolean;
+}): Promise<ExerciceRow[]> {
+  const supabase = await createSupabaseServerReadClient();
+
+  let q = supabase
+    .from("vw_exercice_view")
+    .select("exer_id,exer_code,exer_actif")
+    .eq("clt_id", params.cltId)
+    .order("exer_code", { ascending: false });
+
+  if (params.actifOnly) q = q.eq("exer_actif", true);
+
+  const { data, error } = await q;
+  if (error) throw new Error(error.message);
+
+  return (data ?? []) as unknown as ExerciceRow[];
 }

@@ -2,8 +2,6 @@
 
 // src/lib/auth/get-authenticated-operateur.ts
 
-// src/lib/auth/get-authenticated-operateur.ts
-
 import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
 import { mapOperateurDbRowToAuthenticated } from "@/domain/operateur/operateur.mapper";
 import type { AuthenticatedOperateur } from "@/domain/operateur/authenticated-operateur.interface";

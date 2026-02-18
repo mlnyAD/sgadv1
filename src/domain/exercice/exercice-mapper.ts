@@ -25,12 +25,8 @@ export function mapExerciceRowToView(row: ExerciceRow): ExerciceView {
   };
 }
 
-export function mapExerciceFormToInsert(
-  form: ExerciceFormValues,
-  cltId: string
-): ExerciceInsert {
+export function mapExerciceFormToInsert(form: ExerciceFormValues): Omit<ExerciceInsert, "clt_id"> {
   return {
-    clt_id: cltId,
     exer_code: form.code,
     exer_debut: form.debut,
     exer_fin: form.fin,

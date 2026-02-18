@@ -14,6 +14,7 @@ import { SELECT_CENTRE_COUT_VIEW } from "./centre-cout.select";
 import type { CentreCoutView } from "./centre-cout-types";
 import type { CentreCoutRow, CentreCoutInsert, CentreCoutUpdate } from "@/domain/_db/rows";
 import { PostgrestError } from "@supabase/supabase-js";
+import { getCurrentClient } from "../session/current-client";
 
 function enrichFamille(view: CentreCoutView): CentreCoutView {
 	return {
@@ -47,66 +48,50 @@ export async function getCentreCoutById(params: {
 /* ------------------------------------------------------------------ */
 /* CREATE                                                             */
 /* ------------------------------------------------------------------ */
-export async function createCentreCout(params: {
-	cltId: string;
-	payload: Omit<CentreCoutInsert, "clt_id">;
-}): Promise<void> {
-	const supabase = await createSupabaseAdminClient();
+export async function createCentreCout(
+  payload: Omit<CentreCoutInsert, "clt_id">
+): Promise<void> {
+  const { current } = await getCurrentClient();
+  if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-	const insertPayload: CentreCoutInsert = {
-		...params.payload,
-		clt_id: params.cltId,
-	};
+  const supabase = await createSupabaseAdminClient();
 
-	const { error } = await supabase.from("centre_cout").insert(insertPayload);
-	if (error) {
-		const pg = error as PostgrestError;
+  const insertPayload: CentreCoutInsert = {
+    ...payload,
+    clt_id: current.cltId,
+  };
 
-		// Postgres unique violation
-		if (pg.code === "23505" || pg.message.includes("duplicate key")) {
-			const meta = `${pg.details ?? ""} ${pg.hint ?? ""} ${pg.message ?? ""}`;
-			if (meta.includes("centre_cout_clt_id_cc_code_key")) {
-				throw new Error(`Ce code de centre de coût existe déjà pour ce client : ${insertPayload.cc_code}`);
-			}
-			throw new Error("Ce code de centre de coût existe déjà pour ce client.");
-		}
-
-		throw new Error(error.message);
-	}
+  const { error } = await supabase.from("centre_cout").insert(insertPayload);
+  if (error) throw new Error(error.message);
 }
 
 /* ------------------------------------------------------------------ */
 /* UPDATE                                                             */
 /* ------------------------------------------------------------------ */
-export async function updateCentreCout(params: {
-	cltId: string;
-	centreCoutId: string;
-	payload: CentreCoutUpdate;
-}): Promise<void> {
-	const supabase = await createSupabaseAdminClient();
+export async function updateCentreCout(centreCoutId: string, payload: CentreCoutUpdate): Promise<void> {
 
-	const { error } = await supabase
-		.from("centre_cout")
-		.update(params.payload)
-		.eq("cc_id", params.centreCoutId)
-		.eq("clt_id", params.cltId);
+  const { current } = await getCurrentClient();
+  if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-	if (error) {
-		const pg = error as PostgrestError;
+  const supabase = await createSupabaseAdminClient();
 
-		if (pg.code === "23505" || pg.message.includes("duplicate key")) {
-			const meta = `${pg.details ?? ""} ${pg.hint ?? ""} ${pg.message ?? ""}`;
+  const { error } = await supabase
+    .from("centre_cout")
+    .update(payload)
+    .eq("cc_id", centreCoutId)
+    .eq("clt_id", current.cltId);
 
-			if (meta.includes("centre_cout_clt_id_cc_code_key")) {
-				// payload.cc_code peut être undefined selon le type Update
-				const code = (params.payload as { cc_code?: string }).cc_code ?? "—";
-				throw new Error(`Ce code de centre de coût existe déjà pour ce client : ${code}`);
-			}
+ if (error) {
+  const meta = `${error.message} ${JSON.stringify((error as PostgrestError).details ?? {})}`;
 
-			throw new Error("Ce code de centre de coût existe déjà pour ce client.");
-		}
-		 throw new Error(pg.message);
-	}
+  if (meta.includes("centre_cout_clt_id_cc_code_key")) {
+    const code = payload.cc_code ?? "—";
+    throw new Error(`Ce code de centre de coût existe déjà pour ce client : ${code}`);
+  }
+
+  throw new Error(error.message);
+}
+
 }
 
 /* ------------------------------------------------------------------ */
@@ -143,4 +128,20 @@ export async function listCentreCouts(params: {
 		data: rows.map(mapCentreCoutRowToView).map(enrichFamille),
 		total: count ?? 0,
 	};
+}
+
+export async function listCentreCoutOptions(params: {
+  cltId: string;
+}): Promise<CentreCoutRow[]> {
+  const supabase = await createSupabaseServerReadClient();
+
+  const { data, error } = await supabase
+    .from("vw_centre_cout_view")
+    .select("cc_id,cc_code,cc_libelle")
+    .eq("clt_id", params.cltId)
+    .order("cc_code");
+
+  if (error) throw new Error(error.message);
+
+  return (data ?? []) as unknown as CentreCoutRow[];
 }

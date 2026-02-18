@@ -11,12 +11,10 @@ export async function saveExercice(data: ExerciceFormValues, exerciceId?: string
   const { current } = await getCurrentClient();
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const cltId = current.cltId;
-
   if (exerciceId) {
     await updateExercice(exerciceId, mapExerciceFormToUpdate(data));
     return;
   }
 
-  await createExercice(mapExerciceFormToInsert(data, cltId));
+  await createExercice(mapExerciceFormToInsert(data));
 }

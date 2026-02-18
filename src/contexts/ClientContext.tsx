@@ -8,14 +8,11 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
 import { usePathname } from "next/navigation";
-
-/* ------------------------------------------------------------------
- * Types
- * ------------------------------------------------------------------ */
 
 export interface ClientContextClient {
   id: string;
@@ -36,15 +33,14 @@ interface ClientContextValue {
   refreshClient: () => Promise<void>;
 }
 
-/* ------------------------------------------------------------------
- * Context
- * ------------------------------------------------------------------ */
-
 const ClientContext = createContext<ClientContextValue | undefined>(undefined);
 
-/* ------------------------------------------------------------------
- * Provider
- * ------------------------------------------------------------------ */
+function parseRetryAfterSeconds(res: Response): number | null {
+  const v = res.headers.get("retry-after");
+  if (!v) return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
 
 export function ClientContextProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -52,18 +48,52 @@ export function ClientContextProvider({ children }: { children: ReactNode }) {
   const [currentClient, setCurrentClient] = useState<ClientContextClient | null>(null);
   const [multi, setMulti] = useState(false);
 
+  // Anti-spam / backoff
+  const inFlightRef = useRef(false);
+  const lastOkAtRef = useRef<number>(0);
+  const blockedUntilRef = useRef<number>(0);
+
   const refreshClient = useCallback(async () => {
+    // ne pas refetch si déjà en cours
+    if (inFlightRef.current) return;
+
+    const now = Date.now();
+
+    // backoff actif
+    if (now < blockedUntilRef.current) return;
+
+    // throttle : si on a eu un OK il y a < 30s, inutile de refetch à chaque route
+    if (lastOkAtRef.current && now - lastOkAtRef.current < 30_000) return;
+
+    inFlightRef.current = true;
+
     try {
       const res = await fetch("/api/client", {
         cache: "no-store",
         credentials: "same-origin",
       });
 
-      console.log("ClientContextProvider res ", res)
-
-      if (!res.ok) {
+      // 401 => pas authentifié : on stoppe (pas de boucle)
+      if (res.status === 401) {
         setCurrentClient(null);
         setMulti(false);
+        // on bloque un peu pour éviter spam si l'app rerender
+        blockedUntilRef.current = Date.now() + 60_000;
+        return;
+      }
+
+      // 429 => rate limit : backoff
+      if (res.status === 429) {
+        const retryAfter = parseRetryAfterSeconds(res);
+        const ms = (retryAfter ?? 30) * 1000; // fallback 30s
+        blockedUntilRef.current = Date.now() + ms;
+        return;
+      }
+
+      if (!res.ok) {
+        // erreur transitoire : on ne reset pas tout (évite cascades)
+        // on bloque un peu
+        blockedUntilRef.current = Date.now() + 10_000;
         return;
       }
 
@@ -76,20 +106,21 @@ export function ClientContextProvider({ children }: { children: ReactNode }) {
       } else {
         setCurrentClient(null);
       }
+
+      lastOkAtRef.current = Date.now();
     } catch {
-      // silencieux
+      // réseau / autre : backoff court
+      blockedUntilRef.current = Date.now() + 10_000;
+    } finally {
+      inFlightRef.current = false;
     }
   }, []);
 
   useEffect(() => {
-    // IMPORTANT : sur /select-client, on ne fetch pas /api/client
-    // (cela peut déclencher des redirections/ensure selon ton implémentation)
     if (pathname === "/select-client") return;
 
-    setTimeout(() => {
-      void refreshClient();
-    }, 0);
-    
+    // première charge / changements de route : on tente, mais avec throttle + backoff
+    void refreshClient();
   }, [pathname, refreshClient]);
 
   const value = useMemo(
@@ -105,15 +136,9 @@ export function ClientContextProvider({ children }: { children: ReactNode }) {
   return <ClientContext.Provider value={value}>{children}</ClientContext.Provider>;
 }
 
-/* ------------------------------------------------------------------
- * Hooks
- * ------------------------------------------------------------------ */
-
 export function useClient() {
   const context = useContext(ClientContext);
-  if (!context) {
-    throw new Error("useClient must be used within ClientContextProvider");
-  }
+  if (!context) throw new Error("useClient must be used within ClientContextProvider");
   return context;
 }
 

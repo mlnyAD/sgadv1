@@ -16,6 +16,10 @@ export type ExerciceRow = Tables<"vw_exercice_view">;
 export type CentreCoutRow = Tables<"vw_centre_cout_view">;
 export type SocieteRow = Tables<"vw_societe_view">;
 
+export type InvoiceSalesRow = Tables<"vw_invoice_sales_view">;
+export type InvoicePurchaseRow = Tables<"vw_invoice_purchase_view">;
+
+
 /* ================================================================== */
 /* TABLES (WRITE)                                                      */
 /* ================================================================== */
@@ -37,3 +41,12 @@ export type CentreCoutUpdate = TablesUpdate<"centre_cout">;
 
 export type SocieteInsert = TablesInsert<"societe">;
 export type SocieteUpdate = TablesUpdate<"societe">;
+
+export type InvoiceInsert = TablesInsert<"invoice">;
+export type InvoiceUpdate = TablesUpdate<"invoice">;
+
+export type InvoiceSalesInsert = TablesInsert<"invoice_sales">;
+export type InvoiceSalesUpdate = TablesUpdate<"invoice_sales">;
+
+export type InvoicePurchaseInsert = TablesInsert<"invoice_purchase">;
+export type InvoicePurchaseUpdate = TablesUpdate<"invoice_purchase">;

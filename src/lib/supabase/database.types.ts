@@ -137,6 +137,229 @@ export type Database = {
           },
         ]
       }
+      invoice: {
+        Row: {
+          cc_id: string
+          clt_id: string
+          exer_id: string
+          inv_amount_ht: number
+          inv_amount_tax: number
+          inv_amount_ttc: number
+          inv_bank_value_date: string | null
+          inv_comments: string | null
+          inv_designation: string
+          inv_due_date: string | null
+          inv_id: string
+          inv_invoice_date: string
+          inv_lmod: string
+          inv_payment_date: string | null
+          inv_reference: string | null
+          inv_type: number
+          opb_operation_id: string | null
+          oper_id: string
+          soc_id: string
+        }
+        Insert: {
+          cc_id: string
+          clt_id: string
+          exer_id: string
+          inv_amount_ht?: number
+          inv_amount_tax?: number
+          inv_amount_ttc?: number
+          inv_bank_value_date?: string | null
+          inv_comments?: string | null
+          inv_designation?: string
+          inv_due_date?: string | null
+          inv_id?: string
+          inv_invoice_date: string
+          inv_lmod?: string
+          inv_payment_date?: string | null
+          inv_reference?: string | null
+          inv_type: number
+          opb_operation_id?: string | null
+          oper_id: string
+          soc_id: string
+        }
+        Update: {
+          cc_id?: string
+          clt_id?: string
+          exer_id?: string
+          inv_amount_ht?: number
+          inv_amount_tax?: number
+          inv_amount_ttc?: number
+          inv_bank_value_date?: string | null
+          inv_comments?: string | null
+          inv_designation?: string
+          inv_due_date?: string | null
+          inv_id?: string
+          inv_invoice_date?: string
+          inv_lmod?: string
+          inv_payment_date?: string | null
+          inv_reference?: string | null
+          inv_type?: number
+          opb_operation_id?: string | null
+          oper_id?: string
+          soc_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_cc_id_fkey"
+            columns: ["cc_id"]
+            isOneToOne: false
+            referencedRelation: "centre_cout"
+            referencedColumns: ["cc_id"]
+          },
+          {
+            foreignKeyName: "invoice_cc_id_fkey"
+            columns: ["cc_id"]
+            isOneToOne: false
+            referencedRelation: "vw_centre_cout_view"
+            referencedColumns: ["cc_id"]
+          },
+          {
+            foreignKeyName: "invoice_clt_id_fkey"
+            columns: ["clt_id"]
+            isOneToOne: false
+            referencedRelation: "client"
+            referencedColumns: ["clt_id"]
+          },
+          {
+            foreignKeyName: "invoice_clt_id_fkey"
+            columns: ["clt_id"]
+            isOneToOne: false
+            referencedRelation: "vw_client_view"
+            referencedColumns: ["clt_id"]
+          },
+          {
+            foreignKeyName: "invoice_exer_id_fkey"
+            columns: ["exer_id"]
+            isOneToOne: false
+            referencedRelation: "exercice"
+            referencedColumns: ["exer_id"]
+          },
+          {
+            foreignKeyName: "invoice_exer_id_fkey"
+            columns: ["exer_id"]
+            isOneToOne: false
+            referencedRelation: "vw_exercice_view"
+            referencedColumns: ["exer_id"]
+          },
+          {
+            foreignKeyName: "invoice_oper_id_fkey"
+            columns: ["oper_id"]
+            isOneToOne: false
+            referencedRelation: "operateur"
+            referencedColumns: ["oper_id"]
+          },
+          {
+            foreignKeyName: "invoice_oper_id_fkey"
+            columns: ["oper_id"]
+            isOneToOne: false
+            referencedRelation: "vw_operateur_view"
+            referencedColumns: ["oper_id"]
+          },
+          {
+            foreignKeyName: "invoice_soc_id_fkey"
+            columns: ["soc_id"]
+            isOneToOne: false
+            referencedRelation: "societe"
+            referencedColumns: ["soc_id"]
+          },
+          {
+            foreignKeyName: "invoice_soc_id_fkey"
+            columns: ["soc_id"]
+            isOneToOne: false
+            referencedRelation: "vw_societe_view"
+            referencedColumns: ["soc_id"]
+          },
+        ]
+      }
+      invoice_purchase: {
+        Row: {
+          inv_id: string
+          invp_paid_by_clt_amount: number
+          invp_paid_by_third_party_amount: number
+        }
+        Insert: {
+          inv_id: string
+          invp_paid_by_clt_amount?: number
+          invp_paid_by_third_party_amount?: number
+        }
+        Update: {
+          inv_id?: string
+          invp_paid_by_clt_amount?: number
+          invp_paid_by_third_party_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_purchase_inv_id_fkey"
+            columns: ["inv_id"]
+            isOneToOne: true
+            referencedRelation: "invoice"
+            referencedColumns: ["inv_id"]
+          },
+          {
+            foreignKeyName: "invoice_purchase_inv_id_fkey"
+            columns: ["inv_id"]
+            isOneToOne: true
+            referencedRelation: "vw_invoice_purchase_view"
+            referencedColumns: ["inv_id"]
+          },
+          {
+            foreignKeyName: "invoice_purchase_inv_id_fkey"
+            columns: ["inv_id"]
+            isOneToOne: true
+            referencedRelation: "vw_invoice_sales_view"
+            referencedColumns: ["inv_id"]
+          },
+        ]
+      }
+      invoice_sales: {
+        Row: {
+          inv_id: string
+          invs_deal_name: string | null
+          invs_deal_number: string | null
+          invs_payment_delay_days: number | null
+          invs_revenue_type: number | null
+        }
+        Insert: {
+          inv_id: string
+          invs_deal_name?: string | null
+          invs_deal_number?: string | null
+          invs_payment_delay_days?: number | null
+          invs_revenue_type?: number | null
+        }
+        Update: {
+          inv_id?: string
+          invs_deal_name?: string | null
+          invs_deal_number?: string | null
+          invs_payment_delay_days?: number | null
+          invs_revenue_type?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_sales_inv_id_fkey"
+            columns: ["inv_id"]
+            isOneToOne: true
+            referencedRelation: "invoice"
+            referencedColumns: ["inv_id"]
+          },
+          {
+            foreignKeyName: "invoice_sales_inv_id_fkey"
+            columns: ["inv_id"]
+            isOneToOne: true
+            referencedRelation: "vw_invoice_purchase_view"
+            referencedColumns: ["inv_id"]
+          },
+          {
+            foreignKeyName: "invoice_sales_inv_id_fkey"
+            columns: ["inv_id"]
+            isOneToOne: true
+            referencedRelation: "vw_invoice_sales_view"
+            referencedColumns: ["inv_id"]
+          },
+        ]
+      }
       operateur: {
         Row: {
           lmod: string
@@ -338,6 +561,216 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "vw_client_view"
             referencedColumns: ["clt_id"]
+          },
+        ]
+      }
+      vw_invoice_purchase_view: {
+        Row: {
+          cc_code: string | null
+          cc_id: string | null
+          cc_libelle: string | null
+          clt_id: string | null
+          clt_nom: string | null
+          exer_code: string | null
+          exer_id: string | null
+          inv_amount_ht: number | null
+          inv_amount_tax: number | null
+          inv_amount_ttc: number | null
+          inv_bank_value_date: string | null
+          inv_comments: string | null
+          inv_designation: string | null
+          inv_due_date: string | null
+          inv_id: string | null
+          inv_invoice_date: string | null
+          inv_lmod: string | null
+          inv_payment_date: string | null
+          inv_reference: string | null
+          inv_type: number | null
+          invp_paid_by_clt_amount: number | null
+          invp_paid_by_third_party_amount: number | null
+          opb_operation_id: string | null
+          oper_id: string | null
+          oper_nom: string | null
+          oper_prenom: string | null
+          soc_id: string | null
+          soc_nom: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_cc_id_fkey"
+            columns: ["cc_id"]
+            isOneToOne: false
+            referencedRelation: "centre_cout"
+            referencedColumns: ["cc_id"]
+          },
+          {
+            foreignKeyName: "invoice_cc_id_fkey"
+            columns: ["cc_id"]
+            isOneToOne: false
+            referencedRelation: "vw_centre_cout_view"
+            referencedColumns: ["cc_id"]
+          },
+          {
+            foreignKeyName: "invoice_clt_id_fkey"
+            columns: ["clt_id"]
+            isOneToOne: false
+            referencedRelation: "client"
+            referencedColumns: ["clt_id"]
+          },
+          {
+            foreignKeyName: "invoice_clt_id_fkey"
+            columns: ["clt_id"]
+            isOneToOne: false
+            referencedRelation: "vw_client_view"
+            referencedColumns: ["clt_id"]
+          },
+          {
+            foreignKeyName: "invoice_exer_id_fkey"
+            columns: ["exer_id"]
+            isOneToOne: false
+            referencedRelation: "exercice"
+            referencedColumns: ["exer_id"]
+          },
+          {
+            foreignKeyName: "invoice_exer_id_fkey"
+            columns: ["exer_id"]
+            isOneToOne: false
+            referencedRelation: "vw_exercice_view"
+            referencedColumns: ["exer_id"]
+          },
+          {
+            foreignKeyName: "invoice_oper_id_fkey"
+            columns: ["oper_id"]
+            isOneToOne: false
+            referencedRelation: "operateur"
+            referencedColumns: ["oper_id"]
+          },
+          {
+            foreignKeyName: "invoice_oper_id_fkey"
+            columns: ["oper_id"]
+            isOneToOne: false
+            referencedRelation: "vw_operateur_view"
+            referencedColumns: ["oper_id"]
+          },
+          {
+            foreignKeyName: "invoice_soc_id_fkey"
+            columns: ["soc_id"]
+            isOneToOne: false
+            referencedRelation: "societe"
+            referencedColumns: ["soc_id"]
+          },
+          {
+            foreignKeyName: "invoice_soc_id_fkey"
+            columns: ["soc_id"]
+            isOneToOne: false
+            referencedRelation: "vw_societe_view"
+            referencedColumns: ["soc_id"]
+          },
+        ]
+      }
+      vw_invoice_sales_view: {
+        Row: {
+          cc_code: string | null
+          cc_id: string | null
+          cc_libelle: string | null
+          clt_id: string | null
+          clt_nom: string | null
+          exer_code: string | null
+          exer_id: string | null
+          inv_amount_ht: number | null
+          inv_amount_tax: number | null
+          inv_amount_ttc: number | null
+          inv_bank_value_date: string | null
+          inv_comments: string | null
+          inv_designation: string | null
+          inv_due_date: string | null
+          inv_id: string | null
+          inv_invoice_date: string | null
+          inv_lmod: string | null
+          inv_payment_date: string | null
+          inv_reference: string | null
+          inv_type: number | null
+          invs_deal_name: string | null
+          invs_deal_number: string | null
+          invs_payment_delay_days: number | null
+          invs_revenue_type: number | null
+          opb_operation_id: string | null
+          oper_id: string | null
+          oper_nom: string | null
+          oper_prenom: string | null
+          soc_id: string | null
+          soc_nom: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_cc_id_fkey"
+            columns: ["cc_id"]
+            isOneToOne: false
+            referencedRelation: "centre_cout"
+            referencedColumns: ["cc_id"]
+          },
+          {
+            foreignKeyName: "invoice_cc_id_fkey"
+            columns: ["cc_id"]
+            isOneToOne: false
+            referencedRelation: "vw_centre_cout_view"
+            referencedColumns: ["cc_id"]
+          },
+          {
+            foreignKeyName: "invoice_clt_id_fkey"
+            columns: ["clt_id"]
+            isOneToOne: false
+            referencedRelation: "client"
+            referencedColumns: ["clt_id"]
+          },
+          {
+            foreignKeyName: "invoice_clt_id_fkey"
+            columns: ["clt_id"]
+            isOneToOne: false
+            referencedRelation: "vw_client_view"
+            referencedColumns: ["clt_id"]
+          },
+          {
+            foreignKeyName: "invoice_exer_id_fkey"
+            columns: ["exer_id"]
+            isOneToOne: false
+            referencedRelation: "exercice"
+            referencedColumns: ["exer_id"]
+          },
+          {
+            foreignKeyName: "invoice_exer_id_fkey"
+            columns: ["exer_id"]
+            isOneToOne: false
+            referencedRelation: "vw_exercice_view"
+            referencedColumns: ["exer_id"]
+          },
+          {
+            foreignKeyName: "invoice_oper_id_fkey"
+            columns: ["oper_id"]
+            isOneToOne: false
+            referencedRelation: "operateur"
+            referencedColumns: ["oper_id"]
+          },
+          {
+            foreignKeyName: "invoice_oper_id_fkey"
+            columns: ["oper_id"]
+            isOneToOne: false
+            referencedRelation: "vw_operateur_view"
+            referencedColumns: ["oper_id"]
+          },
+          {
+            foreignKeyName: "invoice_soc_id_fkey"
+            columns: ["soc_id"]
+            isOneToOne: false
+            referencedRelation: "societe"
+            referencedColumns: ["soc_id"]
+          },
+          {
+            foreignKeyName: "invoice_soc_id_fkey"
+            columns: ["soc_id"]
+            isOneToOne: false
+            referencedRelation: "vw_societe_view"
+            referencedColumns: ["soc_id"]
           },
         ]
       }

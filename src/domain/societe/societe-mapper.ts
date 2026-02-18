@@ -32,9 +32,8 @@ export function mapSocieteRowToView(row: SocieteRow): SocieteView {
   };
 }
 
-export function mapSocieteFormToInsert(form: SocieteFormValues, cltId: string): SocieteInsert {
+export function mapSocieteFormToInsert(form: SocieteFormValues): Omit<SocieteInsert, "clt_id"> {
   return {
-    clt_id: cltId,
     soc_nom: form.nom,
     soc_code: form.code,
     soc_adresse: form.adresse ?? null,

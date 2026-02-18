@@ -6,10 +6,10 @@ import {
   FileStack,
   ListTodo,
   Settings2,
-  Users,
   Presentation,
-  KeyRound,
   KanbanSquare,
+  ShoppingCart,
+  TrendingUp,
 } from "lucide-react";
 
 import {
@@ -67,15 +67,15 @@ const ITEMS: NavItem[] = [
   },
   {
     id: "facture_fournisseur",
-    title: "Factures fournisseurs",
-    href: "/factures-fournisseurs",
-    icon: KeyRound,
+    title: "Achats",
+    href: "/invoices/purchase",
+    icon: ShoppingCart,
   },
   {
-    id: "client_facture",
-    title: "Factures clients",
-    href: "/factures-clients",
-    icon: Users,
+    id: "facture_client",
+    title: "Ventes",
+    href: "/invoices/sales",
+    icon: TrendingUp,
   },
   {
     id: "operation_bancaire",
