@@ -196,7 +196,7 @@ export async function createInvoicePurchase(payload: {
 
 	const { data: created, error: e1 } = await supabase
 		.from("invoice")
-		.insert({ ...payload.invoice, clt_id: current.cltId })
+		.insert({ ...payload.invoice, clt_id: current.cltId, inv_type: 2 })
 		.select("inv_id")
 		.maybeSingle();
 

@@ -10,6 +10,7 @@ import {
   KanbanSquare,
   ShoppingCart,
   TrendingUp,
+  BadgeEuro,
 } from "lucide-react";
 
 import {
@@ -76,6 +77,12 @@ const ITEMS: NavItem[] = [
     title: "Ventes",
     href: "/invoices/sales",
     icon: TrendingUp,
+  },
+  {
+    id: "budget",
+    title: "Budget",
+    href: "/budgets",
+    icon: BadgeEuro,
   },
   {
     id: "operation_bancaire",

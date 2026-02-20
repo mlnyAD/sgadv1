@@ -16,6 +16,15 @@ import type { CentreCoutRow, CentreCoutInsert, CentreCoutUpdate } from "@/domain
 import { PostgrestError } from "@supabase/supabase-js";
 import { getCurrentClient } from "../session/current-client";
 
+export type CentreCoutViewRow = {
+  cc_id: string | null;
+  cc_code: string | null;
+  cc_libelle: string | null;
+  cc_actif: boolean | null;
+  clt_id: string | null;
+  famille_id: number | null;
+};
+
 function enrichFamille(view: CentreCoutView): CentreCoutView {
 	return {
 		...view,
@@ -144,4 +153,21 @@ export async function listCentreCoutOptions(params: {
   if (error) throw new Error(error.message);
 
   return (data ?? []) as unknown as CentreCoutRow[];
+}
+
+export async function listCentresCout(params: { cltId: string; actifOnly?: boolean }) {
+  const supabase = await createSupabaseServerReadClient();
+
+  let q = supabase
+    .from("vw_centre_cout_view")
+    .select("cc_id,cc_code,cc_libelle,cc_actif,clt_id,famille_id")
+    .eq("clt_id", params.cltId)
+    .order("cc_code", { ascending: true });
+
+  if (params.actifOnly) q = q.eq("cc_actif", true);
+
+  const { data, error } = await q;
+  if (error) throw new Error(error.message);
+
+  return (data ?? []) as unknown as CentreCoutViewRow[];
 }

@@ -19,6 +19,7 @@ export type SocieteRow = Tables<"vw_societe_view">;
 export type InvoiceSalesRow = Tables<"vw_invoice_sales_view">;
 export type InvoicePurchaseRow = Tables<"vw_invoice_purchase_view">;
 
+export type BudgetRow = Tables<"vw_budget_view">;
 
 /* ================================================================== */
 /* TABLES (WRITE)                                                      */
@@ -50,3 +51,6 @@ export type InvoiceSalesUpdate = TablesUpdate<"invoice_sales">;
 
 export type InvoicePurchaseInsert = TablesInsert<"invoice_purchase">;
 export type InvoicePurchaseUpdate = TablesUpdate<"invoice_purchase">;
+
+export type BudgetInsert = TablesInsert<"budget">;
+export type BudgetUpdate = TablesUpdate<"budget">;

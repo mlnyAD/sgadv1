@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      budget: {
+        Row: {
+          bud_amount_ht_eur: number
+          bud_id: string
+          bud_kind: string
+          cc_id: string | null
+          clt_id: string
+          created_at: string
+          exer_id: string
+          oper_id: string | null
+          revenue_type_id: number | null
+          updated_at: string
+        }
+        Insert: {
+          bud_amount_ht_eur?: number
+          bud_id?: string
+          bud_kind: string
+          cc_id?: string | null
+          clt_id: string
+          created_at?: string
+          exer_id: string
+          oper_id?: string | null
+          revenue_type_id?: number | null
+          updated_at?: string
+        }
+        Update: {
+          bud_amount_ht_eur?: number
+          bud_id?: string
+          bud_kind?: string
+          cc_id?: string | null
+          clt_id?: string
+          created_at?: string
+          exer_id?: string
+          oper_id?: string | null
+          revenue_type_id?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       centre_cout: {
         Row: {
           cc_actif: boolean
@@ -479,6 +518,53 @@ export type Database = {
       }
     }
     Views: {
+      vw_budget_purchase_lines: {
+        Row: {
+          budget_ht_eur: number | null
+          cc_code: string | null
+          cc_id: string | null
+          cc_libelle: string | null
+          clt_id: string | null
+          exer_id: string | null
+          famille_id: number | null
+          pct_realise: number | null
+          realized_ht_eur: number | null
+        }
+        Relationships: []
+      }
+      vw_budget_sales_lines: {
+        Row: {
+          budget_ht_eur: number | null
+          clt_id: string | null
+          exer_id: string | null
+          pct_realise: number | null
+          realized_ht_eur: number | null
+          revenue_type_id: number | null
+        }
+        Relationships: []
+      }
+      vw_budget_view: {
+        Row: {
+          bud_amount_ht_eur: number | null
+          bud_id: string | null
+          bud_kind: string | null
+          cc_code: string | null
+          cc_id: string | null
+          cc_libelle: string | null
+          clt_id: string | null
+          clt_nom: string | null
+          created_at: string | null
+          exer_code: string | null
+          exer_id: string | null
+          famille_id: number | null
+          oper_id: string | null
+          oper_nom: string | null
+          oper_prenom: string | null
+          revenue_type_id: number | null
+          updated_at: string | null
+        }
+        Relationships: []
+      }
       vw_centre_cout_view: {
         Row: {
           cc_actif: boolean | null
@@ -836,6 +922,96 @@ export type Database = {
         }
         Relationships: []
       }
+      vw_purchase_realized_ht: {
+        Row: {
+          cc_id: string | null
+          clt_id: string | null
+          exer_id: string | null
+          realized_ht_eur: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_cc_id_fkey"
+            columns: ["cc_id"]
+            isOneToOne: false
+            referencedRelation: "centre_cout"
+            referencedColumns: ["cc_id"]
+          },
+          {
+            foreignKeyName: "invoice_cc_id_fkey"
+            columns: ["cc_id"]
+            isOneToOne: false
+            referencedRelation: "vw_centre_cout_view"
+            referencedColumns: ["cc_id"]
+          },
+          {
+            foreignKeyName: "invoice_clt_id_fkey"
+            columns: ["clt_id"]
+            isOneToOne: false
+            referencedRelation: "client"
+            referencedColumns: ["clt_id"]
+          },
+          {
+            foreignKeyName: "invoice_clt_id_fkey"
+            columns: ["clt_id"]
+            isOneToOne: false
+            referencedRelation: "vw_client_view"
+            referencedColumns: ["clt_id"]
+          },
+          {
+            foreignKeyName: "invoice_exer_id_fkey"
+            columns: ["exer_id"]
+            isOneToOne: false
+            referencedRelation: "exercice"
+            referencedColumns: ["exer_id"]
+          },
+          {
+            foreignKeyName: "invoice_exer_id_fkey"
+            columns: ["exer_id"]
+            isOneToOne: false
+            referencedRelation: "vw_exercice_view"
+            referencedColumns: ["exer_id"]
+          },
+        ]
+      }
+      vw_sales_realized_ht: {
+        Row: {
+          clt_id: string | null
+          exer_id: string | null
+          realized_ht_eur: number | null
+          revenue_type_id: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_clt_id_fkey"
+            columns: ["clt_id"]
+            isOneToOne: false
+            referencedRelation: "client"
+            referencedColumns: ["clt_id"]
+          },
+          {
+            foreignKeyName: "invoice_clt_id_fkey"
+            columns: ["clt_id"]
+            isOneToOne: false
+            referencedRelation: "vw_client_view"
+            referencedColumns: ["clt_id"]
+          },
+          {
+            foreignKeyName: "invoice_exer_id_fkey"
+            columns: ["exer_id"]
+            isOneToOne: false
+            referencedRelation: "exercice"
+            referencedColumns: ["exer_id"]
+          },
+          {
+            foreignKeyName: "invoice_exer_id_fkey"
+            columns: ["exer_id"]
+            isOneToOne: false
+            referencedRelation: "vw_exercice_view"
+            referencedColumns: ["exer_id"]
+          },
+        ]
+      }
       vw_societe_view: {
         Row: {
           clt_id: string | null
@@ -857,6 +1033,14 @@ export type Database = {
       }
     }
     Functions: {
+      debug_whoami: {
+        Args: never
+        Returns: {
+          r: string
+          su: string
+          u: string
+        }[]
+      }
       is_adminsys: { Args: never; Returns: boolean }
     }
     Enums: {
