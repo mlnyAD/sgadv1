@@ -16,11 +16,17 @@ export async function createSupabaseServerClient() {
     {
       cookies: {
         getAll: () => cookieStore.getAll(),
-        setAll: (cookiesToSet) => {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
-        },
+
+        // IMPORTANT: en Server Component, Next interdit cookies().set()
+        // Donc on rend setAll inoffensif (dashboard = lecture)
+        setAll: () => {},
+      },
+
+      // IMPORTANT: évite toute tentative de refresh / persist cookie
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+        detectSessionInUrl: false,
       },
     }
   );
