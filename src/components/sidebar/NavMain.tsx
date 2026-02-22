@@ -97,6 +97,12 @@ const ITEMS: NavItem[] = [
 		icon: Building2,
 	},
 	{
+		id: "compte",
+		title: "Comptes bancaires",
+		href: "/comptes",
+		icon: Building2,
+	},
+	{
 		id: "fisc",
 		title: "Fiscalité",
 		href: "/wait",
@@ -105,7 +111,7 @@ const ITEMS: NavItem[] = [
 	{
 		id: "treso",
 		title: "Trésorerie",
-		href: "/wait",
+		href: "/treso",
 		icon: Building2,
 	},
 	{

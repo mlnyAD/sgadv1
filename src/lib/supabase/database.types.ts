@@ -516,6 +516,96 @@ export type Database = {
         }
         Relationships: []
       }
+      tro_compte: {
+        Row: {
+          tro_clt_id: string
+          tro_cpt_actif: boolean
+          tro_cpt_id: string
+          tro_cpt_inclus_global: boolean
+          tro_cpt_nom: string
+          tro_cpt_ordre: number
+          tro_lmod: string
+          tro_soc_id: string | null
+        }
+        Insert: {
+          tro_clt_id: string
+          tro_cpt_actif?: boolean
+          tro_cpt_id?: string
+          tro_cpt_inclus_global?: boolean
+          tro_cpt_nom: string
+          tro_cpt_ordre?: number
+          tro_lmod?: string
+          tro_soc_id?: string | null
+        }
+        Update: {
+          tro_clt_id?: string
+          tro_cpt_actif?: boolean
+          tro_cpt_id?: string
+          tro_cpt_inclus_global?: boolean
+          tro_cpt_nom?: string
+          tro_cpt_ordre?: number
+          tro_lmod?: string
+          tro_soc_id?: string | null
+        }
+        Relationships: []
+      }
+      tro_mensuel: {
+        Row: {
+          tro_clt_id: string
+          tro_commentaire: string | null
+          tro_cpt_id: string
+          tro_credits: number
+          tro_debits: number
+          tro_exer_id: string
+          tro_init: boolean
+          tro_lmod: string
+          tro_mens_id: string
+          tro_mois: string
+          tro_solde_init: number
+        }
+        Insert: {
+          tro_clt_id: string
+          tro_commentaire?: string | null
+          tro_cpt_id: string
+          tro_credits?: number
+          tro_debits?: number
+          tro_exer_id: string
+          tro_init?: boolean
+          tro_lmod?: string
+          tro_mens_id?: string
+          tro_mois: string
+          tro_solde_init?: number
+        }
+        Update: {
+          tro_clt_id?: string
+          tro_commentaire?: string | null
+          tro_cpt_id?: string
+          tro_credits?: number
+          tro_debits?: number
+          tro_exer_id?: string
+          tro_init?: boolean
+          tro_lmod?: string
+          tro_mens_id?: string
+          tro_mois?: string
+          tro_solde_init?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tro_mensuel_tro_cpt_id_fkey"
+            columns: ["tro_cpt_id"]
+            isOneToOne: false
+            referencedRelation: "tro_compte"
+            referencedColumns: ["tro_cpt_id"]
+          },
+          {
+            foreignKeyName: "tro_mensuel_tro_cpt_id_fkey"
+            columns: ["tro_cpt_id"]
+            isOneToOne: false
+            referencedRelation: "vw_tro_compte_view"
+            referencedColumns: ["tro_cpt_id"]
+          },
+        ]
+      }
     }
     Views: {
       vw_budget_purchase_lines: {
@@ -1030,6 +1120,123 @@ export type Database = {
           soc_ville: string | null
         }
         Relationships: []
+      }
+      vw_tro_compte_view: {
+        Row: {
+          tro_clt_id: string | null
+          tro_cpt_actif: boolean | null
+          tro_cpt_id: string | null
+          tro_cpt_inclus_global: boolean | null
+          tro_cpt_nom: string | null
+          tro_cpt_ordre: number | null
+          tro_lmod: string | null
+          tro_soc_id: string | null
+        }
+        Insert: {
+          tro_clt_id?: string | null
+          tro_cpt_actif?: boolean | null
+          tro_cpt_id?: string | null
+          tro_cpt_inclus_global?: boolean | null
+          tro_cpt_nom?: string | null
+          tro_cpt_ordre?: number | null
+          tro_lmod?: string | null
+          tro_soc_id?: string | null
+        }
+        Update: {
+          tro_clt_id?: string | null
+          tro_cpt_actif?: boolean | null
+          tro_cpt_id?: string | null
+          tro_cpt_inclus_global?: boolean | null
+          tro_cpt_nom?: string | null
+          tro_cpt_ordre?: number | null
+          tro_lmod?: string | null
+          tro_soc_id?: string | null
+        }
+        Relationships: []
+      }
+      vw_tro_mensuel_view: {
+        Row: {
+          tro_clt_id: string | null
+          tro_commentaire: string | null
+          tro_cpt_id: string | null
+          tro_credits: number | null
+          tro_debits: number | null
+          tro_exer_id: string | null
+          tro_init: boolean | null
+          tro_lmod: string | null
+          tro_mens_id: string | null
+          tro_mois: string | null
+          tro_solde_init: number | null
+        }
+        Insert: {
+          tro_clt_id?: string | null
+          tro_commentaire?: string | null
+          tro_cpt_id?: string | null
+          tro_credits?: number | null
+          tro_debits?: number | null
+          tro_exer_id?: string | null
+          tro_init?: boolean | null
+          tro_lmod?: string | null
+          tro_mens_id?: string | null
+          tro_mois?: string | null
+          tro_solde_init?: number | null
+        }
+        Update: {
+          tro_clt_id?: string | null
+          tro_commentaire?: string | null
+          tro_cpt_id?: string | null
+          tro_credits?: number | null
+          tro_debits?: number | null
+          tro_exer_id?: string | null
+          tro_init?: boolean | null
+          tro_lmod?: string | null
+          tro_mens_id?: string | null
+          tro_mois?: string | null
+          tro_solde_init?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tro_mensuel_tro_cpt_id_fkey"
+            columns: ["tro_cpt_id"]
+            isOneToOne: false
+            referencedRelation: "tro_compte"
+            referencedColumns: ["tro_cpt_id"]
+          },
+          {
+            foreignKeyName: "tro_mensuel_tro_cpt_id_fkey"
+            columns: ["tro_cpt_id"]
+            isOneToOne: false
+            referencedRelation: "vw_tro_compte_view"
+            referencedColumns: ["tro_cpt_id"]
+          },
+        ]
+      }
+      vw_tro_soldes_mensuels_view: {
+        Row: {
+          tro_clt_id: string | null
+          tro_cpt_id: string | null
+          tro_credits: number | null
+          tro_debits: number | null
+          tro_exer_id: string | null
+          tro_mois: string | null
+          tro_solde: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tro_mensuel_tro_cpt_id_fkey"
+            columns: ["tro_cpt_id"]
+            isOneToOne: false
+            referencedRelation: "tro_compte"
+            referencedColumns: ["tro_cpt_id"]
+          },
+          {
+            foreignKeyName: "tro_mensuel_tro_cpt_id_fkey"
+            columns: ["tro_cpt_id"]
+            isOneToOne: false
+            referencedRelation: "vw_tro_compte_view"
+            referencedColumns: ["tro_cpt_id"]
+          },
+        ]
       }
     }
     Functions: {

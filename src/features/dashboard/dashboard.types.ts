@@ -20,9 +20,18 @@ export type DashboardReceivables = {
   dueLate: number;
 };
 
+export type DashboardTreasuryAccount = {
+  compteId: string;
+  nom: string;
+  inclusGlobal: boolean;
+  soldeEur: number;
+};
+
 export type DashboardTreasury = {
-  asOf: string;       // ISO date
-  amountEur: number;  // placeholder tant que transaction trésorerie non définie
+  asOf: string;        // ISO date (mois du dernier solde connu)
+  amountEur: number;   // solde global (pour compat compat)
+  soldeGlobalEur: number;
+  comptes: DashboardTreasuryAccount[];
 };
 
 export type DashboardData = {

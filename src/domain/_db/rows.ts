@@ -21,6 +21,8 @@ export type InvoicePurchaseRow = Tables<"vw_invoice_purchase_view">;
 
 export type BudgetRow = Tables<"vw_budget_view">;
 
+export type TroCompteRow = Tables<"vw_tro_compte_view">;
+
 /* ================================================================== */
 /* TABLES (WRITE)                                                      */
 /* ================================================================== */
@@ -54,3 +56,6 @@ export type InvoicePurchaseUpdate = TablesUpdate<"invoice_purchase">;
 
 export type BudgetInsert = TablesInsert<"budget">;
 export type BudgetUpdate = TablesUpdate<"budget">;
+
+export type TroCompteInsert = TablesInsert<"tro_compte">;
+export type TroCompteUpdate = TablesUpdate<"tro_compte">;

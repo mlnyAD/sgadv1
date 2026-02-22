@@ -1,7 +1,15 @@
 
 
+export type TreasuryCompteModel = {
+  compteId: string;
+  nom: string;
+  soldeEur: number;
+  inclusGlobal: boolean;
+};
+
 export type TreasuryCardModel = {
   asOf: string;
-  amountEur: number;
+  soldeGlobalEur: number;
+  comptes: TreasuryCompteModel[];
   note?: string;
 };
