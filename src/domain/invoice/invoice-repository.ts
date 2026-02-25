@@ -179,7 +179,7 @@ export async function createInvoiceSales(payload: {
 		.from("invoice_sales")
 		.insert({ inv_id: created.inv_id, ...payload.sales });
 
-	console.log("createInvoiceSales e2", e2)
+	//console.log("createInvoiceSales e2", e2)
 	if (e2) throw new Error(e2.message);
 
 	return { invId: created.inv_id };

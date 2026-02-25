@@ -26,7 +26,7 @@ export function InvoicePurchaseEditor(props: {
 	
   const { initialInvoice, options } = props;
 
-  console.log("InvoicePurchaseEditor: list, sélection",options.societes, initialInvoice?.societeId  )
+  //console.log("InvoicePurchaseEditor: list, sélection",options.societes, initialInvoice?.societeId  )
 
   const router = useRouter();
 

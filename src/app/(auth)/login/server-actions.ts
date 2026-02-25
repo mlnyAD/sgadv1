@@ -43,7 +43,8 @@ export async function loginAction(formData: FormData) {
     return { success: false, error: "Identifiants invalides." };
   }
 
-  console.log("Login error, email, ", error, email )
+  //console.log("Login error, email, ", error, email )
+  
   // Connexion OK
   redirect("/dashboard");
 }

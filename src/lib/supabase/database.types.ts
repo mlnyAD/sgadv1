@@ -176,6 +176,42 @@ export type Database = {
           },
         ]
       }
+      fisc: {
+        Row: {
+          fisc_clt_id: string
+          fisc_comments: string | null
+          fisc_date: string | null
+          fisc_exer_id: string
+          fisc_id: string
+          fisc_lmod: string
+          fisc_montant: number
+          fisc_soc_id: string | null
+          fisc_type_id: number
+        }
+        Insert: {
+          fisc_clt_id: string
+          fisc_comments?: string | null
+          fisc_date?: string | null
+          fisc_exer_id: string
+          fisc_id?: string
+          fisc_lmod?: string
+          fisc_montant?: number
+          fisc_soc_id?: string | null
+          fisc_type_id: number
+        }
+        Update: {
+          fisc_clt_id?: string
+          fisc_comments?: string | null
+          fisc_date?: string | null
+          fisc_exer_id?: string
+          fisc_id?: string
+          fisc_lmod?: string
+          fisc_montant?: number
+          fisc_soc_id?: string | null
+          fisc_type_id?: number
+        }
+        Relationships: []
+      }
       invoice: {
         Row: {
           cc_id: string
@@ -739,6 +775,23 @@ export type Database = {
             referencedColumns: ["clt_id"]
           },
         ]
+      }
+      vw_fisc_view: {
+        Row: {
+          clt_nom: string | null
+          exer_code: string | null
+          fisc_clt_id: string | null
+          fisc_comments: string | null
+          fisc_date: string | null
+          fisc_exer_id: string | null
+          fisc_id: string | null
+          fisc_lmod: string | null
+          fisc_montant: number | null
+          fisc_soc_id: string | null
+          fisc_type_id: number | null
+          soc_nom: string | null
+        }
+        Relationships: []
       }
       vw_invoice_purchase_view: {
         Row: {

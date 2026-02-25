@@ -23,6 +23,8 @@ export type BudgetRow = Tables<"vw_budget_view">;
 
 export type TroCompteRow = Tables<"vw_tro_compte_view">;
 
+export type FiscRow = Tables<"vw_fisc_view">;
+
 /* ================================================================== */
 /* TABLES (WRITE)                                                      */
 /* ================================================================== */
@@ -59,3 +61,6 @@ export type BudgetUpdate = TablesUpdate<"budget">;
 
 export type TroCompteInsert = TablesInsert<"tro_compte">;
 export type TroCompteUpdate = TablesUpdate<"tro_compte">;
+
+export type FiscInsert = TablesInsert<"fisc">;
+export type FiscUpdate = TablesUpdate<"fisc">;

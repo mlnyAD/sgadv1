@@ -14,6 +14,7 @@ export default async function CreateCentreCoutPage() {
     new Map(clients.map((c) => [c.id, { id: c.id, nom: c.nom }])).values()
   );
 
-  console.log("CreateCentreCoutPage ", clientOptions)
+  //console.log("CreateCentreCoutPage ", clientOptions)
+  
   return <CentreCoutEditor initialCentreCout={null} clients={clientOptions} />;
 }

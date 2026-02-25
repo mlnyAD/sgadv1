@@ -2,7 +2,7 @@
 
 "use client";
 
-import Image from "next/image";
+
 import { cn } from "@/lib/utils";
 import {
   Sidebar,
@@ -13,6 +13,7 @@ import {
 import NavMain from "./NavMain";
 import NavUser from "./NavUser";
 import { useOperateur } from "@/contexts/OperateurContext";
+import { NavTop } from "./NavTop";
 
 export default function AppSidebar({ collapsed }: { collapsed: boolean }) {
 
@@ -32,13 +33,7 @@ export default function AppSidebar({ collapsed }: { collapsed: boolean }) {
       )}
     >
       <SidebarHeader className="border-b px-4 py-4 flex items-center justify-center">
-        <Image
-          src="/images/axcio_data.png"
-          alt="Logo Axcio Data"
-          width={collapsed ? 40 : 120}
-          height={collapsed ? 40 : 120}
-          className="h-auto w-auto transition-all duration-300"
-        />
+        <NavTop />
       </SidebarHeader>
 
       <SidebarContent className="flex-1 overflow-y-auto px-2 pt-4 space-y-6">

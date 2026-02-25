@@ -23,7 +23,7 @@ export function getInvoiceColumns(options: {
 		},
 		{
 			accessorKey: "societeNom",
-			header: "Tiers",
+			header: "Fournisseur",
 			cell: ({ row }) => row.original.societeNom ?? "",
 		},
 		{

@@ -11,6 +11,9 @@ import {
 	ShoppingCart,
 	TrendingUp,
 	BadgeEuro,
+	HandCoins,
+	Scale,
+	Calendars,
 } from "lucide-react";
 
 import {
@@ -94,7 +97,7 @@ const ITEMS: NavItem[] = [
 		id: "exercice_comptable",
 		title: "Exercices",
 		href: "/exercices",
-		icon: Building2,
+		icon: Calendars,
 	},
 	{
 		id: "compte",
@@ -105,20 +108,20 @@ const ITEMS: NavItem[] = [
 	{
 		id: "fisc",
 		title: "Fiscalité",
-		href: "/wait",
+		href: "/fisc",
 		icon: Building2,
 	},
 	{
 		id: "treso",
 		title: "Trésorerie",
 		href: "/treso",
-		icon: Building2,
+		icon: HandCoins,
 	},
 	{
 		id: "bilan",
 		title: "Bilan",
 		href: "/wait",
-		icon: Building2,
+		icon: Scale,
 	},
 	{
 		id: "todo",

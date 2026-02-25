@@ -70,6 +70,9 @@ export function TresoTransactionScreen(props: {
   const router = useRouter();
   const { exercices, selectedExerId, data } = props;
 
+        const [tab, setTab] = useState<"saisie" | "graph">("saisie");
+
+
   const onChangeExercice = (exerId: string) => {
     router.push(`/treso?exerId=${encodeURIComponent(exerId)}`);
   };
@@ -100,7 +103,8 @@ export function TresoTransactionScreen(props: {
           </select>
         </div>
       </div>
-      <Tabs defaultValue="saisie" className="space-y-4">
+
+      <Tabs value={tab} onValueChange={(v) => setTab(v as "saisie" | "graph")} className="space-y-4">
         <TabsList>
           <TabsTrigger value="saisie">Saisie</TabsTrigger>
           <TabsTrigger value="graph">Graphique</TabsTrigger>

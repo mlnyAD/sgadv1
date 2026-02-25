@@ -83,7 +83,7 @@ export function InvoiceSalesFormFields({
 	options,
 }: Props) {
 
-	console.log("edit sales: list, sélection", options.societes, initialInvoice?.societeId)
+	//console.log("edit sales: list, sélection", options.societes, initialInvoice?.societeId)
 
 	// commun
 	const [socId, setSocId] = useState(initialInvoice?.societeId ?? "");
@@ -188,7 +188,7 @@ export function InvoiceSalesFormFields({
 		onChange,
 	]);
 
-	console.log("edit sales: list, sélection", options.societes, socId)
+	//console.log("edit sales: list, sélection", options.societes, socId)
 
 	return (
 		<>

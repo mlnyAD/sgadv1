@@ -21,7 +21,7 @@ export default async function Page({ params }: PageProps) {
     getInvoiceSalesById({ cltId: current.cltId, invoiceId: invoiceid }),
   ]);
 
-  console.log("sales/id/edit societes ", options.societes);
+  //console.log("sales/id/edit societes ", options.societes);
   
   if (!initialInvoice) return <div>Vente introuvable.</div>;
 

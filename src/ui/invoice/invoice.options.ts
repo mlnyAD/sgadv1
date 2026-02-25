@@ -55,11 +55,11 @@ const [socRes, exerRes, ccRes] = await Promise.all([
   if (ccRes.error) throw new Error(`Options centresCout: ${ccRes.error.message}`);
 
   // debug temporaire
-  console.log("getInvoiceEditorOptions cltId", cltId, {
+  /*console.log("getInvoiceEditorOptions cltId", cltId, {
     societes: socRes.data?.length ?? 0,
     exercices: exerRes.data?.length ?? 0,
     centresCout: ccRes.data?.length ?? 0,
-  });
+  });*/
 
   return {
     societes: toSocieteOptions(socRes.data ?? []),

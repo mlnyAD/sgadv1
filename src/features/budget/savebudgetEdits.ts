@@ -21,7 +21,7 @@ export async function saveBudgetEdits(params: {
       await updateBudgetLine(r.budid, { bud_amount_ht_eur: amount });
     } else {
 
-      console.log("CREATE SALES", { bud_kind: "SALES", revenue_type_id: r.revenue_type_id, amount });
+      //console.log("CREATE SALES", { bud_kind: "SALES", revenue_type_id: r.revenue_type_id, amount });
 
       await createBudgetLine({
         exer_id: exerid,
@@ -40,7 +40,8 @@ export async function saveBudgetEdits(params: {
     } else {
 
 
-console.log("CREATE PURCH", { bud_kind: "PURCHASE", cc_id: r.cc_id, amount });
+      //console.log("CREATE PURCH", { bud_kind: "PURCHASE", cc_id: r.cc_id, amount });
+
       await createBudgetLine({
         exer_id: exerid,
         bud_kind: toBudgetKindDb(1),
