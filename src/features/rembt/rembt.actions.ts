@@ -7,8 +7,7 @@ import { z } from "zod";
 import { getCurrentClient } from "@/domain/session/current-client";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { notFound } from "next/navigation";
-
-const TBL_REMBT = "remboursement";
+import { DB } from "@/domain/_db/names";
 
 const addSchema = z.object({
   exerId: z.string().uuid(),
@@ -32,7 +31,7 @@ export async function addRemboursementAction(formData: FormData) {
 
   const supabase = createSupabaseAdminClient();
 
-  await supabase.from("remboursement").insert({
+  await supabase.from(DB.tables.remboursement).insert({
     rbt_clt_id: cltId,
     rbt_exer_id: parsed.data.exerId,
     rbt_amount: parsed.data.amount,
@@ -55,9 +54,7 @@ export async function deleteRemboursementAction(formData: FormData) {
   if (!current?.cltId) notFound();
   const cltId = current.cltId;
 
- 	if (!cltId) notFound();
-
-  const parsed = delSchema.safeParse({
+   const parsed = delSchema.safeParse({
     exerId: formData.get("exerId"),
     rbtId: formData.get("rbtId"),
   });
@@ -65,9 +62,7 @@ export async function deleteRemboursementAction(formData: FormData) {
 
   const supabase = createSupabaseAdminClient();
 
-  await supabase
-    .from(TBL_REMBT)
-    .delete()
+  await supabase.from(DB.tables.remboursement).delete()
     .eq("rbt_id", parsed.data.rbtId)
     .eq("rbt_clt_id", cltId)
     .eq("rbt_exer_id", parsed.data.exerId);

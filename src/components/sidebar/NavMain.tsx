@@ -126,7 +126,7 @@ const ITEMS: NavItem[] = [
 	{
 		id: "bilan",
 		title: "Bilan",
-		href: "/wait",
+		href: "/bilan",
 		icon: Scale,
 	},
 	{

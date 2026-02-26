@@ -25,6 +25,10 @@ export type TroCompteRow = Tables<"vw_tro_compte_view">;
 
 export type FiscRow = Tables<"vw_fisc_view">;
 
+export type RemboursementRow = Tables<"vw_remboursement_view">;
+export type RemboursementTotalRow = Tables<"vw_remboursement_total_by_exercice">;
+
+
 /* ================================================================== */
 /* TABLES (WRITE)                                                      */
 /* ================================================================== */
@@ -64,3 +68,6 @@ export type TroCompteUpdate = TablesUpdate<"tro_compte">;
 
 export type FiscInsert = TablesInsert<"fisc">;
 export type FiscUpdate = TablesUpdate<"fisc">;
+
+export type RemboursementInsert = TablesInsert<"remboursement">;
+export type RemboursementUpdate = TablesUpdate<"remboursement">;
