@@ -23,8 +23,8 @@ export function AboutVersionsAccordion() {
 				</AccordionTrigger>
 				<AccordionContent>
 					<div className="mt-2 rounded-lg border bg-white dark:bg-black p-4 shadow-sm">
-						<p className="text-xl text-red-500">Version 1.9 du 26/02/2026</p>
-						<p className="mt-2 text-xs">1 - Ajout transaction Remboursements </p>
+						<p className="text-xl text-red-500">Version 1.10 du 26/02/2026</p>
+						<p className="mt-2 text-xs">1 - Ajout transaction bilan </p>
 					</div>
 				</AccordionContent>
 			</AccordionItem>
