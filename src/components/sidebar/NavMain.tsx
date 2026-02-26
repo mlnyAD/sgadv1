@@ -112,6 +112,12 @@ const ITEMS: NavItem[] = [
 		icon: Building2,
 	},
 	{
+		id: "rembt",
+		title: "Remboursements",
+		href: "/rembt",
+		icon: Building2,
+	},
+	{
 		id: "treso",
 		title: "Trésorerie",
 		href: "/treso",

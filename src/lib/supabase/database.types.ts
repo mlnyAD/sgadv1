@@ -504,6 +504,36 @@ export type Database = {
           },
         ]
       }
+      remboursement: {
+        Row: {
+          lmod: string
+          rbt_amount: number
+          rbt_clt_id: string
+          rbt_commentaires: string | null
+          rbt_date: string
+          rbt_exer_id: string
+          rbt_id: string
+        }
+        Insert: {
+          lmod?: string
+          rbt_amount?: number
+          rbt_clt_id: string
+          rbt_commentaires?: string | null
+          rbt_date?: string
+          rbt_exer_id: string
+          rbt_id?: string
+        }
+        Update: {
+          lmod?: string
+          rbt_amount?: number
+          rbt_clt_id?: string
+          rbt_commentaires?: string | null
+          rbt_date?: string
+          rbt_exer_id?: string
+          rbt_id?: string
+        }
+        Relationships: []
+      }
       societe: {
         Row: {
           clt_id: string
@@ -1116,6 +1146,31 @@ export type Database = {
             referencedColumns: ["exer_id"]
           },
         ]
+      }
+      vw_remboursement_total_by_exercice: {
+        Row: {
+          clt_id: string | null
+          exer_id: string | null
+          refunded_amount: number | null
+        }
+        Relationships: []
+      }
+      vw_remboursement_view: {
+        Row: {
+          clt_code: string | null
+          clt_id: string | null
+          clt_nom: string | null
+          exer_code: string | null
+          exer_debut: string | null
+          exer_fin: string | null
+          exer_id: string | null
+          lmod: string | null
+          rbt_amount: number | null
+          rbt_commentaires: string | null
+          rbt_date: string | null
+          rbt_id: string | null
+        }
+        Relationships: []
       }
       vw_sales_realized_ht: {
         Row: {
