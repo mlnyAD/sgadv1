@@ -17,7 +17,7 @@ interface SocietesProps {
 
 export default async function SocietesPage({ searchParams }: SocietesProps) {
 
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/societes" })
   if (!current) notFound();
   if (!current.cltId) notFound();
 

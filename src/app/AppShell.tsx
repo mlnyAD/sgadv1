@@ -71,7 +71,11 @@ export default function AppShell({
   return (
     <OperateurContextProvider>
       <ClientContextProvider>
-        <AppShellInner>{children}</AppShellInner>
+        <AppShellInner>
+          <div className="flex-1 min-w-0 overflow-auto bg-gray-100 p-4 dark:bg-black">
+            {children}
+          </div>
+        </AppShellInner>
       </ClientContextProvider>
     </OperateurContextProvider>
   );

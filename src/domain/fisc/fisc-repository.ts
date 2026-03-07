@@ -33,7 +33,7 @@ export async function getFiscById(params: {
 }
 
 export async function createFisc(payload: Omit<FiscInsert, "fisc_clt_id" | "fisc_soc_id">): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/fisc" });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();
@@ -50,7 +50,7 @@ export async function createFisc(payload: Omit<FiscInsert, "fisc_clt_id" | "fisc
 
 export async function updateFisc(fiscId: string, payload: FiscUpdate): Promise<void> {
 
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/fisc" });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();
@@ -105,7 +105,7 @@ export async function listFisc(params: {
 }
 
 export async function deleteFisc(fiscId: string): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/fisc" });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();

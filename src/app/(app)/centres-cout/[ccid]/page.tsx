@@ -14,7 +14,7 @@ export default async function EditCentreCoutPage({ params }: Props) {
 
 	const { ccid } = await params;
 
-	const { current } = await getCurrentClient();
+	const { current } = await getCurrentClient({ requireSelected: true, next: "/centres-cout" })
 
 	if (!current) notFound();
 const cltId = current.cltId;

@@ -17,7 +17,7 @@ interface ExercicesProps {
 
 export default async function ExercicesPage({ searchParams }: ExercicesProps) {
   
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/exercices" })
   if (!current?.cltId) notFound();
 
   const cltId = current.cltId;

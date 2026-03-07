@@ -35,7 +35,7 @@ export type BilanScreenData = {
 const VW_EXER = "vw_exercice_view";
 
 export async function getBilanScreenData(params: { exerid?: string }): Promise<BilanScreenData> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/bilan" })
   if (!current?.cltId) throw new Error("Aucun client courant");
   const cltId = current.cltId;
 

@@ -20,7 +20,7 @@ export default async function EditSocietePage({ params }: Props) {
 
 	//console.log("EditSocietePage", societeid)
 
-	const { current } = await getCurrentClient();
+	const { current } = await getCurrentClient({ requireSelected: true, next: "/societes" })
 
 	if (!current) notFound();
 	const cltId = current.cltId;

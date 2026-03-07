@@ -30,7 +30,7 @@ export async function getExerciceById(params: {
 }
 
 export async function createExercice(payload: Omit<ExerciceInsert, "clt_id">): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/exercices" });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();
@@ -39,7 +39,7 @@ export async function createExercice(payload: Omit<ExerciceInsert, "clt_id">): P
 }
 
 export async function updateExercice(exerciceId: string, payload: ExerciceUpdate): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/exercices" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();

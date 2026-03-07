@@ -11,7 +11,7 @@ import { toSocieteOptions, toExerciceOptions, toCentreCoutOptions } from "@/ui/i
 import { InvoicePurchaseEditor } from "@/ui/invoice/edit/InvoicePurchaseEditor";
 
 export default async function InvoicePurchaseCreatePage() {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/invoices/purchase" })
   if (!current?.cltId) notFound();
 
   const cltId = current.cltId;

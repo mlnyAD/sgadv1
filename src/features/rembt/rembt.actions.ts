@@ -17,7 +17,7 @@ const addSchema = z.object({
 });
 
 export async function addRemboursementAction(formData: FormData) {
-  const clientCtx = await getCurrentClient();
+  const clientCtx = await getCurrentClient({ requireSelected: true, next: "/rembt" });
   const cltId = clientCtx.current?.cltId;
   if (!cltId) throw new Error("Aucun client courant");
 
@@ -50,7 +50,7 @@ const delSchema = z.object({
 
 export async function deleteRemboursementAction(formData: FormData) {
 
-	  const { current } = await getCurrentClient();
+	  const { current } = await getCurrentClient({ requireSelected: true, next: "/rembt" });
   if (!current?.cltId) notFound();
   const cltId = current.cltId;
 

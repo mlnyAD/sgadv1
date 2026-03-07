@@ -25,7 +25,7 @@ export async function getDashboardData(): Promise<DashboardData> {
 
 	const receivables = await loadReceivablesBlock(supabase, exer.exerId);
 
-	const { current } = await getCurrentClient();
+	const { current } = await getCurrentClient({requireSelected: true, next: "/dashboard", });
 	const cltId = current?.cltId;
 	if (!cltId) throw new Error("Client courant introuvable.");
 

@@ -11,7 +11,7 @@ export async function enregistrerTresoInit(args: {
   moisDebutExerIso: string; // YYYY-MM-01
   soldeInit: number;
 }) {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/treso" });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();
@@ -70,7 +70,7 @@ export async function enregistrerTresoMois(args: {
   credits: number;
   debits: number;
 }) {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/treso" });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();

@@ -18,7 +18,7 @@ export type BudgetEditorData = {
 };
 
 export async function getBudgetEditorData(params: { exerid?: string }): Promise<BudgetEditorData> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/budget" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   // ⚠️ Tu sélectionnes exer_actif dans listBudgetExerciseOptions : assure-toi que la colonne existe.

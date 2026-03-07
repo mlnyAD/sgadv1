@@ -8,7 +8,7 @@ import { mapSocieteFormToInsert, mapSocieteFormToUpdate } from "@/domain/societe
 import type { SocieteFormValues } from "@/ui/societe/societe-form.types";
 
 export async function saveSociete(data: SocieteFormValues, societeId?: string): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/societes" });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   if (societeId) {

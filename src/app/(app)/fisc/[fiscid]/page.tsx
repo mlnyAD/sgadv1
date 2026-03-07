@@ -15,7 +15,7 @@ type Props = {
 export default async function EditFiscPage({ params }: Props) {
   const { fiscid } = await params;
 
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/fisc" })
   if (!current?.cltId) notFound();
   const cltId = current.cltId;
 

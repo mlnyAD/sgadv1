@@ -30,7 +30,7 @@ import type { InvoicePurchaseFormValues } from "@/ui/invoice/edit/invoice-purcha
 import { deleteInvoiceSales } from "@/domain/invoice/invoice-repository";
 
 export async function saveInvoiceSales(data: InvoiceSalesFormValues, invId?: string): Promise<void> {
-	const { current } = await getCurrentClient();
+	const { current } = await getCurrentClient({ requireSelected: true, next: "/invoices/sales" });
 	if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
 	const operateur = await getAuthenticatedOperateur();
@@ -56,7 +56,7 @@ export async function saveInvoiceSales(data: InvoiceSalesFormValues, invId?: str
 }
 
 export async function saveInvoicePurchase(data: InvoicePurchaseFormValues, invId?: string): Promise<void> {
-	const { current } = await getCurrentClient();
+	const { current } = await getCurrentClient({ requireSelected: true, next: "/invoices/purchase" });
 	if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
 	const operateur = await getAuthenticatedOperateur();

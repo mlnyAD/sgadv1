@@ -42,7 +42,7 @@ export async function getBudgetLineByBudId(params: {
 }
 
 export async function createBudgetLine(payload: Omit<BudgetInsert, "clt_id">): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({requireSelected: true, next: "/budgets", });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();
@@ -52,7 +52,7 @@ export async function createBudgetLine(payload: Omit<BudgetInsert, "clt_id">): P
 
 
 export async function updateBudgetLine(budid: string, payload: BudgetUpdate): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({requireSelected: true, next: "/budgets", });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();

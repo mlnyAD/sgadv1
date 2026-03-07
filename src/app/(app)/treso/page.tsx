@@ -14,8 +14,7 @@ export default async function Page(props: {
   searchParams?: Promise<{ exerId?: string }>;
 }) {
   const supabase = await createSupabaseServerClient();
-  const { current } = await getCurrentClient();
-
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/treso" })
   const cltId = current?.cltId;
   if (!cltId) throw new Error("Client courant introuvable.");
 

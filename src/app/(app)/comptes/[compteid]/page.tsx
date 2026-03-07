@@ -12,7 +12,7 @@ type Props = {
 export default async function EditComptePage({ params }: Props) {
   const { compteid } = await params;
 
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/comptes" })
   if (!current?.cltId) notFound();
   const cltId = current.cltId;
 

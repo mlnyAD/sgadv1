@@ -60,7 +60,7 @@ export async function getCentreCoutById(params: {
 export async function createCentreCout(
   payload: Omit<CentreCoutInsert, "clt_id">
 ): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/centres-cout" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();
@@ -79,7 +79,7 @@ export async function createCentreCout(
 /* ------------------------------------------------------------------ */
 export async function updateCentreCout(centreCoutId: string, payload: CentreCoutUpdate): Promise<void> {
 
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/centres-cout" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();

@@ -55,7 +55,7 @@ export type BudgetScreenData = {
 export async function getBudgetScreenData(params: {
 	exerid?: string;
 }): Promise<BudgetScreenData> {
-	const { current } = await getCurrentClient();
+	const { current } = await getCurrentClient({ requireSelected: true, next: "/budget" })
 	if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
 	const exerciseOptions = await listBudgetExerciseOptions({

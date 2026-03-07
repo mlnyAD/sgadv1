@@ -19,7 +19,7 @@ interface Props {
 }
 
 export default async function InvoicePurchasePage({ searchParams }: Props) {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/invoices/purchase" })
   if (!current?.cltId) notFound();
 
   const cltId = current.cltId;

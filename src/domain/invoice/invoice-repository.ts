@@ -155,7 +155,7 @@ export async function createInvoiceSales(payload: {
 	sales: Omit<InvoiceSalesInsert, "inv_id">;
 }): Promise<{ invId: string }> {
 
-	const { current } = await getCurrentClient();
+	const { current } = await getCurrentClient({ requireSelected: true, next: "/invoices/sales" })
 	if (!current?.cltId) throw new Error("Aucun client sélectionné");
 	const cltId = current.cltId;
 	if (!cltId) throw new Error("Aucun client sélectionné (clt_id manquant)");
@@ -189,7 +189,7 @@ export async function createInvoicePurchase(payload: {
 	invoice: Omit<InvoiceInsert, "clt_id">;
 	purchase: Omit<InvoicePurchaseInsert, "inv_id">;
 }): Promise<{ invId: string }> {
-	const { current } = await getCurrentClient();
+	const { current } = await getCurrentClient({ requireSelected: true, next: "/invoices/purchase" })
 	if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
 	const supabase = await createSupabaseAdminClient();
@@ -217,7 +217,7 @@ export async function updateInvoiceSales(invId: string, payload: {
 	invoice: InvoiceUpdate;
 	sales: InvoiceSalesUpdate;
 }): Promise<void> {
-	const { current } = await getCurrentClient();
+	const { current } = await getCurrentClient({ requireSelected: true, next: "/invoices/sales" })
 	if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
 	const supabase = await createSupabaseAdminClient();
@@ -242,7 +242,7 @@ export async function updateInvoicePurchase(invId: string, payload: {
 	invoice: InvoiceUpdate;
 	purchase: InvoicePurchaseUpdate;
 }): Promise<void> {
-	const { current } = await getCurrentClient();
+	const { current } = await getCurrentClient({ requireSelected: true, next: "/invoices/purchase" })
 	if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
 	const supabase = await createSupabaseAdminClient();
@@ -355,7 +355,7 @@ const rows = (data ?? []) as unknown as InvoiceListRow[];
 }
 
 export async function deleteInvoiceSales(params: { invId: string }): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/invoices/sales" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = createSupabaseAdminClient();
@@ -374,7 +374,7 @@ export async function deleteInvoiceSales(params: { invId: string }): Promise<voi
 
 
 export async function deleteInvoicePurchase(params: { invId: string }): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/invoices/purchase" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = createSupabaseAdminClient();

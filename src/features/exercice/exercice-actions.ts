@@ -8,7 +8,7 @@ import { mapExerciceFormToInsert, mapExerciceFormToUpdate } from "@/domain/exerc
 import type { ExerciceFormValues } from "@/ui/exercice/exercice-form.types";
 
 export async function saveExercice(data: ExerciceFormValues, exerciceId?: string): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/exercices" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   if (exerciceId) {

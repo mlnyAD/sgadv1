@@ -3,27 +3,66 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { listClientsForCurrentOperateur } from "@/features/session/current-operateur-client-action";
 
 const COOKIE_NAME = "current_clt_id";
 
-export async function getCurrentClient() {
+type GetCurrentClientOptions = {
+  requireSelected?: boolean;
+  next?: string;
+};
 
+export async function getCurrentClient(options?: GetCurrentClientOptions) {
+  
   const allowed = await listClientsForCurrentOperateur();
+
   if (allowed.length === 0) {
+    if (options?.requireSelected) {
+      const safeNext = options.next && options.next.startsWith("/") ? options.next : "/dashboard";
+      redirect(`/select-client?next=${encodeURIComponent(safeNext)}`);
+    }
+
     return { current: null, allowed: [], multi: false };
   }
 
-  const cookieStore = await cookies(); // (si ta version exige await, remets await)
+  const cookieStore = await cookies();
   const c = cookieStore.get(COOKIE_NAME)?.value;
 
-  // 1) on essaie de retrouver le client via le cookie
-  // 2) sinon fallback sur le premier client autorisé
-  const currentRow = (c ? allowed.find((x) => x.clt_id === c) : undefined) ?? allowed[0];
+  const allowedClients = allowed.map((x) => ({
+    cltId: x.clt_id,
+    cltNom: x.clt_nom,
+  }));
+
+  // mono-client => auto
+  if (allowed.length === 1) {
+    const only = allowed[0];
+    return {
+      current: { cltId: only.clt_id, cltNom: only.clt_nom },
+      allowed: allowedClients,
+      multi: false,
+    };
+  }
+
+  // multi-client => cookie valide obligatoire
+  const currentRow = c ? allowed.find((x) => x.clt_id === c) : undefined;
+
+  if (!currentRow) {
+    if (options?.requireSelected) {
+      const safeNext = options.next && options.next.startsWith("/") ? options.next : "/dashboard";
+      redirect(`/select-client?next=${encodeURIComponent(safeNext)}`);
+    }
+
+    return {
+      current: null,
+      allowed: allowedClients,
+      multi: true,
+    };
+  }
 
   return {
     current: { cltId: currentRow.clt_id, cltNom: currentRow.clt_nom },
-    allowed: allowed.map((x) => ({ cltId: x.clt_id, cltNom: x.clt_nom })),
-    multi: allowed.length > 1,
+    allowed: allowedClients,
+    multi: true,
   };
 }

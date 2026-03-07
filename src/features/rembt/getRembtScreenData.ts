@@ -26,7 +26,7 @@ type RembtScreenData = {
 };
 
 export async function getRembtScreenData(params: { exerid?: string }): Promise<RembtScreenData> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/rembt" })
   if (!current?.cltId) throw new Error("Aucun client courant");
   const cltId = current.cltId;
 

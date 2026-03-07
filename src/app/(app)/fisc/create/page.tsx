@@ -8,7 +8,7 @@ import { getActiveExercicesOptions } from "@/domain/exercice/exercice-options";
 import { FiscEditor } from "@/ui/fisc/edit/FiscEditor";
 
 export default async function CreateFiscPage() {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/fisc" })
   if (!current?.cltId) notFound();
   const cltId = current.cltId;
 

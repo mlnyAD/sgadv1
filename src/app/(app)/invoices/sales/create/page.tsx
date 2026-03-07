@@ -11,7 +11,7 @@ import { listCentreCoutOptions } from "@/domain/centre-cout/centre-cout-reposito
 import { toSocieteOptions, toExerciceOptions, toCentreCoutOptions } from "@/ui/invoice/invoice.options";
 
 export default async function InvoiceSalesCreatePage() {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/invoices/sales" })
   if (!current?.cltId) notFound();
 
   const cltId = current.cltId;

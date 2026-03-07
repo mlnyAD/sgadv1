@@ -23,8 +23,10 @@ export function AboutVersionsAccordion() {
 				</AccordionTrigger>
 				<AccordionContent>
 					<div className="mt-2 rounded-lg border bg-white dark:bg-black p-4 shadow-sm">
-						<p className="text-xl text-red-500">Version 1.10 du 26/02/2026</p>
-						<p className="mt-2 text-xs">1 - Ajout transaction bilan </p>
+						<p className="text-xl text-red-500">Version 1.11 du 07/03/2026</p>
+						<p className="mt-2 text-xs">1 - Correction : erreurs taille graphes </p>
+						<p className="mt-2 text-xs">2 - Correction : sélection du client au démarrage </p>
+						<p className="mt-2 text-xs">3 - ajout skeleton dans le layout global (sidebar) </p>
 					</div>
 				</AccordionContent>
 			</AccordionItem>
@@ -32,6 +34,8 @@ export function AboutVersionsAccordion() {
 			<AccordionItem value="history">
 				<AccordionTrigger>Historique</AccordionTrigger>
 				<AccordionContent>
+					<p className="text-xl text-red-500">Version 1.10 du 26/02/2026</p>
+					<p className="mt-2 text-xs">1 - Ajout transaction bilan </p>
 					<p className="text-xl text-red-500">Version 1.9 du 26/02/2026</p>
 					<p className="mt-2 text-xs">1 - Ajout transaction Remboursements </p>
 					<p className="text-xl text-red-500">Version 1.8 du 25/02/2026</p>

@@ -18,7 +18,7 @@ interface Props {
 }
 
 export default async function FiscPage({ searchParams }: Props) {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/fisc" })
   if (!current?.cltId) notFound();
   const cltId = current.cltId;
 

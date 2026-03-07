@@ -33,7 +33,7 @@ export async function getSocieteById(params: {
 }
 
 export async function createSociete(payload: Omit<SocieteInsert, "clt_id">): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/societes" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();
@@ -48,7 +48,7 @@ export async function createSociete(payload: Omit<SocieteInsert, "clt_id">): Pro
 }
 
 export async function updateSociete(societeId: string, payload: SocieteUpdate): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/societes" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();

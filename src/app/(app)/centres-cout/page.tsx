@@ -16,7 +16,7 @@ interface CentreCoutsProps {
 }
 
 export default async function CentreCoutsPage({ searchParams }: CentreCoutsProps) {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/centres-cout" })
   if (!current) notFound();
   if (!current.cltId) notFound();
 

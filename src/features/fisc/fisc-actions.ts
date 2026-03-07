@@ -13,7 +13,7 @@ import { revalidatePath } from "next/cache";
 import { deleteFisc } from "@/domain/fisc/fisc-repository";
 
 export async function saveFisc(data: FiscFormValues, fiscId?: string): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/fisc" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   if (fiscId) {

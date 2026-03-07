@@ -6,6 +6,6 @@ import { getDashboardData } from "@/features/dashboard/getdashboarddata";
 import { DashboardScreen } from "@/ui/dashboard/DashboardScreen";
 
 export default async function Page() {
-  const data = await getDashboardData(); // mock au départ
+  const data = await getDashboardData();
   return <DashboardScreen data={data} />;
 }

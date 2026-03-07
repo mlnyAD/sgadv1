@@ -36,9 +36,9 @@ export function DashboardScreen(props: { data: DashboardData }) {
         <InvoicesCard data={data} />
         <PurchasesCard data={data} />
 
-        {/* Ligne 2 */}
+        {/* Ligne 2  */}
         <SalesCard data={data} />
-        <PurchasesByCostCenterCard data={data} />
+        <PurchasesByCostCenterCard data={data} /> 
       </div>
     </div>
   );

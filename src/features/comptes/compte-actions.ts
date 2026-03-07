@@ -8,7 +8,7 @@ import { mapCompteFormToInsert, mapCompteFormToUpdate } from "@/domain/compte/co
 import type { CompteFormValues } from "@/ui/compte/compte-form.types";
 
 export async function saveCompte(data: CompteFormValues, compteId?: string): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/comptes" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   if (compteId) {

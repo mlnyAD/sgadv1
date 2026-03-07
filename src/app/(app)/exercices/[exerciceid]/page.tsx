@@ -12,7 +12,7 @@ type Props = {
 export default async function EditExercicePage({ params }: Props) {
   const { exerciceid } = await params;
 
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/exercices" })
   if (!current?.cltId) notFound();
   const cltId = current.cltId;
 

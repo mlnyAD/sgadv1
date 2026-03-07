@@ -8,7 +8,7 @@ import { mapCentreCoutFormToInsert, mapCentreCoutFormToUpdate } from "@/domain/c
 import type { CentreCoutFormValues } from "@/ui/centre-cout/centre-cout-form.types";
 
 export async function saveCentreCout(data: CentreCoutFormValues, centreCoutId?: string): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/centres-cout" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   if (centreCoutId) {

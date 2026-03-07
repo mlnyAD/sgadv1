@@ -30,7 +30,7 @@ export async function getCompteById(params: {
 }
 
 export async function createCompte(payload: Omit<TroCompteInsert, "tro_clt_id">): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/comptes" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();
@@ -62,7 +62,7 @@ export async function createCompte(payload: Omit<TroCompteInsert, "tro_clt_id">)
 }
 
 export async function updateCompte(compteId: string, payload: TroCompteUpdate): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/comptes" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();
@@ -131,7 +131,7 @@ export async function listCompteOptions(params: {
 }
 
 export async function softDeleteCompte(compteId: string): Promise<void> {
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/comptes" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();

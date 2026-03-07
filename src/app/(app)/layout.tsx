@@ -17,7 +17,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     redirect("/dashboard-admin");
   }
 
-  const { current } = await getCurrentClient();
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/dashboard" })
 
   // si pas de client courant, on passe par ensure + retour vers dashboard
   if (!current) {
