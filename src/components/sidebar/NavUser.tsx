@@ -56,7 +56,7 @@ export default function NavUser() {
 
 					{/* ✔ un seul enfant : Link */}
 					<DropdownMenuItem asChild>
-						<Link href="/profile">Mon profil</Link>
+						<Link href="/wait">Mon profil</Link>
 					</DropdownMenuItem>
 					<DropdownMenuItem asChild>
 						<Link href="/about">About</Link>

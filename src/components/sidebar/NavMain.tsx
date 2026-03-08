@@ -130,6 +130,12 @@ const ITEMS: NavItem[] = [
 		icon: Scale,
 	},
 	{
+		id: "export",
+		title: "Exports",
+		href: "/exports",
+		icon: Scale,
+	},
+	{
 		id: "todo",
 		title: "ToDo Liste",
 		href: "/wait",
