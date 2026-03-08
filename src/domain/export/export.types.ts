@@ -1,8 +1,12 @@
 
 
-export type ExportFormat = "xlsx";
+import type { Database } from "@/lib/supabase/database.types";
 
+export type ExportFormat = "xlsx";
 export type ExportScope = "METIER" | "ADMINSYS";
+
+type PublicViews = Database["public"]["Views"];
+export type ExportViewName = keyof PublicViews;
 
 export type ExportFilter =
   | {
@@ -25,7 +29,7 @@ export type ExportColumn = {
 export type ExportDefinition = {
   key: string;
   label: string;
-  view: string;
+  view: ExportViewName;
   scope: ExportScope;
   filters?: ExportFilter[];
   columns: ExportColumn[];

@@ -6,138 +6,16 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-type ExportFormat = "xlsx";
+import { EXPORTS } from "@/domain/export/export.catalog";
+import type { ExportDefinition, ExportFilter } from "@/domain/export/export.types";
 
-type ExportFilter =
-  | {
-      type: "exercice";
-      label: string;
-      column: string;
-    }
-  | {
-      type: "dateRange";
-      label: string;
-      fromColumn: string;
-      toColumn?: string;
-    };
-
-type ExportColumn = {
-  key: string;
-  header: string;
-};
-
-type ExportDefinition = {
-  key: string;
-  label: string;
-  view: string;
-  scope: "METIER" | "ADMINSYS";
-  filters?: ExportFilter[];
-  columns: ExportColumn[];
-  formats: ExportFormat[];
-};
-
-const EXPORTS: ExportDefinition[] = [
-  {
-    key: "invoice-purchase",
-    label: "Factures fournisseurs",
-    view: "vw_invoice_purchase_view",
-    scope: "METIER",
-    filters: [
-      {
-        type: "exercice",
-        label: "Exercice",
-        column: "exercice",
-      },
-      {
-        type: "dateRange",
-        label: "Période",
-        fromColumn: "inv_due_date",
-      },
-    ],
-    formats: ["xlsx"],
-    columns: [
-      { key: "inv_due_date", header: "Date" },
-      { key: "inv_reference", header: "Numéro" },
-      { key: "soc_nom", header: "Société" },
-      { key: "cc_libelle", header: "Centre de coût" },
-      { key: "inv_amount_ht", header: "Montant HT" },
-      { key: "inv_amount_tax", header: "TVA" },
-      { key: "inv_amount_ttc", header: "Montant TTC" },
-    ],
-  },
-  {
-    key: "invoice-sales",
-    label: "Factures clients",
-    view: "vw_invoice_sales_view",
-    scope: "METIER",
-    filters: [
-      {
-        type: "exercice",
-        label: "Exercice",
-        column: "exercice",
-      },
-      {
-        type: "dateRange",
-        label: "Période",
-        fromColumn: "inv_due_date",
-      },
-    ],
-    formats: ["xlsx"],
-    columns: [
-      { key: "inv_due_date", header: "Date" },
-      { key: "inv_reference", header: "Numéro" },
-      { key: "clt_nom", header: "Client" },
-      { key: "invs_revenue_type", header: "Type revenu" },
-      { key: "inv_amount_ht", header: "Montant HT" },
-      { key: "inv_amount_tax", header: "TVA" },
-      { key: "inv_amount_ttc", header: "Montant TTC" },
-    ],
-  },
-  {
-    key: "budget",
-    label: "Budgets",
-    view: "vw_budget_view",
-    scope: "METIER",
-    filters: [
-      {
-        type: "exercice",
-        label: "Exercice",
-        column: "exercice",
-      },
-    ],
-    formats: ["xlsx"],
-    columns: [
-      { key: "famille_libelle", header: "Famille" },
-      { key: "budget_ht_eur", header: "Budget HT €" },
-    ],
-  },
-  {
-    key: "remboursement",
-    label: "Remboursements",
-    view: "vw_remboursement_view",
-    scope: "METIER",
-    filters: [
-      {
-        type: "exercice",
-        label: "Exercice",
-        column: "exercice",
-      },
-    ],
-    formats: ["xlsx"],
-    columns: [
-      { key: "rbt_date", header: "Date" },
-      { key: "rbt_amount", header: "Montant" },
-      { key: "rbt_commentaires", header: "Commentaires" },
-    ],
-  },
-];
-
-function getDefaultExport(exportsList: ExportDefinition[], selectedKey?: string | null) {
+function getDefaultExport(
+  exportsList: ExportDefinition[],
+  selectedKey?: string | null,
+) {
   if (selectedKey) {
     const found = exportsList.find((item) => item.key === selectedKey);
-    if (found) {
-      return found;
-    }
+    if (found) return found;
   }
 
   return exportsList[0] ?? null;
@@ -176,7 +54,7 @@ export default function ExportsPage() {
   const hasFilter = (type: ExportFilter["type"]) =>
     (selectedExport.filters ?? []).some((filter) => filter.type === type);
 
-  const handleSubmit = async () => {
+  async function handleSubmit() {
     try {
       setErrorMessage("");
       setIsSubmitting(true);
@@ -235,18 +113,15 @@ export default function ExportsPage() {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   return (
     <main className="min-h-full bg-slate-50 p-6">
       <div className="mx-auto max-w-7xl">
         <header className="mb-6">
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-            Transaction Export
+            Exports
           </h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Export générique basé sur le catalogue déclaratif et les vues SQL.
-          </p>
         </header>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
@@ -273,14 +148,6 @@ export default function ExportsPage() {
                     ].join(" ")}
                   >
                     <div className="text-sm font-medium">{item.label}</div>
-                    <div
-                      className={[
-                        "mt-1 text-xs",
-                        isActive ? "text-slate-200" : "text-slate-500",
-                      ].join(" ")}
-                    >
-                      {item.key}
-                    </div>
                   </Link>
                 );
               })}
@@ -302,12 +169,8 @@ export default function ExportsPage() {
 
                   <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
                     <div>
-                      <span className="font-medium text-slate-800">Vue :</span>{" "}
-                      {selectedExport.view}
-                    </div>
-                    <div className="mt-1">
-                      <span className="font-medium text-slate-800">Scope :</span>{" "}
-                      {selectedExport.scope}
+                      <span className="font-medium text-slate-800">Format :</span>{" "}
+                      XLSX
                     </div>
                   </div>
                 </div>
@@ -363,40 +226,42 @@ export default function ExportsPage() {
                 </div>
               </div>
 
-              <div>
-                <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-500">
+              <details className="rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="cursor-pointer list-none px-4 py-3 text-sm font-medium text-slate-700">
                   Colonnes exportées
-                </h3>
+                </summary>
 
-                <div className="overflow-hidden rounded-xl border border-slate-200">
-                  <table className="min-w-full divide-y divide-slate-200 text-sm">
-                    <thead className="bg-slate-50">
-                      <tr>
-                        <th className="px-4 py-3 text-left font-medium text-slate-700">
-                          Clé
-                        </th>
-                        <th className="px-4 py-3 text-left font-medium text-slate-700">
-                          Libellé
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 bg-white">
-                      {selectedExport.columns.map((column) => (
-                        <tr key={column.key}>
-                          <td className="px-4 py-3 text-slate-600">
-                            <code className="rounded bg-slate-100 px-2 py-1 text-xs text-slate-800">
-                              {column.key}
-                            </code>
-                          </td>
-                          <td className="px-4 py-3 text-slate-800">
-                            {column.header}
-                          </td>
+                <div className="border-t border-slate-200 bg-white">
+                  <div className="overflow-hidden rounded-b-xl">
+                    <table className="min-w-full divide-y divide-slate-200 text-sm">
+                      <thead className="bg-slate-50">
+                        <tr>
+                          <th className="px-4 py-3 text-left font-medium text-slate-700">
+                            Clé
+                          </th>
+                          <th className="px-4 py-3 text-left font-medium text-slate-700">
+                            Libellé
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 bg-white">
+                        {selectedExport.columns.map((column) => (
+                          <tr key={column.key}>
+                            <td className="px-4 py-3 text-slate-600">
+                              <code className="rounded bg-slate-100 px-2 py-1 text-xs text-slate-800">
+                                {column.key}
+                              </code>
+                            </td>
+                            <td className="px-4 py-3 text-slate-800">
+                              {column.header}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
+              </details>
 
               {errorMessage ? (
                 <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">

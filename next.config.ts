@@ -10,6 +10,16 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
 
   // Rien d'autre n'est nécessaire pour un projet App Router + Supabase
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "xfaitxgzmoqcqogjbdcy.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+    ],
+  },
 };
+
 
 export default nextConfig;

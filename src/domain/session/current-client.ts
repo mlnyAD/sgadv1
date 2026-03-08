@@ -14,12 +14,15 @@ type GetCurrentClientOptions = {
 };
 
 export async function getCurrentClient(options?: GetCurrentClientOptions) {
-  
   const allowed = await listClientsForCurrentOperateur();
 
   if (allowed.length === 0) {
     if (options?.requireSelected) {
-      const safeNext = options.next && options.next.startsWith("/") ? options.next : "/dashboard";
+      const safeNext =
+        options.next && options.next.startsWith("/")
+          ? options.next
+          : "/dashboard";
+
       redirect(`/select-client?next=${encodeURIComponent(safeNext)}`);
     }
 
@@ -32,24 +35,32 @@ export async function getCurrentClient(options?: GetCurrentClientOptions) {
   const allowedClients = allowed.map((x) => ({
     cltId: x.clt_id,
     cltNom: x.clt_nom,
+    cltLogoPath: x.clt_logo_path ?? null,
   }));
 
-  // mono-client => auto
   if (allowed.length === 1) {
     const only = allowed[0];
+
     return {
-      current: { cltId: only.clt_id, cltNom: only.clt_nom },
+      current: {
+        cltId: only.clt_id,
+        cltNom: only.clt_nom,
+        cltLogoPath: only.clt_logo_path ?? null,
+      },
       allowed: allowedClients,
       multi: false,
     };
   }
 
-  // multi-client => cookie valide obligatoire
   const currentRow = c ? allowed.find((x) => x.clt_id === c) : undefined;
 
   if (!currentRow) {
     if (options?.requireSelected) {
-      const safeNext = options.next && options.next.startsWith("/") ? options.next : "/dashboard";
+      const safeNext =
+        options.next && options.next.startsWith("/")
+          ? options.next
+          : "/dashboard";
+
       redirect(`/select-client?next=${encodeURIComponent(safeNext)}`);
     }
 
@@ -61,7 +72,11 @@ export async function getCurrentClient(options?: GetCurrentClientOptions) {
   }
 
   return {
-    current: { cltId: currentRow.clt_id, cltNom: currentRow.clt_nom },
+    current: {
+      cltId: currentRow.clt_id,
+      cltNom: currentRow.clt_nom,
+      cltLogoPath: currentRow.clt_logo_path ?? null,
+    },
     allowed: allowedClients,
     multi: true,
   };

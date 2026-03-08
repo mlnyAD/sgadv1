@@ -94,6 +94,7 @@ export type Database = {
           clt_code_postal: string | null
           clt_email: string | null
           clt_id: string
+          clt_logo_path: string | null
           clt_nom: string
           clt_pays: string | null
           clt_telephone: string | null
@@ -107,6 +108,7 @@ export type Database = {
           clt_code_postal?: string | null
           clt_email?: string | null
           clt_id?: string
+          clt_logo_path?: string | null
           clt_nom: string
           clt_pays?: string | null
           clt_telephone?: string | null
@@ -120,6 +122,7 @@ export type Database = {
           clt_code_postal?: string | null
           clt_email?: string | null
           clt_id?: string
+          clt_logo_path?: string | null
           clt_nom?: string
           clt_pays?: string | null
           clt_telephone?: string | null
@@ -743,6 +746,7 @@ export type Database = {
           clt_code_postal: string | null
           clt_email: string | null
           clt_id: string | null
+          clt_logo_path: string | null
           clt_nom: string | null
           clt_pays: string | null
           clt_telephone: string | null
@@ -756,6 +760,7 @@ export type Database = {
           clt_code_postal?: string | null
           clt_email?: string | null
           clt_id?: string | null
+          clt_logo_path?: string | null
           clt_nom?: string | null
           clt_pays?: string | null
           clt_telephone?: string | null
@@ -769,6 +774,7 @@ export type Database = {
           clt_code_postal?: string | null
           clt_email?: string | null
           clt_id?: string | null
+          clt_logo_path?: string | null
           clt_nom?: string | null
           clt_pays?: string | null
           clt_telephone?: string | null
@@ -1037,6 +1043,7 @@ export type Database = {
         Row: {
           clt_actif: boolean | null
           clt_id: string | null
+          clt_logo_path: string | null
           clt_nom: string | null
           lmod: string | null
           opcl_id: string | null
