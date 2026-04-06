@@ -29,14 +29,43 @@ export async function getCompteById(params: {
   return mapCompteRowToView(data as unknown as TroCompteRow);
 }
 
-export async function createCompte(payload: Omit<TroCompteInsert, "tro_clt_id">): Promise<void> {
-  const { current } = await getCurrentClient({ requireSelected: true, next: "/comptes" })
-  if (!current?.cltId) throw new Error("Aucun client sélectionné");
+export async function createCompte(
+  payload: Omit<TroCompteInsert, "tro_clt_id">
+): Promise<void> {
+  const { current } = await getCurrentClient({
+    requireSelected: true,
+    next: "/comptes",
+  });
+
+  if (!current?.cltId) {
+    throw new Error("Aucun client sélectionné");
+  }
 
   const supabase = await createSupabaseAdminClient();
 
-  // Ordre auto si absent (transaction simple)
-  let ordre = (payload as any).tro_cpt_ordre ?? null;
+  const compteNom = String(payload.tro_cpt_nom ?? "").trim();
+
+  if (!compteNom) {
+    throw new Error("Le nom du compte est obligatoire.");
+  }
+
+  const { data: existingCompte, error: existingError } = await supabase
+    .from("tro_compte")
+    .select("tro_cpt_id")
+    .eq("tro_clt_id", current.cltId)
+    .eq("tro_cpt_nom", compteNom)
+    .maybeSingle();
+
+  if (existingError) {
+    throw new Error(existingError.message);
+  }
+
+  if (existingCompte) {
+    throw new Error("Un compte portant déjà ce nom existe pour ce client.");
+  }
+
+  let ordre = payload.tro_cpt_ordre ?? null;
+
   if (ordre == null) {
     const { data: maxRow, error: maxErr } = await supabase
       .from("tro_compte")
@@ -46,20 +75,30 @@ export async function createCompte(payload: Omit<TroCompteInsert, "tro_clt_id">)
       .limit(1)
       .maybeSingle();
 
-    if (maxErr) throw new Error(maxErr.message);
+    if (maxErr) {
+      throw new Error(maxErr.message);
+    }
 
-    const maxOrdre = (maxRow?.tro_cpt_ordre as number | null) ?? 0;
+    const maxOrdre = maxRow?.tro_cpt_ordre ?? 0;
     ordre = maxOrdre + 1;
   }
 
   const { error } = await supabase.from("tro_compte").insert({
     ...payload,
+    tro_cpt_nom: compteNom,
     tro_cpt_ordre: ordre,
     tro_clt_id: current.cltId,
   });
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    if (error.message.includes("uq_tro_compte_nom_clt")) {
+      throw new Error("Un compte portant déjà ce nom existe pour ce client.");
+    }
+
+    throw new Error(error.message);
+  }
 }
+
 
 export async function updateCompte(compteId: string, payload: TroCompteUpdate): Promise<void> {
   const { current } = await getCurrentClient({ requireSelected: true, next: "/comptes" })
@@ -86,6 +125,8 @@ export async function listComptes(params: {
 
   const supabase = await createSupabaseServerReadClient();
 
+  //console.log("listComptes avant appel Supabase cltId, page, pageSize, search, actif", cltId,  page, pageSize, search, actif )
+
   let query = supabase
     .from("vw_tro_compte_view")
     .select(SELECT_COMPTE_VIEW, { count: "exact" })
@@ -100,9 +141,14 @@ export async function listComptes(params: {
   const to = from + pageSize - 1;
 
   const { data, error, count } = await query.range(from, to);
+
+  //console.log("Après appel Supabse, data, error ", data, error);
+
   if (error) throw new Error(error.message);
 
   const rows = (data ?? []) as unknown as TroCompteRow[];
+
+  //console.log("listComptes retour", rows)
 
   return {
     data: rows.map(mapCompteRowToView),

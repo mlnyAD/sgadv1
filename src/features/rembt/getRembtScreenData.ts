@@ -59,16 +59,16 @@ export async function getRembtScreenData(params: { exerid?: string }): Promise<R
     };
   }
 
-  const { data: invpRows, error: invpErr } = await supabase
-    .from(DB.views.invoicePurchase)
-    .select("invp_paid_by_third_party_amount, exer_code")
+  const { data: purRows, error: purErr } = await supabase
+    .from(DB.views.Purchase)
+    .select("pur_paid_by_third_party_amount, exer_code")
     .eq("clt_id", cltId)
     .eq("exer_id", resolvedExerId);
 
-  if (invpErr) throw new Error(invpErr.message);
+  if (purErr) throw new Error(purErr.message);
 
-  const toRefundAmount = (invpRows ?? []).reduce(
-    (acc, r) => acc + Number(r.invp_paid_by_third_party_amount ?? 0),
+  const toRefundAmount = (purRows ?? []).reduce(
+    (acc, r) => acc + Number(r.pur_paid_by_third_party_amount ?? 0),
     0
   );
 
@@ -88,7 +88,7 @@ export async function getRembtScreenData(params: { exerid?: string }): Promise<R
   );
 
   const exerCode =
-    (invpRows?.[0]?.exer_code ?? rembRows?.[0]?.exer_code ?? null) as string | null;
+    (purRows?.[0]?.exer_code ?? rembRows?.[0]?.exer_code ?? null) as string | null;
 
   const rows: RembtRow[] = (rembRows ?? [])
     .filter((r) => !!r.rbt_id && !!r.rbt_date)

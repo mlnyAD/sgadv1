@@ -4,9 +4,9 @@ import type { ExportDefinition } from "./export.types";
 
 export const EXPORTS: ExportDefinition[] = [
   {
-    key: "invoice-purchase",
+    key: "purchase",
     label: "Factures fournisseurs",
-    view: "vw_invoice_purchase_view",
+    view: "vw_purchase_view",
     scope: "METIER",
     filters: [
       {
@@ -14,28 +14,23 @@ export const EXPORTS: ExportDefinition[] = [
         label: "Exercice",
         column: "exer_code",
       },
-      {
-        type: "dateRange",
-        label: "Période",
-        fromColumn: "inv_due_date",
-      },
     ],
     formats: ["xlsx"],
     columns: [
-      { key: "inv_due_date", header: "Date" },
-      { key: "inv_reference", header: "Numéro" },
+      { key: "pur_purchase_date", header: "Date" },
+      { key: "pur_reference", header: "Numéro" },
       { key: "soc_nom", header: "Société" },
       { key: "cc_libelle", header: "Centre de coût" },
-      { key: "inv_amount_ht", header: "Montant HT" },
-      { key: "inv_amount_tax", header: "TVA" },
-      { key: "inv_amount_ttc", header: "Montant TTC" },
+      { key: "pur_amount_ht", header: "Montant HT" },
+      { key: "pur_amount_tax", header: "TVA" },
+      { key: "pur_amount_ttc", header: "Montant TTC" },
     ],
   },
 
   {
-    key: "invoice-sales",
+    key: "sales",
     label: "Factures clients",
-    view: "vw_invoice_sales_view",
+    view: "vw_sales_view",
     scope: "METIER",
     filters: [
       {
@@ -43,21 +38,16 @@ export const EXPORTS: ExportDefinition[] = [
         label: "Exercice",
         column: "exer_code",
       },
-      {
-        type: "dateRange",
-        label: "Période",
-        fromColumn: "inv_due_date",
-      },
     ],
     formats: ["xlsx"],
     columns: [
-      { key: "inv_due_date", header: "Date" },
-      { key: "inv_reference", header: "Numéro" },
+      { key: "sal_invoice_date", header: "Date" },
+      { key: "sal_reference", header: "Numéro" },
       { key: "clt_nom", header: "Client" },
-      { key: "invs_revenue_type", header: "Type revenu" },
-      { key: "inv_amount_ht", header: "Montant HT" },
-      { key: "inv_amount_tax", header: "TVA" },
-      { key: "inv_amount_ttc", header: "Montant TTC" },
+      { key: "sal_revenue_type", header: "Type revenu" },
+      { key: "sal_amount_ht", header: "Montant HT" },
+      { key: "sal_amount_tax", header: "TVA" },
+      { key: "sal_amount_ttc", header: "Montant TTC" },
     ],
   },
 {

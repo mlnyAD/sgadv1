@@ -42,10 +42,20 @@ export async function getBudgetLineByBudId(params: {
 }
 
 export async function createBudgetLine(payload: Omit<BudgetInsert, "clt_id">): Promise<void> {
+
   const { current } = await getCurrentClient({requireSelected: true, next: "/budgets", });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
   const supabase = await createSupabaseAdminClient();
+
+  //console.log("budget insert payload", { ...payload, clt_id: current.cltId });
+  if (payload.bud_kind === "SALES" && !payload.revenue_type_id) {
+  throw new Error("Budget SALES invalide : revenue_type_id manquant.");
+}
+if (payload.bud_kind === "PURCHASE" && !payload.cc_id) {
+  throw new Error("Budget PURCHASE invalide : cc_id manquant.");
+}
+
   const { error } = await supabase.from("budget").insert({ ...payload, clt_id: current.cltId });
   if (error) throw new Error(error.message);
 }
@@ -173,7 +183,7 @@ export async function listBudgetPurchaseLines(params: { cltId: string; exerid: s
 
   if (error) throw new Error(error.message);
 
-  console.log("listBudgetPurchaseLines data, error ", data, error)
+  //console.log("listBudgetPurchaseLines data, error ", data, error)
 
   return (data ?? []) as unknown as BudgetPurchaseLineRow[];
 }

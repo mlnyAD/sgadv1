@@ -144,16 +144,16 @@ export function BudgetScreen(props: {
 								</SelectContent>
 							</Select>
 						</div>
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center h-9 px-4 rounded-md border border-muted-foreground/40 text-foreground hover:bg-muted text-base"
-        >
-          Fermer
-        </Link>
-						<Button 
+						<Link
+							href="/dashboard"
+							className="inline-flex items-center h-9 px-4 rounded-md border border-muted-foreground/40 text-foreground hover:bg-muted text-base"
+						>
+							Fermer
+						</Link>
+						<Button
 							type="button"
 							variant="axcio"
-							onClick={onSave} 
+							onClick={onSave}
 							disabled={isSaving}>
 							{isSaving ? "Enregistrement..." : "Enregistrer"}
 						</Button>

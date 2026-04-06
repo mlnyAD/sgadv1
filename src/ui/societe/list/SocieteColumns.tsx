@@ -49,13 +49,13 @@ export function getSocieteColumns(options: {
 			accessorKey: "client",
 			header: "Client",
 			cell: ({ row }) =>
-				row.original.client ? "Non" : "Oui",
+				row.original.client ? "Oui" : "Non",
 		},
 		{
 			accessorKey: "fournisseur",
 			header: "Fournisseur",
 			cell: ({ row }) =>
-				row.original.fournisseur ? "Non" : "Oui",
+				row.original.fournisseur ? "Oui" : "Non",
 		},
 		{
 			id: "actions",

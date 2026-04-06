@@ -1,31 +1,23 @@
 
 
-// src/ui/fisc/fields/FiscMontantField.tsx
+import { FormRow } from "@/ui/_shared/form/FormRow";
+import { AppDecimalInput } from "@/ui/_shared/form/AppDecimalInput";
+
 interface Props {
   value: number;
   onChange: (value: number) => void;
   error?: string | null;
 }
 
-export function FiscMontantField({ value, onChange, error }: Props) {
+export function FiscMontantField({value, onChange, error, }: Props) {
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center border-b border-muted pb-2">
-      <label className="md:col-span-1 text-sm font-medium">Montant</label>
-
-      <div className="md:col-span-5">
-        <input
-          type="number"
-          step="0.01"
-          className="h-9 w-full rounded-md border px-3 text-sm"
-          value={Number.isFinite(value) ? value : 0}
-          onChange={(e) => {
-            const n = Number(e.target.value);
-            onChange(Number.isFinite(n) ? n : 0);
-          }}
-        />
-
-        {error ? <p className="text-sm text-destructive">{error}</p> : null}
-      </div>
-    </div>
+    <FormRow label="Montant" error={error}>
+      <AppDecimalInput
+        value={value}
+        onChange={onChange}
+        invalid={!!error}
+      />
+    </FormRow>
   );
 }

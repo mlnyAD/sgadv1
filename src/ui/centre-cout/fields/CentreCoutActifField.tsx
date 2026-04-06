@@ -1,10 +1,8 @@
 
-
-
-
 "use client";
 
-import { Switch } from "@/components/ui/switch";
+import { FormRow } from "@/ui/_shared/form/FormRow";
+import { AppSwitchControl } from "@/ui/_shared/form/AppSwitchControl";
 
 interface Props {
   value: boolean;
@@ -12,33 +10,16 @@ interface Props {
   error?: string | null;
 }
 
-export function CentreCoutActifField({
-  value,
-  onChange,
-  error,
-}: Props) {
+export function CentreCoutActifField({value, onChange, error, }: Props) {
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center border-b border-muted pb-2">
-      <label className="md:col-span-1 text-sm font-medium">
-        Actif
-      </label>
-
-      <div className="md:col-span-5 flex items-center gap-3">
-        <Switch
-          checked={value}
-          onCheckedChange={onChange}
-        />
-
-        <span className="text-sm text-muted-foreground">
-          {value ? "Oui" : "Non"}
-        </span>
-      </div>
-
-      {error && (
-        <p className="md:col-span-6 text-sm text-destructive">
-          {error}
-        </p>
-      )}
-    </div>
+    <FormRow label="Actif ?" error={error}>
+      <AppSwitchControl
+        checked={value}
+        onChange={onChange}
+        trueLabel="Oui"
+        falseLabel="Non"
+      />
+    </FormRow>
   );
 }

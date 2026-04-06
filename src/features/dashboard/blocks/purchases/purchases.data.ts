@@ -13,9 +13,9 @@ type CentreCoutRow = {
   famille_id: number | null;
 };
 
-type InvoiceRow = {
+type PurchaseRow = {
   cc_id: string | null;
-  inv_amount_ht: number | null;
+  pur_amount_ht: number | null;
 };
 
 type BudgetRow = {
@@ -43,9 +43,9 @@ export async function loadPurchasesBlock(
   }
 
   // 2️⃣ Réalisé achats
-  const { data: invRows, error: invErr } = await supabase
-    .from("vw_invoice_purchase_view")
-    .select("cc_id, inv_amount_ht")
+  const { data: purRows, error: invErr } = await supabase
+    .from("vw_purchase_view")
+    .select("cc_id, pur_amount_ht")
     .eq("exer_id", exerId);
 
   if (invErr) throw invErr;
@@ -53,12 +53,12 @@ export async function loadPurchasesBlock(
   const realizedByFamille = new Map<number, number>();
   let totalRealized = 0;
 
-  for (const r of (invRows ?? []) as InvoiceRow[]) {
+  for (const r of (purRows ?? []) as PurchaseRow[]) {
     const famId = toCentreCoutFamilleId(
       ccToFamille.get(r.cc_id ?? "") ?? 8
     );
 
-    const amount = r.inv_amount_ht ?? 0;
+    const amount = r.pur_amount_ht ?? 0;
     totalRealized += amount;
 
     realizedByFamille.set(

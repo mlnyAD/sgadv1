@@ -29,14 +29,14 @@ export async function POST(req: NextRequest) {
       {
         exportKey: body.exportKey,
         exercice: body.exercice,
-        dateFrom: body.dateFrom,
-        dateTo: body.dateTo,
       },
       {
         userId: "current-user",
         cltId: current.cltId,
       },
     );
+
+    console.log("export - result = ", result.buffer);
 
     return new NextResponse(new Uint8Array(result.buffer), {
       status: 200,

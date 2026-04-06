@@ -29,6 +29,8 @@ export default async function ComptesPage({ searchParams }: ComptesProps) {
   const search = typeof query.search === "string" ? query.search : undefined;
   const actif = typeof query.actif === "string" ? query.actif === "true" : undefined;
 
+  //console.log("Avant appel listComptes cltId, page, pagesize", cltId, page, pageSize)
+
   const { data, total } = await listComptes({
     cltId,
     page,

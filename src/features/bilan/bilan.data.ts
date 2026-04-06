@@ -3,7 +3,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 type BudgetRow = { budget_ht_eur: number | null };
-type InvoiceRow = { inv_amount_ht: number | null };
+type SalesRow = { sal_amount_ht: number | null };
+type PurchaseRow = { pur_amount_ht: number | null };
 
 export async function loadSalesTotals(
   supabase: SupabaseClient,
@@ -16,15 +17,15 @@ export async function loadSalesTotals(
     .eq("exer_id", args.exerId);
   if (budErr) throw budErr;
 
-  const { data: invRows, error: invErr } = await supabase
-    .from("vw_invoice_sales_view")
-    .select("inv_amount_ht")
+  const { data: salRows, error: invErr } = await supabase
+    .from("vw_sales_view")
+    .select("sal_amount_ht")
     .eq("clt_id", args.cltId)
     .eq("exer_id", args.exerId);
   if (invErr) throw invErr;
 
   const totalBudget = (budRows ?? []).reduce((a, r: BudgetRow) => a + (r.budget_ht_eur ?? 0), 0);
-  const totalReal = (invRows ?? []).reduce((a, r: InvoiceRow) => a + (r.inv_amount_ht ?? 0), 0);
+  const totalReal = (salRows ?? []).reduce((a, r: SalesRow) => a + (r.sal_amount_ht ?? 0), 0);
 
   return {
     totalBudgetEur: Math.round(totalBudget),
@@ -43,15 +44,15 @@ export async function loadPurchaseTotals(
     .eq("exer_id", args.exerId);
   if (budErr) throw budErr;
 
-  const { data: invRows, error: invErr } = await supabase
-    .from("vw_invoice_purchase_view")
-    .select("inv_amount_ht")
+  const { data: purRows, error: invErr } = await supabase
+    .from("vw_purchase_view")
+    .select("pur_amount_ht")
     .eq("clt_id", args.cltId)
     .eq("exer_id", args.exerId);
   if (invErr) throw invErr;
 
   const totalBudget = (budRows ?? []).reduce((a, r: BudgetRow) => a + (r.budget_ht_eur ?? 0), 0);
-  const totalReal = (invRows ?? []).reduce((a, r: InvoiceRow) => a + (r.inv_amount_ht ?? 0), 0);
+  const totalReal = (purRows ?? []).reduce((a, r: PurchaseRow) => a + (r.pur_amount_ht ?? 0), 0);
 
   return {
     totalBudgetEur: Math.round(totalBudget),

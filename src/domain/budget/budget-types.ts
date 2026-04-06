@@ -1,7 +1,8 @@
 
 
-import type { InvoiceTypeId, RevenueTypeId } from "@/domain/invoice/invoice-types.catalog";
+import type { RevenueTypeId } from "@/domain/revenus/revenue-types.catalog";
 import type { CentreCoutFamilleId } from "@/domain/centre-cout/centre-cout-familles.catalog";
+import type { BudgetKind } from "@/domain/budget/budget-kind";
 
 export interface BudgetView {
   id: string;
@@ -13,7 +14,7 @@ export interface BudgetView {
   centrecoutCode: string | null;
   centrecoutLibelle: string | null;
 
-  kind: InvoiceTypeId; // ✅ 1 ou 2
+  kind: BudgetKind;
 
   exerId: string;
   exerCode: string | null;
@@ -29,3 +30,23 @@ export interface BudgetView {
   created_at: string;
   updated_at: string;
 }
+
+export type BudgetDraftRow = {
+  key: string;
+
+  budid: string | null;
+  exerid: string;
+
+  kind: BudgetKind;
+
+  ccid: string | null;
+  cccode: string | null;
+  cclibelle: string | null;
+  familleid: CentreCoutFamilleId | null;
+
+  revenuetypeid: RevenueTypeId | null;
+
+  amountHTEur: number;
+
+  sortKey: string;
+};

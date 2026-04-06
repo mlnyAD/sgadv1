@@ -1,6 +1,7 @@
 
 
-
+import { AppInput } from "@/ui/_shared/form/AppInput";
+import { FormRow } from "@/ui/_shared/form/FormRow";
 
 interface Props {
   value: string;
@@ -10,25 +11,12 @@ interface Props {
 
 export function SocieteAdresseField({ value, onChange, error }: Props) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center border-b border-muted pb-2">
-      <label className="md:col-span-1 text-sm font-medium">
-        Adresse
-      </label>
-
-      <div className="md:col-span-5">
-        <input
-          type="text"
-          className="h-9 w-full rounded-md border px-3 text-sm"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-        />
-
-        {error && (
-          <p className="text-sm text-destructive">
-            {error}
-          </p>
-        )}
-      </div>
-    </div>
+    <FormRow label="Adresse" error={error}>
+      <AppInput
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        invalid={!!error}
+      />
+    </FormRow>
   );
 }

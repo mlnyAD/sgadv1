@@ -3,18 +3,17 @@
 // src/features/budget/budget-skeleton.ts
 import type { BudgetView } from "@/domain/budget/budget-types";
 import type { CentreCoutViewRow } from "@/domain/centre-cout/centre-cout-repository";
-
+import type { BudgetKind } from "@/domain/budget/budget-kind";
 import {
   REVENUE_TYPES,
-  type InvoiceTypeId,
   type RevenueTypeId,
-} from "@/domain/invoice/invoice-types.catalog";
+} from "@/domain/revenus/revenue-types.catalog";
 
 import { toCentreCoutFamilleId, type CentreCoutFamilleId } from "@/domain/centre-cout/centre-cout-familles.catalog";
 import type { BudgetDraftRow } from "./budget.types";
 
-const KIND_SALES = 1 as InvoiceTypeId;
-const KIND_PURCHASE = 2 as InvoiceTypeId;
+const KIND_SALES: BudgetKind = 1;
+const KIND_PURCHASE: BudgetKind = 2;
 
 function keySales(rt: RevenueTypeId) {
   return `k:${KIND_SALES}|rt:${rt}`;
@@ -81,19 +80,18 @@ export function mergeExistingIntoSkeleton(params: {
 
   const existingMap = new Map<string, BudgetView>();
 
-  for (const e of existing) {
-    // Ici, e.kind est string chez toi. Il faut le normaliser en number.
-    const kindNum = Number(e.kind) as InvoiceTypeId;
+for (const e of existing) {
+  const kindNum = e.kind;
 
-    if (kindNum === KIND_SALES && e.revenueTypeId) {
-      existingMap.set(keySales(e.revenueTypeId as RevenueTypeId), e);
-    }
-
-    if (kindNum === KIND_PURCHASE && e.centrecoutId) {
-      const fam = toCentreCoutFamilleId(e.familleId ?? 8);
-      existingMap.set(keyPurchase(e.centrecoutId, fam), e);
-    }
+  if (kindNum === KIND_SALES && e.revenueTypeId) {
+    existingMap.set(keySales(e.revenueTypeId), e);
   }
+
+  if (kindNum === KIND_PURCHASE && e.centrecoutId) {
+    const fam = toCentreCoutFamilleId(e.familleId ?? 8);
+    existingMap.set(keyPurchase(e.centrecoutId, fam), e);
+  }
+}
 
   return skeleton.map((row) => {
     const hit = existingMap.get(row.key);

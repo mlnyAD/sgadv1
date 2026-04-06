@@ -44,7 +44,7 @@ export async function saveBudgetEdits(params: {
 
       await createBudgetLine({
         exer_id: exerid,
-        bud_kind: toBudgetKindDb(1),
+        bud_kind: toBudgetKindDb(2),
         cc_id: r.cc_id,
         bud_amount_ht_eur: amount,
       });

@@ -16,8 +16,8 @@ export function NavTop({
       <Image
         src={logoUrl ?? "/images/axcio_data.png"}
         alt={alt}
-        width={36}
-        height={36}
+        width={55}
+        height={55}
         className="h-auto w-auto transition-all duration-300"
       />
     </div>

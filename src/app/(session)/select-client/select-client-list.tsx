@@ -56,7 +56,7 @@ export default function SelectClientList({
           >
             <span className="font-medium">{c.nom}</span>
             <button
-              className="h-9 rounded-md border px-3 text-sm"
+              className="h-9 rounded-md border px-3 text-sm bg-ad-light"
               onClick={() => choose(c.id)}
               disabled={loadingId !== null}
             >

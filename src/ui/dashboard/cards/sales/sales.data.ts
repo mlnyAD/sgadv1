@@ -1,7 +1,7 @@
 
 
 import type { DashboardBarPoint } from "@/features/dashboard/dashboard.types";
-import { REVENUE_TYPES, toRevenueTypeId, getRevenueTypeById } from "@/domain/invoice/invoice-types.catalog";
+import { REVENUE_TYPES, toRevenueTypeId, getRevenueTypeById } from "@/domain/revenus/revenue-types.catalog";
 
 // adapte le type Supabase à ton projet
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -13,9 +13,9 @@ type BudgetRow = {
   exer_id: string | null;
 };
 
-type InvoiceSalesRow = {
-  invs_revenue_type: number | null;
-  inv_amount_ht: number | null;
+type SalesRow = {
+  sal_revenue_type_id: number | null;
+  sal_amount_ht: number | null;
   exer_id: string | null;
 };
 
@@ -36,9 +36,9 @@ export async function loadSalesBlock(
   if (budErr) throw budErr;
 
   // 2) Réalisé ventes (factures de vente) (par type)
-  const { data: invRows, error: invErr } = await supabase
-    .from("vw_invoice_sales_view")
-    .select("invs_revenue_type, inv_amount_ht, exer_id")
+  const { data: salRows, error: invErr } = await supabase
+    .from("vw_sales_view")
+    .select("sal_revenue_type_id, sal_amount_ht, exer_id")
     .eq("exer_id", exerId);
 
   if (invErr) throw invErr;
@@ -58,9 +58,9 @@ export async function loadSalesBlock(
   const realizedByType = new Map<number, number>();
   let totalRealized = 0;
 
-  for (const r of (invRows ?? []) as InvoiceSalesRow[]) {
-    const typeId = r.invs_revenue_type ?? 1; // fallback "---"
-    const v = r.inv_amount_ht ?? 0;
+  for (const r of (salRows ?? []) as SalesRow[]) {
+    const typeId = r.sal_revenue_type_id ?? 1; // fallback "---"
+    const v = r.sal_amount_ht ?? 0;
     totalRealized += v;
     realizedByType.set(typeId, (realizedByType.get(typeId) ?? 0) + v);
   }
@@ -72,18 +72,19 @@ export async function loadSalesBlock(
     ...Array.from(realizedByType.keys()),
   ]);
 
-  const byRevenueType: DashboardBarPoint[] = Array.from(typeIds)
-    .sort((a, b) => a - b)
-    .map((id) => {
-      // label à partir de ton catalog
-      const rt = getRevenueTypeById(toRevenueTypeId(id));
-      return {
-        label: rt?.libelle ?? `Type ${id}`,
-        budgetEur: Math.round(budgetByType.get(id) ?? 0),
-        realizedEur: Math.round(realizedByType.get(id) ?? 0),
-      };
-    });
+const byRevenueType: DashboardBarPoint[] = Array.from(typeIds)
+  .sort((a, b) => a - b)
+  .map((id) => {
+    const revenueTypeId = toRevenueTypeId(id);
+    const rt = revenueTypeId != null ? getRevenueTypeById(revenueTypeId) : null;
 
+    return {
+      label: rt?.libelle ?? `Type ${id}`,
+      budgetEur: Math.round(budgetByType.get(id) ?? 0),
+      realizedEur: Math.round(realizedByType.get(id) ?? 0),
+    };
+  });
+  
   return {
     totalBudgetEur: Math.round(totalBudget),
     totalRealizedEur: Math.round(totalRealized),

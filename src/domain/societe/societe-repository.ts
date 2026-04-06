@@ -98,7 +98,29 @@ export async function listSocietes(params: {
 	};
 }
 
-export async function listSocietesForInvoice(params: {
+export async function listSocietesForPurchase(params: {
+  cltId: string;
+  invType: 1 | 2; // 1 sales / 2 purchase
+}): Promise<SocieteRow[]> {
+  const supabase = await createSupabaseServerReadClient();
+
+  let q = supabase
+    .from("vw_societe_view")
+    .select("soc_id,soc_nom,soc_client,soc_fournisseur")
+    .eq("clt_id", params.cltId)
+    .order("soc_nom");
+
+  if (params.invType === 1) q = q.eq("soc_client", true);
+  if (params.invType === 2) q = q.eq("soc_fournisseur", true);
+
+  const { data, error } = await q;
+  if (error) throw new Error(error.message);
+
+  return (data ?? []) as unknown as SocieteRow[];
+}
+
+
+export async function listSocietesForSales(params: {
   cltId: string;
   invType: 1 | 2; // 1 sales / 2 purchase
 }): Promise<SocieteRow[]> {

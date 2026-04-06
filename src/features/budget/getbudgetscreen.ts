@@ -14,9 +14,9 @@ import { listCentresCout } from "@/domain/centre-cout/centre-cout-repository";
 import { buildBudgetSkeleton, mergeExistingIntoSkeleton } from "./budget-skeleton";
 import type { BudgetDraftRow } from "./budget.types";
 
-import { getRevenueTypeById, toRevenueTypeId } from "@/domain/invoice/invoice-types.catalog";
+import { getRevenueTypeById, toRevenueTypeId } from "@/domain/revenus/revenue-types.catalog";
 import { getFamilleById, toCentreCoutFamilleId } from "@/domain/centre-cout/centre-cout-familles.catalog";
-import { REVENUE_TYPES, type RevenueTypeId } from "@/domain/invoice/invoice-types.catalog";
+import { REVENUE_TYPES, type RevenueTypeId } from "@/domain/revenus/revenue-types.catalog";
 
 
 export type BudgetExerciseOption = { exer_id: string; exer_code: string | null };

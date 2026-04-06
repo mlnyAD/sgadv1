@@ -18,7 +18,7 @@ export async function getDashboardData(): Promise<DashboardData> {
 	// Exercice courant (vw_exercice_view)
 	const exer = await loadCurrentExercise(supabase);
 
-	// Ventes (vw_invoice_sales_view + vw_budget_sales_lines)
+	// Ventes (vw_sales_view + vw_budget_sales_lines)
 	const sales = await loadSalesBlock(supabase, exer.exerId);
 
 	const purchases = await loadPurchasesBlock(supabase, exer.exerId);

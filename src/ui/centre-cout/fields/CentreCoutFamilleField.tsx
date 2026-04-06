@@ -1,5 +1,5 @@
 
-
+/*
 import {
   CENTRE_COUT_FAMILLES,
   CentreCoutFamilleId,
@@ -49,5 +49,36 @@ export function CentreCoutFamilleField({
         )}
       </div>
     </div>
+  );
+}*/
+
+import { CENTRE_COUT_FAMILLES, CentreCoutFamilleId } from "@/domain/centre-cout/centre-cout-familles.catalog";
+import { FormRow } from "@/ui/_shared/form/FormRow";
+import { AppCatalogSelect } from "@/ui/_shared/form/AppCatalogSelect";
+
+interface Props {
+  value: CentreCoutFamilleId;
+  onChange: (value: CentreCoutFamilleId) => void;
+  error?: string | null;
+}
+
+export function CentreCoutFamilleField({
+  value,
+  onChange,
+  error,
+}: Props) {
+  return (
+    <FormRow label="Famille" error={error}>
+      <AppCatalogSelect
+        value={value}
+        onChange={(value) => onChange(value as CentreCoutFamilleId)}
+        options={CENTRE_COUT_FAMILLES.map((famille) => ({
+          value: famille.id,
+          label: famille.libelle,
+        }))}
+        invalid={!!error}
+        placeholder="— Sélectionner une famille —"
+      />
+    </FormRow>
   );
 }

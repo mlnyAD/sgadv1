@@ -5,7 +5,7 @@ import { mapRemboursementViewRow } from "./rembt.mapper";
 import type { RefundState, RemboursementRow } from "./rembt.types";
 
 const VW_REMBT = "vw_remboursement_view";
-const VW_INVP = "vw_invoice_purchase_view";
+const VW_INVP = "vw_purchase_view";
 const TBL_REMBT = "remboursement";
 
 export async function getRefundState(params: { cltId: string; exerId: string }): Promise<RefundState> {

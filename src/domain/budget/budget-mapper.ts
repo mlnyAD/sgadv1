@@ -2,7 +2,7 @@
 
 // src/domain/budget/budget-mapper.ts
 import type { BudgetView } from "./budget-types";
-import { toRevenueTypeId } from "@/domain/invoice/invoice-types.catalog";
+import { toRevenueTypeId } from "@/domain/revenus/revenue-types.catalog";
 import { toCentreCoutFamilleId } from "@/domain/centre-cout/centre-cout-familles.catalog";
 import { fromBudgetKindDb } from "@/domain/budget/budget-kind";
 import type { BudgetKindDb } from "@/domain/budget/budget-kind";
@@ -16,7 +16,7 @@ export type VwBudgetViewRow = {
   exer_id: string | null;
   exer_code: string | null;
 
-bud_kind: BudgetKindDb | null; // "SALES" | "PURCHASE"
+  bud_kind: BudgetKindDb | null; // "SALES" | "PURCHASE"
 
   revenue_type_id: number | null;
 
@@ -43,9 +43,7 @@ export function mapBudgetViewRowToView(row: VwBudgetViewRow): BudgetView {
   if (!row.bud_kind) throw new Error("vw_budget_view: bud_kind manquant");
   if (!row.created_at || !row.updated_at) throw new Error("vw_budget_view: timestamps manquants");
 
-  if (!row.bud_kind) throw new Error("vw_budget_view: bud_kind manquant");
-
-const kind = fromBudgetKindDb(row.bud_kind); // ✅ "SALES"/"PURCHASE" -> 1/2
+  const kind = fromBudgetKindDb(row.bud_kind); // ✅ "SALES"/"PURCHASE" -> 1/2
 
   const operNom = [row.oper_prenom, row.oper_nom].filter(Boolean).join(" ").trim();
 

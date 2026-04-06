@@ -72,13 +72,13 @@ const ITEMS: NavItem[] = [
 	{
 		id: "facture_fournisseur",
 		title: "Achats",
-		href: "/invoices/purchase",
+		href: "/purchases",
 		icon: ShoppingCart,
 	},
 	{
 		id: "facture_client",
 		title: "Ventes",
-		href: "/invoices/sales",
+		href: "/sales",
 		icon: TrendingUp,
 	},
 	{
@@ -90,7 +90,7 @@ const ITEMS: NavItem[] = [
 	{
 		id: "operation_bancaire",
 		title: "Opérations bancaires",
-		href: "/operations-bancaires",
+		href: "/wait",
 		icon: Settings2,
 	},
 	{

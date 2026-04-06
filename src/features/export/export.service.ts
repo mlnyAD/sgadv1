@@ -5,9 +5,7 @@ import type { ExportDefinition } from "@/domain/export/export.types";
 
 export type ExportParams = {
   exportKey: string;
-  exercice?: number;
-  dateFrom?: string;
-  dateTo?: string;
+  exercice?: string;
 };
 
 export type ExportContext = {
@@ -76,11 +74,21 @@ export class ExportService {
 
     const where = this.buildWhereClauses(definition, params, context);
 
+     console.log("export execute", {
+      exportKey: params.exportKey,
+      definitionView: definition.view,
+      cltId: context.cltId,
+      exercice: params.exercice,
+      where,
+    });
+
     const rows = await this.repository.runViewQuery({
       definition,
       where,
       orderBy: this.buildOrderBy(definition),
     });
+
+     console.log("export rows count", rows.length);
 
     const buffer = await this.xlsxBuilder.build({
       sheetName: definition.label,
@@ -96,49 +104,35 @@ export class ExportService {
     };
   }
 
-  private buildWhereClauses(
-    definition: ExportDefinition,
-    params: ExportParams,
-    context: ExportContext
-  ): ExportWhereClause[] {
+private buildWhereClauses(
+  definition: ExportDefinition,
+  params: ExportParams,
+  context: ExportContext
+): ExportWhereClause[] {
+  const where: ExportWhereClause[] = [];
 
-    const where: ExportWhereClause[] = [];
+  where.push({
+    type: "eq",
+    column: "clt_id",
+    value: context.cltId!,
+  });
 
-    where.push({
-      type: "eq",
-      column: "clt_id",
-      value: context.cltId!,
-    });
-
-    for (const filter of definition.filters ?? []) {
-      switch (filter.type) {
-
-        case "exercice":
+  for (const filter of definition.filters ?? []) {
+    switch (filter.type) {
+      case "exercice":
+        if (params.exercice) {
           where.push({
             type: "eq",
             column: filter.column,
-            value: params.exercice!,
+            value: params.exercice,
           });
-          break;
-
-        case "dateRange":
-          where.push({
-            type: "gte",
-            column: filter.fromColumn,
-            value: params.dateFrom!,
-          });
-
-          where.push({
-            type: "lte",
-            column: filter.toColumn ?? filter.fromColumn,
-            value: params.dateTo!,
-          });
-          break;
-      }
+        }
+        break;
     }
-
-    return where;
   }
+
+  return where;
+}
 
   private buildOrderBy(definition: ExportDefinition) {
     const hasDate = definition.columns.some(c => c.key === "inv_due_date");
