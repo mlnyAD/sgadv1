@@ -11,6 +11,7 @@ import { loadPurchasesBlock } from "./blocks/purchases/purchases.data";
 import { loadReceivablesBlock } from "./blocks/receivables/receivables.data";
 import { getCurrentClient } from "@/domain/session/current-client";
 import { chargerBlocTresoDashboard } from "@/features/treso/chargerBlocTresoDashboard";
+import { loadTvaBlock } from "./blocks/tva/tva.data";
 
 export async function getDashboardData(): Promise<DashboardData> {
 	const supabase = await createSupabaseServerClient();
@@ -34,6 +35,7 @@ export async function getDashboardData(): Promise<DashboardData> {
 
 	const treasury = await chargerBlocTresoDashboard(supabase, cltId, exer.exerId);
 
+	const tva = await loadTvaBlock(supabase, cltId, exer.exerId);
 
 	// TODO: remplacer ensuite par les vrais loaders purchases/receivables
 	return {
@@ -42,5 +44,6 @@ export async function getDashboardData(): Promise<DashboardData> {
 		purchases,
 		receivables,
 		treasury,
+		tva,
 	};
 }

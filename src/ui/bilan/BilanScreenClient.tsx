@@ -58,11 +58,22 @@ export function BilanScreenClient(props: {
     router.push(`/bilan?exerid=${encodeURIComponent(nextExerId)}`);
   };
 
-  // Bac à sable: inputs modifiables (init sur "à date")
+  // Format spécifique bilan
+  function bilanNumber(n: number) {
+    return Math.round(n ?? 0).toLocaleString("fr-FR", {
+      maximumFractionDigits: 0,
+    });
+  }
+
+  function toNumberOrZero(v: string) {
+    const n = Number(String(v).replace(",", "."));
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  // Bac à sable
   const [sandboxCa, setSandboxCa] = React.useState<number>(columns.toDate.caHt ?? 0);
   const [sandboxCharges, setSandboxCharges] = React.useState<number>(columns.toDate.chargesHt ?? 0);
 
-  // si on change d’exercice => props changent => reset des inputs
   React.useEffect(() => {
     setSandboxCa(columns.toDate.caHt ?? 0);
     setSandboxCharges(columns.toDate.chargesHt ?? 0);
@@ -73,19 +84,10 @@ export function BilanScreenClient(props: {
     [sandboxCa, sandboxCharges]
   );
 
-  function eur(n: number) {
-    return (n ?? 0).toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
-  }
-
-  function toNumberOrZero(v: string) {
-    const n = Number(String(v).replace(",", "."));
-    return Number.isFinite(n) ? n : 0;
-  }
-
   const rows = [
-    { label: "CA (HT)", key: "caHt" as const },
+    { label: "Chiffre d'affaires (CA HT)", key: "caHt" as const },
     { label: "Charges (HT)", key: "chargesHt" as const },
-    { label: "REX", key: "rex" as const },
+    { label: "Résultat d'exploitation (REX)", key: "rex" as const },
     { label: "Impôts (IS)", key: "impot" as const },
     { label: "Résultat net", key: "resultatNet" as const },
     { label: "Réserve légale", key: "reserveLegale" as const },
@@ -102,7 +104,7 @@ export function BilanScreenClient(props: {
               Bilan — Exercice {meta.exerCode ?? exerid}
             </h1>
             <p className="text-sm text-muted-foreground">
-              Simulation indicative (ne remplace pas un bilan comptable).
+              Simulation indicative (ne remplace pas le bilan comptable).
             </p>
           </div>
 
@@ -134,7 +136,7 @@ export function BilanScreenClient(props: {
         <Separator />
       </div>
 
-      {/* Table 3 colonnes */}
+      {/* Table */}
       <Card className="rounded-2xl">
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Synthèse</CardTitle>
@@ -163,13 +165,18 @@ export function BilanScreenClient(props: {
                   <TableRow key={r.key}>
                     <TableCell className="font-medium">{r.label}</TableCell>
 
-                    <TableCell className="text-right tabular-nums">{eur(Number(b ?? 0))}</TableCell>
-                    <TableCell className="text-right tabular-nums">{eur(Number(d ?? 0))}</TableCell>
+                    <TableCell className="text-right tabular-nums bg-blue-50">
+                      {bilanNumber(Number(b ?? 0))}
+                    </TableCell>
 
-                    <TableCell className="text-right">
+                    <TableCell className="text-right tabular-nums bg-amber-50">
+                      {bilanNumber(Number(d ?? 0))}
+                    </TableCell>
+
+                    <TableCell className="text-right bg-gray-200">
                       {isEditable ? (
                         <Input
-                          className="h-8 w-36 ml-auto text-right tabular-nums"
+                          className="h-8 w-36 ml-auto text-right tabular-nums bg-green-50"
                           inputMode="decimal"
                           value={String(r.key === "caHt" ? sandboxCa : sandboxCharges)}
                           onChange={(e) => {
@@ -179,7 +186,9 @@ export function BilanScreenClient(props: {
                           }}
                         />
                       ) : (
-                        <span className="tabular-nums">{eur(Number(s ?? 0))}</span>
+                        <span className="tabular-nums">
+                          {bilanNumber(Number(s ?? 0))}
+                        </span>
                       )}
                     </TableCell>
                   </TableRow>
@@ -195,23 +204,37 @@ export function BilanScreenClient(props: {
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Paramètres</CardTitle>
         </CardHeader>
+
         <CardContent className="text-sm space-y-2">
           <div className="flex flex-wrap gap-x-6 gap-y-1">
             <div>
-              IS réduit : <span className="font-medium">{Math.round(meta.config.is.reducedRate * 100)}%</span>{" "}
-              jusqu’à <span className="font-medium">{eur(meta.config.is.reducedLimit)}</span>
+              IS réduit :{" "}
+              <span className="font-medium">
+                {Math.round(meta.config.is.reducedRate * 100)}%
+              </span>{" "}
+              jusqu’à{" "}
+              <span className="font-medium">
+                {bilanNumber(meta.config.is.reducedLimit)}
+              </span>
             </div>
+
             <div>
-              IS normal : <span className="font-medium">{Math.round(meta.config.is.normalRate * 100)}%</span>
+              IS normal :{" "}
+              <span className="font-medium">
+                {Math.round(meta.config.is.normalRate * 100)}%
+              </span>
             </div>
+
             <div>
-              Réserve légale (forfait) : <span className="font-medium">{eur(meta.config.reserveLegale.forfait)}</span>
+              Réserve légale (forfait) :{" "}
+              <span className="font-medium">
+                {bilanNumber(meta.config.reserveLegale.forfait)}
+              </span>
             </div>
           </div>
 
           <div className="text-muted-foreground">
-            Hypothèses simplifiées : IS uniquement, réserve légale forfaitaire. Pas de charges sociales, dividendes, ni
-            retraitements comptables.
+            Hypothèses simplifiées : IS uniquement, réserve légale forfaitaire.
           </div>
         </CardContent>
       </Card>

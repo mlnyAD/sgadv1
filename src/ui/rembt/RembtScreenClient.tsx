@@ -122,7 +122,7 @@ export function RembtScreenClient(props: {
 					<CardContent className="text-2xl font-semibold">{eur(state.refundedAmount)}</CardContent>
 				</Card>
 
-				<Card className="rounded-2xl bg-amber-200">
+				<Card className="rounded-2xl bg-amber-100">
 					<CardHeader className="pb-2">
 						<CardTitle className="text-sm">Reste à rembourser</CardTitle>
 					</CardHeader>
@@ -139,7 +139,7 @@ export function RembtScreenClient(props: {
 					<form action={addRemboursementAction} className="grid gap-4 md:grid-cols-4 items-end">
 						<input type="hidden" name="exerId" value={exerid} />
 
-						<div className="grid gap-2 bg-green-200 dark:text-black rounded-xl">
+						<div className="grid gap-2 bg-green-50 dark:text-black rounded-xl">
 							<Label htmlFor="date">Date</Label>
 							<Input
 								id="date"
@@ -151,7 +151,7 @@ export function RembtScreenClient(props: {
 							/>
 						</div>
 
-						<div className="grid gap-2 bg-green-200 dark:text-black rounded-xl">
+						<div className="grid gap-2 bg-green-50 dark:text-black rounded-xl">
 							<Label htmlFor="amount">Montant</Label>
 							<Input
 								id="amount"
@@ -163,7 +163,7 @@ export function RembtScreenClient(props: {
 								required
 							/>
 						</div>
-						<div className="md:col-span-2 grid gap-2  bg-green-200 dark:text-black rounded-xl">
+						<div className="md:col-span-2 grid gap-2  bg-green-50 dark:text-black rounded-xl">
 							<Label htmlFor="commentaires">Commentaires</Label>
 							<Textarea
 								id="commentaires"
@@ -192,8 +192,9 @@ export function RembtScreenClient(props: {
 						<TableHeader>
 							<TableRow>
 								<TableHead className="w-40">Date</TableHead>
+								<TableHead>Commentaires</TableHead>								
 								<TableHead className="text-right">Montant</TableHead>
-								<TableHead>Commentaires</TableHead>
+
 								<TableHead className="w-[140px] text-right">Actions</TableHead>
 							</TableRow>
 						</TableHeader>

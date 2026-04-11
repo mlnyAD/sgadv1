@@ -27,7 +27,7 @@ export async function loadPurchasesBlock(
   supabase: SupabaseClient,
   exerId: string
 ) {
-  // 1️⃣ Mapping centre → famille
+  // 1) Mapping centre -> famille
   const { data: ccRows, error: ccErr } = await supabase
     .from("vw_centre_cout_view")
     .select("cc_id, famille_id");
@@ -42,32 +42,29 @@ export async function loadPurchasesBlock(
     }
   }
 
-  // 2️⃣ Réalisé achats
-  const { data: purRows, error: invErr } = await supabase
+  // 2) Réalisé achats
+  const { data: purRows, error: purErr } = await supabase
     .from("vw_purchase_view")
     .select("cc_id, pur_amount_ht")
     .eq("exer_id", exerId);
 
-  if (invErr) throw invErr;
+  if (purErr) throw purErr;
 
   const realizedByFamille = new Map<number, number>();
   let totalRealized = 0;
 
   for (const r of (purRows ?? []) as PurchaseRow[]) {
-    const famId = toCentreCoutFamilleId(
-      ccToFamille.get(r.cc_id ?? "") ?? 8
-    );
-
+    const famId = toCentreCoutFamilleId(ccToFamille.get(r.cc_id ?? "") ?? 8);
     const amount = r.pur_amount_ht ?? 0;
-    totalRealized += amount;
 
+    totalRealized += amount;
     realizedByFamille.set(
       famId,
       (realizedByFamille.get(famId) ?? 0) + amount
     );
   }
 
-  // 3️⃣ Budget achats
+  // 3) Budget achats
   const { data: budRows, error: budErr } = await supabase
     .from("vw_budget_purchase_lines")
     .select("famille_id, budget_ht_eur")
@@ -89,16 +86,17 @@ export async function loadPurchasesBlock(
     );
   }
 
-  // 4️⃣ Construction dataset graphique (ordre catalogue)
-  const byFamille = CENTRE_COUT_FAMILLES.map((f) => ({
-    label: f.libelle,
-    budgetEur: Math.round(budgetByFamille.get(f.id) ?? 0),
-    realizedEur: Math.round(realizedByFamille.get(f.id) ?? 0),
+  // 4) Tableau final : toutes les familles, même sans données
+const rows = CENTRE_COUT_FAMILLES.map((famille) => ({
+    familleId: famille.id,
+    label: famille.libelle,
+    budgetEur: Math.round(budgetByFamille.get(famille.id) ?? 0),
+    realizedEur: Math.round(realizedByFamille.get(famille.id) ?? 0),
   }));
 
   return {
     totalBudgetEur: Math.round(totalBudget),
     totalRealizedEur: Math.round(totalRealized),
-    byCentreCout: byFamille, // on conserve la clé pour éviter refacto UI
+    rows,
   };
 }

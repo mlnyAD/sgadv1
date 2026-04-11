@@ -3,20 +3,13 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-	TableFooter,
-} from "@/components/ui/table";
 import {
 	Select,
 	SelectContent,
@@ -24,7 +17,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import Link from "next/link";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export type BudgetExerciseOption = { exer_id: string; exer_code: string | null };
 
@@ -50,9 +48,12 @@ function eur(n: number) {
 	return (n ?? 0).toLocaleString("fr-FR", { maximumFractionDigits: 0 });
 }
 
-function pct(realized: number, budget: number) {
-	if (!budget) return "—";
-	return `${Math.round((realized / budget) * 100)}%`;
+function resteAFaire(realized: number, budget: number) {
+	return (budget ?? 0) - (realized ?? 0);
+}
+
+function resteClassName(realized: number, budget: number) {
+	return resteAFaire(realized, budget) < 0 ? "text-red-600 font-semibold" : "";
 }
 
 function sum<T>(rows: T[], pick: (r: T) => number) {
@@ -60,9 +61,28 @@ function sum<T>(rows: T[], pick: (r: T) => number) {
 }
 
 function toNumberOrZero(v: string) {
-	// accepte "" => 0, "12" => 12, "12,5" => 12.5
 	const n = Number(String(v).replace(",", "."));
 	return Number.isFinite(n) ? n : 0;
+}
+
+const GRID_PURCHASE = "grid-cols-[28%_12%_1fr_140px_140px_140px]";
+const GRID_SALES = "grid-cols-[28%_12%_1fr_140px_140px_140px]";
+
+function LeftChevronTrigger(props: {
+	children: React.ReactNode;
+	className?: string;
+}) {
+	return (
+		<AccordionTrigger
+			className={[
+				"px-4 hover:no-underline",
+				"[&>svg]:order-first [&>svg]:mr-3 [&>svg]:ml-0",
+				props.className ?? "",
+			].join(" ")}
+		>
+			<div className="w-full">{props.children}</div>
+		</AccordionTrigger>
+	);
 }
 
 export function BudgetScreen(props: {
@@ -94,15 +114,23 @@ export function BudgetScreen(props: {
 		onChangePurchaseBudget,
 	} = props;
 
-	// group achats by famille
+	const salesByType = React.useMemo(() => {
+		return salesRows.map((r) => ({
+			key: String(r.revenue_type_id),
+			label: r.detail,
+			rows: [r],
+		}));
+	}, [salesRows]);
+
 	const purchaseByFamille = React.useMemo(() => {
 		const m = new Map<string, PurchaseRow[]>();
+
 		for (const r of purchaseRows) {
 			const key = r.famille || "Autres";
 			if (!m.has(key)) m.set(key, []);
 			m.get(key)!.push(r);
 		}
-		// stable ordering: famille name, then cc_code
+
 		return Array.from(m.entries())
 			.map(([famille, rows]) => ({
 				famille,
@@ -113,6 +141,20 @@ export function BudgetScreen(props: {
 			.sort((a, b) => a.famille.localeCompare(b.famille));
 	}, [purchaseRows]);
 
+	const allSalesKeys = React.useMemo(
+		() => salesByType.map((g) => g.key),
+		[salesByType]
+	);
+
+	const allPurchaseKeys = React.useMemo(
+		() => purchaseByFamille.map((g) => g.famille),
+		[purchaseByFamille]
+	);
+
+	// Tout fermé par défaut
+	const [openSales, setOpenSales] = React.useState<string[]>([]);
+	const [openPurchases, setOpenPurchases] = React.useState<string[]>([]);
+
 	const salesBudget = sum(salesRows, (r) => r.budget_ht_eur);
 	const salesReal = sum(salesRows, (r) => r.realized_ht_eur);
 
@@ -120,8 +162,7 @@ export function BudgetScreen(props: {
 	const purchReal = sum(purchaseRows, (r) => r.realized_ht_eur);
 
 	return (
-		<div className="p-6 space-y-6">
-			{/* Header */}
+		<div className="space-y-6 p-6">
 			<div className="space-y-2">
 				<div className="flex items-start justify-between gap-4">
 					<div>
@@ -144,27 +185,29 @@ export function BudgetScreen(props: {
 								</SelectContent>
 							</Select>
 						</div>
+
 						<Link
 							href="/dashboard"
-							className="inline-flex items-center h-9 px-4 rounded-md border border-muted-foreground/40 text-foreground hover:bg-muted text-base"
+							className="inline-flex h-9 items-center rounded-md border border-muted-foreground/40 px-4 text-base text-foreground hover:bg-muted"
 						>
 							Fermer
 						</Link>
+
 						<Button
 							type="button"
 							variant="axcio"
 							onClick={onSave}
-							disabled={isSaving}>
+							disabled={isSaving}
+						>
 							{isSaving ? "Enregistrement..." : "Enregistrer"}
 						</Button>
-
 					</div>
 				</div>
 
 				<Separator />
 			</div>
 
-			{/* CA */}
+			{/* VENTES */}
 			<Card className="rounded-2xl">
 				<CardHeader className="pb-3">
 					<div className="flex items-center justify-between">
@@ -176,144 +219,233 @@ export function BudgetScreen(props: {
 					</div>
 				</CardHeader>
 
-				<CardContent>
-					<Table>
-						<TableHeader>
-							<TableRow>
-								<TableHead className="w-[50%]">Détail</TableHead>
-								<TableHead className="text-right">Montant HT</TableHead>
-								<TableHead className="text-right">Réalisé HT</TableHead>
-								<TableHead className="text-right">% réalisé</TableHead>
-							</TableRow>
-						</TableHeader>
+				<CardContent className="space-y-4">
+					<div className="flex items-center justify-end gap-2">
+						<Button
+							type="button"
+							variant="outline"
+							size="sm"
+							onClick={() => setOpenSales(allSalesKeys)}
+						>
+							Tout ouvrir
+						</Button>
+						<Button
+							type="button"
+							variant="outline"
+							size="sm"
+							onClick={() => setOpenSales([])}
+						>
+							Tout fermer
+						</Button>
+					</div>
 
-						<TableBody>
-							{salesRows.map((r) => (
-								<TableRow key={r.revenue_type_id}>
-									<TableCell className="font-medium">{r.detail}</TableCell>
+					<div className="rounded-md border">
+						<div className={`grid ${GRID_SALES} border-b bg-muted/40 px-4 py-2 text-sm font-medium`}>
+							<div>Détail</div>
+							<div />
+							<div />
+							<div className="text-right">Montant HT</div>
+							<div className="text-right">Réalisé HT</div>
+							<div className="text-right">Reste à faire</div>
+						</div>
 
-									<TableCell className="text-right">
-										<Input
-											className="h-8 w-28 text-right tabular-nums"
-											inputMode="decimal"
-											value={String(r.budget_ht_eur ?? 0)}
-											onChange={(e) =>
-												onChangeSalesBudget(r.revenue_type_id, toNumberOrZero(e.target.value))
-											}
-										/>
-									</TableCell>
+						<Accordion
+							type="multiple"
+							value={openSales}
+							onValueChange={setOpenSales}
+							className="w-full"
+						>
+							{salesByType.map(({ key, label, rows }) => {
+								const row = rows[0];
+								const budget = row?.budget_ht_eur ?? 0;
+								const realized = row?.realized_ht_eur ?? 0;
 
-									<TableCell className="text-right tabular-nums">{eur(r.realized_ht_eur)}</TableCell>
+								return (
+									<AccordionItem key={key} value={key}>
+										<LeftChevronTrigger>
+											<div className={`grid ${GRID_SALES} items-center text-sm`}>
+												<div className="text-left font-medium">{label}</div>
+												<div />
+												<div />
+												<div className="text-right tabular-nums font-semibold">{eur(budget)}</div>
+												<div className="text-right tabular-nums font-semibold">{eur(realized)}</div>
+												<div className={`text-right tabular-nums font-semibold ${resteClassName(realized, budget)}`}>
+													{eur(resteAFaire(realized, budget))}
+												</div>
+											</div>
+										</LeftChevronTrigger>
 
-									<TableCell className="text-right tabular-nums">
-										{pct(r.realized_ht_eur, r.budget_ht_eur)}
-									</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
+										<AccordionContent className="px-4 pb-2">
+											<div className={`grid ${GRID_SALES} items-center py-1 text-sm`}>
+												<div>{label}</div>
+												<div />
+												<div />
 
-						<TableFooter>
-							<TableRow className="bg-gray-200">
-								<TableCell className="font-semibold text-right">CA prévisionnel (HT)</TableCell>
-								<TableCell className="text-right font-semibold tabular-nums">{eur(salesBudget)}</TableCell>
-								<TableCell className="text-right font-semibold tabular-nums">{eur(salesReal)}</TableCell>
-								<TableCell className="text-right font-semibold tabular-nums">
-									{pct(salesReal, salesBudget)}
-								</TableCell>
-							</TableRow>
-						</TableFooter>
-					</Table>
+												<div className="flex justify-end">
+													<Input
+														className="h-8 w-28 bg-green-50 text-right tabular-nums"
+														inputMode="decimal"
+														value={String(budget)}
+														onChange={(e) =>
+															onChangeSalesBudget(
+																row.revenue_type_id,
+																toNumberOrZero(e.target.value)
+															)
+														}
+													/>
+												</div>
+
+												<div className="rounded bg-gray-100 px-2 py-1 text-right tabular-nums">
+													{eur(realized)}
+												</div>
+
+												<div className={`rounded bg-blue-50 px-2 py-1 text-right tabular-nums ${resteClassName(realized, budget)}`}>
+													{eur(resteAFaire(realized, budget))}
+												</div>
+											</div>
+										</AccordionContent>
+									</AccordionItem>
+								);
+							})}
+						</Accordion>
+
+						<div className={`grid ${GRID_SALES} items-center border-t bg-gray-100 px-4 py-3 text-sm font-semibold`}>
+							<div />
+							<div />
+							<div className="text-right">CA prévisionnel (HT)</div>
+							<div className="text-right tabular-nums">{eur(salesBudget)}</div>
+							<div className="text-right tabular-nums">{eur(salesReal)}</div>
+							<div className={`text-right tabular-nums ${resteClassName(salesReal, salesBudget)}`}>
+								{eur(resteAFaire(salesReal, salesBudget))}
+							</div>
+						</div>
+					</div>
 				</CardContent>
 			</Card>
 
-			{/* Achats */}
-			<Card className="rounded-2xl">
+			{/* ACHATS */}
+			<Card className="rounded-2xl border-slate-200 bg-slate-50/50">
 				<CardHeader className="pb-3">
 					<div className="flex items-center justify-between">
 						<div>
 							<CardTitle className="text-base">Achats prévisionnels (HT)</CardTitle>
-							<CardDescription>Sous-totaux par famille de centre de coût + total global</CardDescription>
+							<CardDescription>
+								Sous-totaux par famille de centre de coût + total global
+							</CardDescription>
 						</div>
 						<Badge variant="secondary">Achats</Badge>
 					</div>
 				</CardHeader>
 
 				<CardContent className="space-y-4">
-					<Table>
-						<TableHeader>
-							<TableRow>
-								<TableHead className="w-[28%]">Famille</TableHead>
-								<TableHead className="w-[12%]">Code</TableHead>
-								<TableHead>Détail</TableHead>
-								<TableHead className="text-right">Montant HT</TableHead>
-								<TableHead className="text-right">Réalisé HT</TableHead>
-								<TableHead className="text-right">% réalisé</TableHead>
-							</TableRow>
-						</TableHeader>
+					<div className="flex items-center justify-end gap-2">
+						<Button
+							type="button"
+							variant="outline"
+							size="sm"
+							onClick={() => setOpenPurchases(allPurchaseKeys)}
+						>
+							Tout ouvrir
+						</Button>
+						<Button
+							type="button"
+							variant="outline"
+							size="sm"
+							onClick={() => setOpenPurchases([])}
+						>
+							Tout fermer
+						</Button>
+					</div>
 
-						<TableBody>
+					<div className="rounded-md border bg-white">
+						<div className={`grid ${GRID_PURCHASE} border-b bg-muted/40 px-4 py-2 text-sm font-medium`}>
+							<div>Famille</div>
+							<div>Code</div>
+							<div>Détail</div>
+							<div className="text-right">Montant HT</div>
+							<div className="text-right">Réalisé HT</div>
+							<div className="text-right">Reste à faire</div>
+						</div>
+
+						<Accordion
+							type="multiple"
+							value={openPurchases}
+							onValueChange={setOpenPurchases}
+							className="w-full"
+						>
 							{purchaseByFamille.map(({ famille, rows }) => {
 								const famBudget = sum(rows, (r) => r.budget_ht_eur);
 								const famReal = sum(rows, (r) => r.realized_ht_eur);
 
 								return (
-									<React.Fragment key={famille}>
-										{rows.map((r, idx) => (
-											<TableRow key={`${famille}-${r.cc_id}-${idx}`}>
-												<TableCell className="align-top">
-													{idx === 0 ? <span className="font-medium">{famille}</span> : null}
-												</TableCell>
+									<AccordionItem key={famille} value={famille}>
+										<LeftChevronTrigger>
+											<div className={`grid ${GRID_PURCHASE} items-center text-sm`}>
+												<div className="text-left font-medium">{famille}</div>
+												<div />
+												<div className="text-left text-muted-foreground">
+													{rows.length} centre{rows.length > 1 ? "s" : ""} de coût
+												</div>
+												<div className="text-right tabular-nums font-semibold">{eur(famBudget)}</div>
+												<div className="text-right tabular-nums font-semibold">{eur(famReal)}</div>
+												<div className={`text-right tabular-nums font-semibold ${resteClassName(famReal, famBudget)}`}>
+													{eur(resteAFaire(famReal, famBudget))}
+												</div>
+											</div>
+										</LeftChevronTrigger>
 
-												<TableCell className="tabular-nums">{r.cc_code}</TableCell>
+										<AccordionContent className="px-4 pb-2">
+											<div className="space-y-1">
+												{rows.map((r) => (
+													<div
+														key={`${famille}-${r.cc_id}`}
+														className={`grid ${GRID_PURCHASE} items-center py-1 text-sm`}
+													>
+														<div />
+														<div className="tabular-nums">{r.cc_code}</div>
+														<div>{r.cc_libelle}</div>
 
-												<TableCell>{[r.cc_code, r.cc_libelle].filter(Boolean).join(" - ")}</TableCell>
+														<div className="flex justify-end">
+															<Input
+																className="h-8 w-28 bg-green-50 text-right tabular-nums"
+																inputMode="decimal"
+																value={String(r.budget_ht_eur ?? 0)}
+																onChange={(e) =>
+																	onChangePurchaseBudget(
+																		r.cc_id,
+																		toNumberOrZero(e.target.value)
+																	)
+																}
+															/>
+														</div>
 
-												<TableCell className="text-right">
-													<Input
-														className="h-8 w-28 text-right tabular-nums"
-														inputMode="decimal"
-														value={String(r.budget_ht_eur ?? 0)}
-														onChange={(e) =>
-															onChangePurchaseBudget(r.cc_id, toNumberOrZero(e.target.value))
-														}
-													/>
-												</TableCell>
+														<div className="rounded bg-gray-100 px-2 py-1 text-right tabular-nums">
+															{eur(r.realized_ht_eur)}
+														</div>
 
-												<TableCell className="text-right tabular-nums">{eur(r.realized_ht_eur)}</TableCell>
-
-												<TableCell className="text-right tabular-nums">
-													{pct(r.realized_ht_eur, r.budget_ht_eur)}
-												</TableCell>
-											</TableRow>
-										))}
-
-										{/* Sous-total famille */}
-										<TableRow className="bg-muted/40">
-											<TableCell />
-											<TableCell />
-											<TableCell className="text-right italic">{`S/Total ${famille} (HT)`}</TableCell>
-											<TableCell className="text-right font-semibold tabular-nums">{eur(famBudget)}</TableCell>
-											<TableCell className="text-right font-semibold tabular-nums">{eur(famReal)}</TableCell>
-											<TableCell className="text-right font-semibold tabular-nums">{pct(famReal, famBudget)}</TableCell>
-										</TableRow>
-									</React.Fragment>
+														<div className={`rounded bg-blue-100 px-2 py-1 text-right tabular-nums ${resteClassName(r.realized_ht_eur, r.budget_ht_eur)}`}>
+															{eur(resteAFaire(r.realized_ht_eur, r.budget_ht_eur))}
+														</div>
+													</div>
+												))}
+											</div>
+										</AccordionContent>
+									</AccordionItem>
 								);
 							})}
-						</TableBody>
+						</Accordion>
 
-						<TableFooter>
-							<TableRow className="bg-gray-200">
-								<TableCell />
-								<TableCell />
-								<TableCell className="text-right font-semibold">Total des charges (HT)</TableCell>
-								<TableCell className="text-right font-semibold tabular-nums">{eur(purchBudget)}</TableCell>
-								<TableCell className="text-right font-semibold tabular-nums">{eur(purchReal)}</TableCell>
-								<TableCell className="text-right font-semibold tabular-nums">
-									{pct(purchReal, purchBudget)}
-								</TableCell>
-							</TableRow>
-						</TableFooter>
-					</Table>
+						<div className={`grid ${GRID_PURCHASE} items-center border-t bg-gray-200 px-4 py-3 text-sm font-semibold`}>
+							<div />
+							<div />
+							<div className="text-right">Total des charges (HT)</div>
+							<div className="text-right tabular-nums">{eur(purchBudget)}</div>
+							<div className="text-right tabular-nums">{eur(purchReal)}</div>
+							<div className={`text-right tabular-nums ${resteClassName(purchReal, purchBudget)}`}>
+								{eur(resteAFaire(purchReal, purchBudget))}
+							</div>
+						</div>
+					</div>
 				</CardContent>
 			</Card>
 		</div>

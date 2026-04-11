@@ -9,86 +9,112 @@ import { GenericListTable } from "@/components/table/GenericListTable";
 import type { CentreCoutView } from "@/domain/centre-cout/centre-cout-types";
 import { getCentreCoutColumns } from "@/ui/centre-cout/list/CentreCoutColumns";
 import { CentreCoutSelectableColumns } from "@/ui/centre-cout/list/CentreCoutSelectableColumns";
-import { CentreCoutFiltersClient } from "@/ui/centre-cout/list/CentreCoutFiltersClient";
-
+import { CentreCoutFilters } from "@/ui/centre-cout/list/CentreCoutFilters";
+import {
+  toCentreCoutFamilleId,
+  type CentreCoutFamilleId,
+} from "@/domain/centre-cout/centre-cout-familles.catalog";
 
 interface CentreCoutListProps {
-	centreCouts: CentreCoutView[];
-	page: number;
-	pageSize: number;
-	totalPages: number;
+  centreCouts: CentreCoutView[];
+  page: number;
+  pageSize: number;
+  totalPages: number;
 }
 
 export function CentreCoutList({
-	centreCouts,
-	page,
-	pageSize,
-	totalPages,
+  centreCouts,
+  page,
+  pageSize,
+  totalPages,
 }: CentreCoutListProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-	const router = useRouter();
-	const searchParams = useSearchParams();
+  const actifParam = searchParams.get("actif");
+  const search = searchParams.get("search") ?? "";
+  const code = searchParams.get("code") ?? "";
 
-	//console.log("CENTRE COUT ROW", centreCouts);
+  const familleIdParam = searchParams.get("familleId");
+  const familleId: CentreCoutFamilleId | null =
+    familleIdParam && familleIdParam !== ""
+      ? toCentreCoutFamilleId(Number(familleIdParam))
+      : null;
 
-	const actifParam = searchParams.get("actif");
-	const actifFilter =
-		actifParam === null
-			? null
-			: actifParam === "true";
+  const actifFilter =
+    actifParam === null
+      ? null
+      : actifParam === "true";
 
-	const [visibleColumns] = useState(CentreCoutSelectableColumns);
+  const [visibleColumns] = useState(CentreCoutSelectableColumns);
 
-	const handleEdit = (centreCout: CentreCoutView) => {
-		//console.log("Edit centre de coût", centreCout);
-		router.push(`/centres-cout/${centreCout.id}`);
-	};
+  const handleEdit = (centreCout: CentreCoutView) => {
+    router.push(`/centres-cout/${centreCout.id}`);
+  };
 
-	const columns = getCentreCoutColumns({
-		onEdit: handleEdit,
-	});
+  const columns = getCentreCoutColumns({
+    onEdit: handleEdit,
+  });
 
-	//console.log("CentreCoutList data sample =", centreCouts?.[0]);
+  function pushWithParams(mutator: (params: URLSearchParams) => void) {
+    const params = new URLSearchParams(searchParams.toString());
+    mutator(params);
+    router.push(`?${params.toString()}`);
+  }
 
-	return (
-		<>
-			<GenericListTable
-				data={centreCouts}
-				columns={columns}
-				selectableColumns={visibleColumns}
-				page={page}
-				pageSize={pageSize}
-				totalPages={totalPages}
-				onPageChange={(nextPage) => {
-					router.push(
-						`?page=${nextPage}&pageSize=${pageSize}${actifParam ? `&actif=${actifParam}` : ""
-						}`
-					);
+  return (
+	<div className="p-4 space-y-4">
+		<GenericListTable
+			data={centreCouts}
+			columns={columns}
+			selectableColumns={visibleColumns}
+			page={page}
+			pageSize={pageSize}
+			totalPages={totalPages}
+			onPageChange={(nextPage) => {
+				pushWithParams((params) => {
+				params.set("page", String(nextPage));
+				params.set("pageSize", String(pageSize));
+				});
+			}}
+			onPageSizeChange={(nextPageSize) => {
+				pushWithParams((params) => {
+				params.set("page", "1");
+				params.set("pageSize", String(nextPageSize));
+				});
+			}}
+			filtersSlot={
+				<CentreCoutFilters
+				search={search}
+				code={code}
+				familleId={familleId}
+				actif={actifFilter}
+				onChange={(next) => {
+					pushWithParams((params) => {
+					if (next.search.trim()) params.set("search", next.search.trim());
+					else params.delete("search");
+
+					if (next.code.trim()) params.set("code", next.code.trim());
+					else params.delete("code");
+
+					if (next.familleId != null) {
+						params.set("familleId", String(next.familleId));
+					} else {
+						params.delete("familleId");
+					}
+
+					if (next.actif === null) {
+						params.delete("actif");
+					} else {
+						params.set("actif", String(next.actif));
+					}
+
+					params.set("page", "1");
+					});
 				}}
-				onPageSizeChange={(nextPageSize) => {
-					router.push(
-						`?page=1&pageSize=${nextPageSize}${actifParam ? `&actif=${actifParam}` : ""
-						}`
-					);
-				}}
-				filtersSlot={
-					<CentreCoutFiltersClient
-						actif={actifFilter}
-						onChange={(next) => {
-							const params = new URLSearchParams(searchParams.toString());
-
-							if (next === null) {
-								params.delete("actif");
-							} else {
-								params.set("actif", String(next));
-							}
-
-							params.set("page", "1");
-							router.push(`?${params.toString()}`);
-						}}
-					/>
-				}
-			/>
-		</>
-	);
+				/>
+			}
+		/>
+	</div>
+  );
 }

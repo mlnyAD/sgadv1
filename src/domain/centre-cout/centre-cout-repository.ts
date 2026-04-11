@@ -107,36 +107,52 @@ export async function updateCentreCout(centreCoutId: string, payload: CentreCout
 /* LIST                                                               */
 /* ------------------------------------------------------------------ */
 export async function listCentreCouts(params: {
-	cltId: string;
-	page: number;
-	pageSize: number;
-	search?: string;
-	actif?: boolean;
+  cltId: string;
+  page: number;
+  pageSize: number;
+  search?: string;
+  code?: string;
+  familleId?: number;
+  actif?: boolean | null;
 }): Promise<{ data: CentreCoutView[]; total: number }> {
-	const { cltId, page, pageSize, search, actif } = params;
+  const { cltId, page, pageSize, search, code, familleId, actif } = params;
 
-	const supabase = await createSupabaseServerReadClient();
+  const supabase = await createSupabaseServerReadClient();
 
-	let query = supabase
-		.from("vw_centre_cout_view")
-		.select(SELECT_CENTRE_COUT_VIEW, { count: "exact" })
-		.eq("clt_id", cltId)
-		.order("cc_code");
+  let query = supabase
+    .from("vw_centre_cout_view")
+    .select(SELECT_CENTRE_COUT_VIEW, { count: "exact" })
+    .eq("clt_id", cltId)
+    .order("cc_code");
 
-	if (search) query = query.ilike("cc_libelle", `%${search}%`);
-	if (actif !== undefined) query = query.eq("cc_actif", actif);
+  if (search?.trim()) {
+    const term = search.trim();
+    query = query.or(`cc_libelle.ilike.%${term}%,cc_code.ilike.%${term}%`);
+  }
 
-	const from = (page - 1) * pageSize;
-	const to = from + pageSize - 1;
+  if (code?.trim()) {
+    query = query.ilike("cc_code", `%${code.trim()}%`);
+  }
 
-	const { data, error, count } = await query.range(from, to);
-	if (error) throw new Error(error.message);
+  if (familleId != null) {
+    query = query.eq("famille_id", familleId);
+  }
 
-	const rows = (data ?? []) as unknown as CentreCoutRow[];
-	return {
-		data: rows.map(mapCentreCoutRowToView).map(enrichFamille),
-		total: count ?? 0,
-	};
+  if (actif !== null && actif !== undefined) {
+    query = query.eq("cc_actif", actif);
+  }
+
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  const { data, error, count } = await query.range(from, to);
+  if (error) throw new Error(error.message);
+
+  const rows = (data ?? []) as unknown as CentreCoutRow[];
+  return {
+    data: rows.map(mapCentreCoutRowToView).map(enrichFamille),
+    total: count ?? 0,
+  };
 }
 
 export async function listCentreCoutOptions(params: {

@@ -8,7 +8,14 @@ export type DashboardKpi = {
 };
 
 export type DashboardBarPoint = {
-  label: string;      // ex: "---", "Trvx", "Autre" ou "Achats", "Réalisé"
+  label: string;
+  budgetEur: number;
+  realizedEur: number;
+};
+
+export type DashboardPurchaseFamilyRow = {
+  familleId: number;
+  label: string;
   budgetEur: number;
   realizedEur: number;
 };
@@ -28,8 +35,8 @@ export type DashboardTreasuryAccount = {
 };
 
 export type DashboardTreasury = {
-  asOf: string;        // ISO date (mois du dernier solde connu)
-  amountEur: number;   // solde global (pour compat compat)
+  asOf: string;
+  amountEur: number;
   soldeGlobalEur: number;
   comptes: DashboardTreasuryAccount[];
 };
@@ -38,23 +45,31 @@ export type DashboardData = {
   exer: {
     exerId: string;
     exerCode: string | null;
-    debut: string; // ISO
-    fin: string;   // ISO
+    debut: string;
+    fin: string;
   };
 
   sales: {
     totalBudgetEur: number;
     totalRealizedEur: number;
-    byRevenueType: DashboardBarPoint[]; // bar chart vertical multi
+    byRevenueType: DashboardBarPoint[];
   };
 
-purchases: {
-  totalBudgetEur: number;
-  totalRealizedEur: number;
-  byCentreCout: DashboardBarPoint[]; // budget vs réalisé (familles pour l’instant)
-};
+  purchases: {
+    totalBudgetEur: number;
+    totalRealizedEur: number;
+    rows: DashboardPurchaseFamilyRow[];
+  };
 
   receivables: DashboardReceivables;
 
-  treasury?: DashboardTreasury; // optional pour l’instant
+  treasury?: DashboardTreasury;
+  tva?: DashboardTva;
+};
+
+export type DashboardTva = {
+  tvaCollecteeEur: number;
+  tvaDeductibleEur: number;
+  tvaDejaPayeeEur: number;
+  tvaRestanteEur: number;
 };

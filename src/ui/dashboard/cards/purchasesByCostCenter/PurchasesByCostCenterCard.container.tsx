@@ -7,7 +7,11 @@ import type { PurchasesByCostCenterCardModel } from "./purchasesByCostCenter.mod
 import { PurchasesByCostCenterCardView } from "./PurchasesByCostCenterCard.view";
 
 function selectModel(data: DashboardData): PurchasesByCostCenterCardModel {
-  return { items: data.purchases.byCentreCout ?? [] };
+  return {
+    rows: data.purchases.rows ?? [],
+    totalBudgetEur: data.purchases.totalBudgetEur ?? 0,
+    totalRealizedEur: data.purchases.totalRealizedEur ?? 0,
+  };
 }
 
 export function PurchasesByCostCenterCard(props: { data: DashboardData }) {

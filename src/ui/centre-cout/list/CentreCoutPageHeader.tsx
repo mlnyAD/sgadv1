@@ -6,9 +6,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { TableHeader } from "@/components/transaction/TableHeader";
 
-export function CentreCoutToolbar() {
+export function CentreCoutPageHeader() {
   return (
-    <div className="mb-4 flex items-end justify-between gap-4">
+    <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
       <TableHeader
         title="Centres de coût"
         subtitle="Gérer les centres de coût du site"
@@ -17,7 +17,7 @@ export function CentreCoutToolbar() {
       <div className="flex items-center gap-2">
         <Link
           href="/dashboard"
-          className="inline-flex items-center h-9 px-4 rounded-md border border-muted-foreground/40 text-foreground hover:bg-muted text-base"
+          className="inline-flex h-9 items-center rounded-md border border-muted-foreground/40 px-4 text-sm text-foreground hover:bg-muted"
         >
           Fermer
         </Link>

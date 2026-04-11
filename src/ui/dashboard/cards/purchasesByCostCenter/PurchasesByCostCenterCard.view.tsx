@@ -2,104 +2,83 @@
 
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import type { PurchasesByCostCenterCardModel } from "./purchasesByCostCenter.model";
-import { DASHBOARD_COLORS } from "@/ui/dashboard/dashboard.colors";
-import { eur } from "@/ui/dashboard/format";
-import { useElementSize } from "@/hooks/use-element-size";
-
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  CartesianGrid,
-  Cell,
-} from "recharts";
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+	CardDescription,
+} from "@/components/ui/card";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableRow,
+} from "@/components/ui/table";
 
-type TickProps = {
-  x?: number;
-  y?: number;
-  payload?: { value?: string };
-};
-
-function CustomTick(props: TickProps) {
-  const x = props.x ?? 0;
-  const y = props.y ?? 0;
-  const value = props.payload?.value ?? "";
-
-  return (
-    <text
-      x={x}
-      y={y + 15}
-      textAnchor="end"
-      transform={`rotate(-30, ${x}, ${y})`}
-      fontSize={11}
-      fill={DASHBOARD_COLORS.axis}
-    >
-      {value}
-    </text>
-  );
-}
+import type { PurchasesByCostCenterCardModel } from "./purchasesByCostCenter.model";
+import { eur } from "@/ui/dashboard/format";
 
 export function PurchasesByCostCenterCardView(props: {
-  model: PurchasesByCostCenterCardModel;
+	model: PurchasesByCostCenterCardModel;
 }) {
-  const { items } = props.model;
-  const { ref, size } = useElementSize<HTMLDivElement>();
+	const { rows, totalBudgetEur, totalRealizedEur } = props.model;
 
-  const ready = size.width > 0 && size.height > 0;
+	return (
+		<Card className="min-w-0 rounded-2xl  bg-slate-50/40 border">
+			<CardHeader className="pb-2">
+				<CardTitle className="text-base">Répartition des achats</CardTitle>
+				<CardDescription>
+					Budget vs réalisé (HT) par famille de centres de coût
+				</CardDescription>
+			</CardHeader>
 
-  return (
-    <Card className="min-w-0 rounded-2xl lg:col-span-2 bg-slate-50/40">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base">Répartition des achats</CardTitle>
-        <CardDescription>
-          Budget vs réalisé (HT) par famille de centres de coût
-        </CardDescription>
-      </CardHeader>
+			<CardContent>
+				<div className="h-80 min-w-0 overflow-y-auto">
+					<Table>
+						<TableBody>
 
-      <CardContent>
-        <div ref={ref} className="h-56 min-w-0">
-          {!ready ? (
-            <div className="h-full w-full rounded bg-muted animate-pulse" />
-          ) : (
-            <BarChart width={size.width} height={size.height} data={items}>
-              <CartesianGrid stroke={DASHBOARD_COLORS.grid} vertical={false} />
+							{/* Header */}
+							<TableRow className="border-b bg-muted/30">
+								<TableCell className="font-medium">
+									Famille de centre de coût
+								</TableCell>
+								<TableCell className="text-right font-medium">
+									Budget prévisionnel
+								</TableCell>
+								<TableCell className="text-right font-medium">
+									Réalisé à date
+								</TableCell>
+							</TableRow>
 
-              <XAxis dataKey="label" interval={0} height={70} tick={<CustomTick />} />
-              <YAxis tick={{ fontSize: 11, fill: DASHBOARD_COLORS.axis }} />
+							{/* Rows */}
+							{rows.map((row) => (
+								<TableRow key={row.familleId}>
+									<TableCell>{row.label}</TableCell>
+									<TableCell className="text-right tabular-nums">
+										{eur(row.budgetEur)} €
+									</TableCell>
+									<TableCell className="text-right tabular-nums">
+										{eur(row.realizedEur)} €
+									</TableCell>
+								</TableRow>
+							))}
 
-              <Tooltip
-                formatter={(value) => {
-                  const n = typeof value === "number" ? value : Number(value ?? 0);
-                  return `${eur(n)} €`;
-                }}
-              />
-              <Legend />
+							{/* Total */}
+							<TableRow className="border-t bg-muted/80 font-semibold sticky bottom-0">
+								<TableCell className="text-right">Total</TableCell>
+								<TableCell className="text-right tabular-nums">
+									{eur(totalBudgetEur)} €
+								</TableCell>
+								<TableCell className="text-right tabular-nums">
+									{eur(totalRealizedEur)} €
+								</TableCell>
+							</TableRow>
 
-              <Bar dataKey="budgetEur" name="Budget" fill={DASHBOARD_COLORS.budget} />
-
-              <Bar dataKey="realizedEur" name="Réalisé">
-                {items.map((entry, idx) => {
-                  const over =
-                    (entry.realizedEur ?? 0) > (entry.budgetEur ?? 0) &&
-                    (entry.budgetEur ?? 0) > 0;
-
-                  return (
-                    <Cell
-                      key={`cell-${idx}`}
-                      fill={over ? DASHBOARD_COLORS.over : DASHBOARD_COLORS.realized}
-                    />
-                  );
-                })}
-              </Bar>
-            </BarChart>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
+						</TableBody>
+					</Table>
+				</div>
+			</CardContent>
+		</Card>
+	);
 }

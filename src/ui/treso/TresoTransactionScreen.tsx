@@ -237,7 +237,7 @@ function CompteBloc(props: {
         <td className="py-1 pr-2 align-top text-muted-foreground"> </td>
 
         {mois.map((m) => (
-          <td key={m.mois} className="py-2 pr-3 align-top text-muted-foreground" />
+          <td key={m.mois} className="py-2 pr-3 align-top text-muted-foreground " />
         ))}
       </tr>
 
@@ -269,7 +269,7 @@ function CompteBloc(props: {
         <td className="py-1.5 pr-3 text-muted-foreground">—</td>
 
         {mois.map((m) => (
-          <td key={m.mois} className="py-1.5 pr-3 tabular-nums">
+          <td key={m.mois} className="py-1.5 pr-3 tabular-nums ">
             {eur(ligne.debits[m.mois] ?? 0)} €
           </td>
         ))}
@@ -292,7 +292,7 @@ function CompteBloc(props: {
         </td>
 
         {mois.map((m) => (
-          <td key={m.mois} className="py-1.5 pr-3 font-medium tabular-nums">
+          <td key={m.mois} className="py-1.5 pr-3 font-medium tabular-nums bg-green-50">
             {eur(ligne.soldes[m.mois] ?? ligne.soldeInit)} €
           </td>
         ))}

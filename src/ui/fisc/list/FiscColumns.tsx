@@ -20,7 +20,6 @@ export function getFiscColumns(options: {
       header: "Type",
       cell: ({ row }) => getFiscTypeById(row.original.typeId)?.libelle ?? String(row.original.typeId),
     },
-    { accessorKey: "societeNom", header: "Société", cell: ({ row }) => row.original.societeNom ?? "—" },
     { accessorKey: "exerciceCode", header: "Exercice", cell: ({ row }) => row.original.exerciceCode ?? "—" },
     { accessorKey: "montant", header: "Montant", cell: ({ row }) => `${eur(row.original.montant)} €` },
     { accessorKey: "commentaires", header: "Commentaires", cell: ({ row }) => row.original.commentaires ?? "" },

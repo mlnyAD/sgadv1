@@ -9,6 +9,6 @@ export const FiscSelectableColumns: ColumnSelectorItem[] = [
   { key: "societeNom", label: "Société", visible: true },
   { key: "exerciceCode", label: "Exercice", visible: true },
   { key: "montant", label: "Montant", visible: true },
-  { key: "commentaires", label: "Commentaires", visible: false },
+  { key: "commentaires", label: "Commentaires", visible: true },
   // "actions" toujours visible
 ];

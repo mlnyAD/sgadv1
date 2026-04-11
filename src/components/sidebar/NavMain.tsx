@@ -2,18 +2,20 @@
 
 import {
 	Building2,
-	Contact,
-	FileStack,
-	ListTodo,
-	Settings2,
-	Presentation,
 	KanbanSquare,
-	ShoppingCart,
 	TrendingUp,
-	BadgeEuro,
 	HandCoins,
 	Scale,
-	Calendars,
+	TrendingDown,
+	Target,
+	UserCog,
+	Handshake,
+	ReceiptText,
+	RotateCcw,
+	CalendarRange,
+	Network,
+	Landmark,
+	FileDown,
 } from "lucide-react";
 
 import {
@@ -45,77 +47,47 @@ const ITEMS: NavItem[] = [
 		id: "operateur",
 		title: "Opérateurs",
 		href: "/operateurs",
-		icon: Contact,
+		icon: UserCog,
 		adminOnly: true,
 	},
 	{
 		id: "operclient",
 		title: "Opérateurs/Clients",
 		href: "/operclients",
-		icon: Contact,
+		icon: Handshake,
 		adminOnly: true,
 	},
 
 	// --- Accessible à tous ---
 	{
-		id: "centres_cout",
-		title: "Centres coût",
-		href: "/centres-cout",
-		icon: FileStack,
+		id: "facture_fournisseur",
+		title: "Factures fournisseurs",
+		href: "/purchases",
+		icon: TrendingDown,
+	},
+	{
+		id: "facture_client",
+		title: "Factures clients",
+		href: "/sales",
+		icon: TrendingUp,
 	},
 	{
 		id: "societes",
 		title: "Sociétés",
 		href: "/societes",
-		icon: Presentation,
-	},
-	{
-		id: "facture_fournisseur",
-		title: "Achats",
-		href: "/purchases",
-		icon: ShoppingCart,
-	},
-	{
-		id: "facture_client",
-		title: "Ventes",
-		href: "/sales",
-		icon: TrendingUp,
-	},
-	{
-		id: "budget",
-		title: "Budget",
-		href: "/budgets",
-		icon: BadgeEuro,
-	},
-	{
-		id: "operation_bancaire",
-		title: "Opérations bancaires",
-		href: "/wait",
-		icon: Settings2,
-	},
-	{
-		id: "exercice_comptable",
-		title: "Exercices",
-		href: "/exercices",
-		icon: Calendars,
-	},
-	{
-		id: "compte",
-		title: "Comptes bancaires",
-		href: "/comptes",
 		icon: Building2,
 	},
 	{
 		id: "fisc",
 		title: "Fiscalité",
 		href: "/fisc",
-		icon: Building2,
+		icon: ReceiptText,
 	},
 	{
 		id: "rembt",
 		title: "Remboursements",
 		href: "/rembt",
-		icon: Building2,
+		icon: RotateCcw,
 	},
 	{
 		id: "treso",
@@ -124,23 +96,55 @@ const ITEMS: NavItem[] = [
 		icon: HandCoins,
 	},
 	{
+		id: "exercice_comptable",
+		title: "Exercices",
+		href: "/exercices",
+		icon: CalendarRange,
+	},
+	{
+		id: "budget",
+		title: "Budget",
+		href: "/budgets",
+		icon: Target,
+	},
+	{
 		id: "bilan",
 		title: "Bilan",
 		href: "/bilan",
 		icon: Scale,
 	},
 	{
+		id: "centres_cout",
+		title: "Centres coût",
+		href: "/centres-cout",
+		icon: Network,
+	},
+/*	{
+		id: "operation_bancaire",
+		title: "Opérations bancaires",
+		href: "/wait",
+		icon: Settings2,
+	},
+*/
+	{
+		id: "compte",
+		title: "Comptes bancaires",
+		href: "/comptes",
+		icon: Landmark,
+	},
+	{
 		id: "export",
 		title: "Exports",
 		href: "/exports",
-		icon: Scale,
+		icon: FileDown,
 	},
-	{
+/*	{
 		id: "todo",
 		title: "ToDo Liste",
 		href: "/wait",
 		icon: ListTodo,
 	},
+*/
 ];
 
 /**

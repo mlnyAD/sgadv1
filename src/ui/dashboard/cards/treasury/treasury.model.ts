@@ -10,6 +10,18 @@ export type TreasuryCompteModel = {
 export type TreasuryCardModel = {
   asOf: string;
   soldeGlobalEur: number;
-  comptes: TreasuryCompteModel[];
+  comptes: {
+    compteId: string;
+    nom: string;
+    inclusGlobal: boolean;
+    soldeEur: number;
+  }[];
   note?: string;
+
+  tva?: {
+    tvaRestanteEur: number;
+    tvaCollecteeEur: number;
+    tvaDeductibleEur: number;
+    tvaDejaPayeeEur: number;
+  };
 };

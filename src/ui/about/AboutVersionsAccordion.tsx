@@ -23,9 +23,9 @@ export function AboutVersionsAccordion() {
 				</AccordionTrigger>
 				<AccordionContent>
 					<div className="rounded-lg border bg-white dark:bg-black p-4 shadow-sm">
-						<p className="mt-2 text-sm font-medium">Version 1.15 du 06/04/2026</p>
-						<p className="text-xs">1 - Séparation des Ventes et des Achats </p>
-						<p className="text-xs">et reprise des transactions impactées </p>
+						<p className="mt-2 text-sm font-medium">Version 1.16 du 11/04/2026</p>
+						<p className="text-xs">1 - Mise en place filtres sur centres de coût </p>
+						<p className="text-xs">2 - Reprise dashboard et budget </p>
 					</div>
 				</AccordionContent>
 			</AccordionItem>
@@ -33,6 +33,9 @@ export function AboutVersionsAccordion() {
 			<AccordionItem value="history">
 				<AccordionTrigger>Historique</AccordionTrigger>
 				<AccordionContent>
+					<p className="mt-2 text-sm font-medium">Version 1.15 du 06/04/2026</p>
+					<p className="text-xs">1 - Séparation des Ventes et des Achats </p>
+					<p className="text-xs">et reprise des transactions impactées </p>
 					<p className="mt-2 text-sm font-medium">Version 1.14 du 09/03/2026</p>
 					<p className="text-xs">1 - Reprise du n° de version </p>
 					<p className="mt-2 text-sm font-medium">Version 1.13 du 08/03/2026</p>

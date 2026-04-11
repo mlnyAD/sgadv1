@@ -15,6 +15,7 @@ function selectModel(data: DashboardData): TreasuryCardModel {
       soldeGlobalEur: 0,
       comptes: [],
       note: "Trésorerie non initialisée",
+      tva: data.tva,
     };
   }
 
@@ -27,6 +28,7 @@ function selectModel(data: DashboardData): TreasuryCardModel {
       soldeEur: c.soldeEur,
       inclusGlobal: c.inclusGlobal,
     })),
+    tva: data.tva,
   };
 }
 
