@@ -5,7 +5,7 @@
 import "server-only";
 
 import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerWriteClient } from "@/lib/supabase/server-write";
 import { SELECT_FISC_VIEW } from "./fisc.select";
 
 import type { FiscView } from "./fisc-types";
@@ -36,7 +36,7 @@ export async function createFisc(payload: Omit<FiscInsert, "fisc_clt_id" | "fisc
   const { current } = await getCurrentClient({ requireSelected: true, next: "/fisc" });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   const insertPayload: FiscInsert = {
     ...payload,
@@ -53,7 +53,7 @@ export async function updateFisc(fiscId: string, payload: FiscUpdate): Promise<v
   const { current } = await getCurrentClient({ requireSelected: true, next: "/fisc" });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   const { error } = await supabase
     .from("fisc")
@@ -108,7 +108,7 @@ export async function deleteFisc(fiscId: string): Promise<void> {
   const { current } = await getCurrentClient({ requireSelected: true, next: "/fisc" });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   const { error } = await supabase
     .from("fisc")

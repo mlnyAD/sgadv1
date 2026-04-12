@@ -2,7 +2,8 @@
 
 "use server"
 
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerWriteClient } from "@/lib/supabase/server-write";
+import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
 import { getCurrentClient } from "@/domain/session/current-client";
 
 export async function enregistrerTresoInit(args: {
@@ -14,7 +15,7 @@ export async function enregistrerTresoInit(args: {
   const { current } = await getCurrentClient({ requireSelected: true, next: "/treso" });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerReadClient();
 
   const { exerId, cptId, moisDebutExerIso, soldeInit } = args;
 
@@ -73,7 +74,7 @@ export async function enregistrerTresoMois(args: {
   const { current } = await getCurrentClient({ requireSelected: true, next: "/treso" });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   const { exerId, cptId, moisIso, credits, debits } = args;
 

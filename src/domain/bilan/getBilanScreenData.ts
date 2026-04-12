@@ -1,7 +1,7 @@
 
 
 import { getCurrentClient } from "@/domain/session/current-client";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
 import { loadSalesTotals, loadPurchaseTotals } from "@/features/bilan/bilan.data";
 import { computeBilan } from "@/domain/bilan/bilan.calculations";
 import { BilanConfig } from "@/domain/bilan/bilan.config";
@@ -39,7 +39,7 @@ export async function getBilanScreenData(params: { exerid?: string }): Promise<B
   if (!current?.cltId) throw new Error("Aucun client courant");
   const cltId = current.cltId;
 
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseServerReadClient();
 
   // Exercice options + resolve exercice courant
   const { data: exerRows, error: exerErr } = await supabase

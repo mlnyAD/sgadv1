@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       },
     );
 
-    console.log("export - result = ", result.buffer);
+    //console.log("export - result = ", result.buffer);
 
     return new NextResponse(new Uint8Array(result.buffer), {
       status: 200,

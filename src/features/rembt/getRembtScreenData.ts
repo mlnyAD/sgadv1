@@ -1,7 +1,7 @@
 
 
 import { getCurrentClient } from "@/domain/session/current-client";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
 import { DB } from "@/domain/_db/names";
 
 type ExerciseOption = { exer_id: string; exer_code: string | null };
@@ -30,7 +30,7 @@ export async function getRembtScreenData(params: { exerid?: string }): Promise<R
   if (!current?.cltId) throw new Error("Aucun client courant");
   const cltId = current.cltId;
 
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseServerReadClient();
 
   const { data: exerRows, error: exerErr } = await supabase
     .from(DB.views.exercice)

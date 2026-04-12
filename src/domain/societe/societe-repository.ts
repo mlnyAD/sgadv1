@@ -3,7 +3,7 @@
 import "server-only";
 
 import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerWriteClient } from "@/lib/supabase/server-write";
 import { SELECT_SOCIETE_VIEW } from "./societe.select";
 
 import type { SocieteView } from "./societe-types";
@@ -36,7 +36,7 @@ export async function createSociete(payload: Omit<SocieteInsert, "clt_id">): Pro
   const { current } = await getCurrentClient({ requireSelected: true, next: "/societes" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   const insertPayload: SocieteInsert = {
     ...payload,
@@ -51,7 +51,7 @@ export async function updateSociete(societeId: string, payload: SocieteUpdate): 
   const { current } = await getCurrentClient({ requireSelected: true, next: "/societes" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   const { error } = await supabase
     .from("societe")

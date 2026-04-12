@@ -3,7 +3,7 @@
 import "server-only";
 
 import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerWriteClient } from "@/lib/supabase/server-write";
 import { SELECT_EXERCICE_VIEW } from "./exercice.select";
 
 import type { ExerciceView } from "./exercice-types";
@@ -33,7 +33,7 @@ export async function createExercice(payload: Omit<ExerciceInsert, "clt_id">): P
   const { current } = await getCurrentClient({ requireSelected: true, next: "/exercices" });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
   const { error } = await supabase.from("exercice").insert({ ...payload, clt_id: current.cltId });
   if (error) throw new Error(error.message);
 }
@@ -42,7 +42,7 @@ export async function updateExercice(exerciceId: string, payload: ExerciceUpdate
   const { current } = await getCurrentClient({ requireSelected: true, next: "/exercices" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
   const { error } = await supabase
     .from("exercice")
     .update(payload)

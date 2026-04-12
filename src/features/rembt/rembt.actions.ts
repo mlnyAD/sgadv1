@@ -5,7 +5,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getCurrentClient } from "@/domain/session/current-client";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerWriteClient } from "@/lib/supabase/server-write";
 import { notFound } from "next/navigation";
 import { DB } from "@/domain/_db/names";
 
@@ -29,7 +29,7 @@ export async function addRemboursementAction(formData: FormData) {
   });
   if (!parsed.success) return;
 
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   await supabase.from(DB.tables.remboursement).insert({
     rbt_clt_id: cltId,
@@ -60,7 +60,7 @@ export async function deleteRemboursementAction(formData: FormData) {
   });
   if (!parsed.success) return;
 
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   await supabase.from(DB.tables.remboursement).delete()
     .eq("rbt_id", parsed.data.rbtId)

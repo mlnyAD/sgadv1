@@ -5,7 +5,7 @@
 import "server-only";
 
 import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerWriteClient } from "@/lib/supabase/server-write";
 
 import { getFamilleById } from "./centre-cout-familles.catalog";
 import { mapCentreCoutRowToView } from "./centre-cout-mapper";
@@ -63,7 +63,7 @@ export async function createCentreCout(
   const { current } = await getCurrentClient({ requireSelected: true, next: "/centres-cout" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   const insertPayload: CentreCoutInsert = {
     ...payload,
@@ -82,7 +82,7 @@ export async function updateCentreCout(centreCoutId: string, payload: CentreCout
   const { current } = await getCurrentClient({ requireSelected: true, next: "/centres-cout" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   const { error } = await supabase
     .from("centre_cout")

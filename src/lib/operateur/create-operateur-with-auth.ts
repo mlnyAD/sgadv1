@@ -8,7 +8,7 @@ export async function createOperateurWithAuth(email: string): Promise<{
   operId: string;
   tempPassword: string;
 }> {
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseAdminClient();
 
   const tempPassword = crypto.randomUUID();
 
@@ -26,6 +26,21 @@ export async function createOperateurWithAuth(email: string): Promise<{
 }
 
 export async function rollbackOperateurAuth(operId: string): Promise<void> {
-  const supabase = createSupabaseAdminClient();
-  await supabase.auth.admin.deleteUser(operId);
+  const supabase = await createSupabaseAdminClient();
+
+  const { error } = await supabase.auth.admin.deleteUser(operId);
+
+  if (error) {
+    throw new Error(`Erreur rollback Auth: ${error.message}`);
+  }
+}
+
+export async function deleteOperateurAuth(operId: string): Promise<void> {
+  const supabase = await createSupabaseAdminClient();
+
+  const { error } = await supabase.auth.admin.deleteUser(operId);
+
+  if (error) {
+    throw new Error(`Erreur suppression Auth: ${error.message}`);
+  }
 }

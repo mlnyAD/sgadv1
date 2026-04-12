@@ -13,7 +13,7 @@ export default async function Page({ params }: PageProps) {
 
   const { purchaseid } = await params;
 
-  const { current } = await getCurrentClient({ requireSelected: true, next: "/purchases/sales" })
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/sales" })
   if (!current?.cltId) return <div>Aucun client sélectionné.</div>;
 
   const [options, initialPurchase] = await Promise.all([

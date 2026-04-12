@@ -27,11 +27,20 @@ export async function getClientById(id: string): Promise<ClientView | null> {
   return mapClientRowToView(data);
 }
 
-export async function createClient(payload: ClientInsert): Promise<void> {
+export async function createClient(payload: ClientInsert): Promise<string> {
   const supabase = await createSupabaseAdminClient();
 
-  const { error } = await supabase.from("client").insert(payload);
-  if (error) throw new Error(error.message);
+  const { data, error } = await supabase
+    .from("client")
+    .insert(payload)
+    .select("clt_id")
+    .single();
+
+  if (error || !data?.clt_id) {
+    throw new Error(error?.message ?? "Création client impossible");
+  }
+
+  return data.clt_id;
 }
 
 export async function updateClient(clientId: string, payload: ClientUpdate): Promise<void> {

@@ -1,20 +1,37 @@
 
 
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerWriteClient } from "@/lib/supabase/server-write";
+import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
 import { mapRemboursementViewRow } from "./rembt.mapper";
 import type { RefundState, RemboursementRow } from "./rembt.types";
 
 const VW_REMBT = "vw_remboursement_view";
-const VW_INVP = "vw_purchase_view";
+const VW_PURCHASE = "vw_purchase_view";
 const TBL_REMBT = "remboursement";
 
-export async function getRefundState(params: { cltId: string; exerId: string }): Promise<RefundState> {
-  const supabase = createSupabaseAdminClient();
+type PurchaseRefundRow = {
+  pur_paid_by_third_party_amount: number | string | null;
+  exer_code: string | null;
+};
 
-  const [{ data: invpRows, error: invpErr }, { data: rembAgg, error: rembAggErr }] = await Promise.all([
+type RemboursementAggRow = {
+  rbt_amount: number | string | null;
+  exer_code: string | null;
+};
+
+export async function getRefundState(params: {
+  cltId: string;
+  exerId: string;
+}): Promise<RefundState> {
+  const supabase = await createSupabaseServerReadClient();
+
+  const [
+    { data: invpRows, error: invpErr },
+    { data: rembAgg, error: rembAggErr },
+  ] = await Promise.all([
     supabase
-      .from(VW_INVP)
-      .select("invp_paid_by_third_party_amount, exer_code")
+      .from(VW_PURCHASE)
+      .select("pur_paid_by_third_party_amount, exer_code")
       .eq("clt_id", params.cltId)
       .eq("exer_id", params.exerId),
     supabase
@@ -27,13 +44,21 @@ export async function getRefundState(params: { cltId: string; exerId: string }):
   if (invpErr) throw new Error(invpErr.message);
   if (rembAggErr) throw new Error(rembAggErr.message);
 
-  const toRefundAmount =
-    (invpRows ?? []).reduce((acc, r: any) => acc + Number(r.invp_paid_by_third_party_amount ?? 0), 0);
+  const purchaseRows = (invpRows ?? []) as PurchaseRefundRow[];
+  const remboursementRows = (rembAgg ?? []) as RemboursementAggRow[];
 
-  const refundedAmount =
-    (rembAgg ?? []).reduce((acc, r: any) => acc + Number(r.rbt_amount ?? 0), 0);
+  const toRefundAmount = purchaseRows.reduce(
+    (acc, row) => acc + Number(row.pur_paid_by_third_party_amount ?? 0),
+    0
+  );
 
-  const exerCode = (invpRows?.[0]?.exer_code ?? rembAgg?.[0]?.exer_code ?? null) as string | null;
+  const refundedAmount = remboursementRows.reduce(
+    (acc, row) => acc + Number(row.rbt_amount ?? 0),
+    0
+  );
+
+  const exerCode =
+    purchaseRows[0]?.exer_code ?? remboursementRows[0]?.exer_code ?? null;
 
   return {
     cltId: params.cltId,
@@ -45,8 +70,11 @@ export async function getRefundState(params: { cltId: string; exerId: string }):
   };
 }
 
-export async function listRemboursements(params: { cltId: string; exerId: string }): Promise<RemboursementRow[]> {
-  const supabase = createSupabaseAdminClient();
+export async function listRemboursements(params: {
+  cltId: string;
+  exerId: string;
+}): Promise<RemboursementRow[]> {
+  const supabase = await createSupabaseServerReadClient();
 
   const { data, error } = await supabase
     .from(VW_REMBT)
@@ -64,9 +92,9 @@ export async function createRemboursement(params: {
   cltId: string;
   exerId: string;
   amount: number;
-  date: string; // YYYY-MM-DD
+  date: string;
 }) {
-  const supabase = createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   const { error } = await supabase.from(TBL_REMBT).insert({
     rbt_clt_id: params.cltId,
@@ -78,10 +106,13 @@ export async function createRemboursement(params: {
   if (error) throw new Error(error.message);
 }
 
-export async function deleteRemboursement(params: { rbtId: string; cltId: string; exerId: string }) {
-  const supabase = createSupabaseAdminClient();
+export async function deleteRemboursement(params: {
+  rbtId: string;
+  cltId: string;
+  exerId: string;
+}) {
+  const supabase = await createSupabaseServerWriteClient();
 
-  // filtre clt/exer pour éviter toute suppression cross-tenant même avec admin
   const { error } = await supabase
     .from(TBL_REMBT)
     .delete()

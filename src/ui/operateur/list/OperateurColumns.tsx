@@ -1,11 +1,12 @@
 
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import type { OperateurView } from "@/domain/operateur/operateur-types";
 
 export function getOperateurColumns(options: {
   onEdit: (operateur: OperateurView) => void;
+  onDelete: (operateur: OperateurView) => void;
 }): ColumnDef<OperateurView>[] {
   return [
     {
@@ -39,21 +40,30 @@ export function getOperateurColumns(options: {
     {
       accessorKey: "actif",
       header: "Statut",
-      cell: ({ row }) =>
-        row.original.actif ? "Actif" : "Inactif",
+      cell: ({ row }) => (row.original.actif ? "Actif" : "Inactif"),
     },
     {
       id: "actions",
       header: "Actions",
       enableSorting: false,
       cell: ({ row }) => (
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-2">
           <button
+            type="button"
             className="h-8 w-8 rounded-md border hover:bg-muted flex items-center justify-center"
             title="Modifier"
             onClick={() => options.onEdit(row.original)}
           >
             <Pencil className="h-4 w-4" />
+          </button>
+
+          <button
+            type="button"
+            className="h-8 w-8 rounded-md border border-red-200 text-red-600 hover:bg-red-50 flex items-center justify-center"
+            title="Supprimer"
+            onClick={() => options.onDelete(row.original)}
+          >
+            <Trash2 className="h-4 w-4" />
           </button>
         </div>
       ),

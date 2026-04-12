@@ -19,7 +19,6 @@ interface PurchaseListProps {
   pageSize: number;
   totalPages: number;
   onDeleteItem?: (item: PurchaseListItem) => Promise<void>;
-  // ex: "/purchases/sales" ou "/purchases/purchase"
   basePath: string;
 }
 

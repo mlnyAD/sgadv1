@@ -3,7 +3,7 @@
 import "server-only";
 
 import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerWriteClient } from "@/lib/supabase/server-write";
 import { getCurrentClient } from "@/domain/session/current-client";
 
 import type { PurchaseListItem } from "@/ui/purchase/purchase.types";
@@ -141,9 +141,9 @@ export async function createPurchase(
 
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
-  console.log("Create Purchase Payload = ", payload)
+  //console.log("Create Purchase Payload = ", payload)
 
   const { data: created, error } = await supabase
     .from("purchase")
@@ -172,7 +172,7 @@ export async function updatePurchase(
 
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   const { error } = await supabase
     .from("purchase")
@@ -191,7 +191,7 @@ export async function deletePurchase(params: { purId: string }): Promise<void> {
 
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   const { error } = await supabase
     .from("purchase")

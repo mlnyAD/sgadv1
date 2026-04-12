@@ -170,4 +170,39 @@ export async function getAuthenticatedOperateurByUserId(
 	return mapOperateurDbRowToAuthenticated(operRow, clientIds);
 }
 
+/* ------------------------------------------------------------------ */
+/* DELETE (table)                                                     */
+/* ------------------------------------------------------------------ */
+export async function countOperateurClientAssociations(
+  operateurId: string
+): Promise<number> {
+  const supabase = await createSupabaseAdminClient();
 
+  const { count, error } = await supabase
+    .from("operateur_client")
+    .select("opcl_id", { count: "exact", head: true })
+    .eq("oper_id", operateurId);
+
+  if (error) throw new Error(error.message);
+
+  return count ?? 0;
+}
+
+export async function deleteOperateur(operateurId: string): Promise<void> {
+  const supabase = await createSupabaseAdminClient();
+
+  const linksCount = await countOperateurClientAssociations(operateurId);
+
+  if (linksCount > 0) {
+    throw new Error(
+      "Suppression impossible : cet opérateur est encore associé à un ou plusieurs clients."
+    );
+  }
+
+  const { error } = await supabase
+    .from("operateur")
+    .delete()
+    .eq("oper_id", operateurId);
+
+  if (error) throw new Error(error.message);
+}

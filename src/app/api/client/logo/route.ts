@@ -2,6 +2,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { requireApiAdmin } from "@/lib/auth/require-api-admin";
 
 const LOGO_BUCKET = "client-logos";
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
@@ -19,6 +20,11 @@ function getExtension(file: File): string {
 }
 
 export async function POST(req: NextRequest) {
+  const operateur = await requireApiAdmin();
+  if (operateur instanceof NextResponse) {
+    return operateur;
+  }
+
   try {
     const formData = await req.formData();
 
@@ -28,28 +34,28 @@ export async function POST(req: NextRequest) {
     if (typeof clientId !== "string" || clientId.length === 0) {
       return NextResponse.json(
         { error: "CLIENT_ID_REQUIRED", message: "clientId est requis." },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     if (!(file instanceof File)) {
       return NextResponse.json(
         { error: "FILE_REQUIRED", message: "Aucun fichier transmis." },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     if (!ALLOWED_TYPES.includes(file.type)) {
       return NextResponse.json(
         { error: "INVALID_FILE_TYPE", message: "Format de fichier non autorisé." },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
         { error: "FILE_TOO_LARGE", message: "Fichier trop volumineux." },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -71,7 +77,7 @@ export async function POST(req: NextRequest) {
     if (uploadError) {
       return NextResponse.json(
         { error: "UPLOAD_ERROR", message: uploadError.message },
-        { status: 500 },
+        { status: 500 }
       );
     }
 
@@ -85,7 +91,7 @@ export async function POST(req: NextRequest) {
     if (updateError) {
       return NextResponse.json(
         { error: "CLIENT_UPDATE_ERROR", message: updateError.message },
-        { status: 500 },
+        { status: 500 }
       );
     }
 
@@ -99,7 +105,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { error: "INTERNAL_ERROR", message },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

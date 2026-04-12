@@ -74,13 +74,13 @@ export class ExportService {
 
     const where = this.buildWhereClauses(definition, params, context);
 
-     console.log("export execute", {
+    /* console.log("export execute", {
       exportKey: params.exportKey,
       definitionView: definition.view,
       cltId: context.cltId,
       exercice: params.exercice,
       where,
-    });
+    }); */
 
     const rows = await this.repository.runViewQuery({
       definition,
@@ -88,7 +88,7 @@ export class ExportService {
       orderBy: this.buildOrderBy(definition),
     });
 
-     console.log("export rows count", rows.length);
+     //console.log("export rows count", rows.length);
 
     const buffer = await this.xlsxBuilder.build({
       sheetName: definition.label,

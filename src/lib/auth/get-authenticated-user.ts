@@ -1,44 +1,20 @@
 
 
-// src/lib/auth/get-authenticated-user.ts
+import "server-only";
 
-import { cookies } from "next/headers";
-import { createServerClient } from "@supabase/ssr";
+import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
 
-export interface AuthUser {
-  id: string;
-  email: string;
-}
-
-export async function getAuthenticatedUser(): Promise<AuthUser | null> {
-  const cookieStore = await cookies();
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll: () => cookieStore.getAll(),
-        setAll: (cookiesToSet) => {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
-        },
-      },
-    }
-  );
+export async function getAuthenticatedUser() {
+  const supabase = await createSupabaseServerReadClient();
 
   const {
     data: { user },
     error,
   } = await supabase.auth.getUser();
 
-  if (error || !user?.email) {
+  if (error || !user) {
     return null;
   }
 
-  return {
-    id: user.id,
-    email: user.email,
-  };
+  return user;
 }

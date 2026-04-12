@@ -7,6 +7,7 @@ import { GenericListTable } from "@/components/table/GenericListTable";
 import type { OperateurView } from "@/domain/operateur/operateur-types";
 import { getOperateurColumns } from "./OperateurColumns";
 import { OperateurFilters } from "./OperateurFilters";
+import { deleteOperateurServerAction } from "@/features/operateur/operateur-action";
 
 interface Props {
   operateurs: OperateurView[];
@@ -29,7 +30,22 @@ export function OperateurList({
     actifParam === null ? null : actifParam === "true";
 
   const columns = getOperateurColumns({
-    onEdit: (op) => router.push(`/operateurs/${op.id}`),
+    onEdit: (operateur) => router.push(`/operateurs/${operateur.id}`),
+    onDelete: async (operateur) => {
+      const ok = window.confirm(
+        `Supprimer l'opérateur ${operateur.email} ?`
+      );
+      if (!ok) return;
+
+      try {
+        await deleteOperateurServerAction(operateur.id);
+        router.refresh();
+      } catch (error) {
+        alert(
+          error instanceof Error ? error.message : "Suppression impossible"
+        );
+      }
+    },
   });
 
   return (
@@ -57,9 +73,7 @@ export function OperateurList({
         <OperateurFilters
           actif={actif}
           onChange={(next) => {
-            const params = new URLSearchParams(
-              searchParams.toString()
-            );
+            const params = new URLSearchParams(searchParams.toString());
 
             if (next === null) {
               params.delete("actif");

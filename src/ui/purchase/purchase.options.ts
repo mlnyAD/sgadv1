@@ -1,7 +1,7 @@
 
 
 import type { SelectOption } from "@/ui/_shared/select-options";
-import { createSupabaseServerReadClient } from "@/lib/supabase/server-read"; // ajuste le chemin si besoin
+import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
 
 export type PurchaseEditorOptions = {
 	societes: SelectOption[];

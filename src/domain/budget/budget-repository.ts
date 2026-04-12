@@ -3,7 +3,7 @@
 import "server-only";
 
 import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerWriteClient } from "@/lib/supabase/server-write";
 import { SELECT_BUDGET_VIEW } from "./budget.select";
 import { mapBudgetViewRowToView, type VwBudgetViewRow } from "@/domain/budget/budget-mapper";
 import type { BudgetView } from "@/domain/budget/budget-types";
@@ -46,7 +46,7 @@ export async function createBudgetLine(payload: Omit<BudgetInsert, "clt_id">): P
   const { current } = await getCurrentClient({requireSelected: true, next: "/budgets", });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   //console.log("budget insert payload", { ...payload, clt_id: current.cltId });
   if (payload.bud_kind === "SALES" && !payload.revenue_type_id) {
@@ -65,7 +65,7 @@ export async function updateBudgetLine(budid: string, payload: BudgetUpdate): Pr
   const { current } = await getCurrentClient({requireSelected: true, next: "/budgets", });
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
   const { error } = await supabase
     .from("budget")
     .update(payload)

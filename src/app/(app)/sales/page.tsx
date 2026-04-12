@@ -56,7 +56,7 @@ export default async function SalesPage({ searchParams }: Props) {
                 page={page}
                 pageSize={pageSize}
                 totalPages={totalPages}
-                basePath="/purchases/sales"
+                basePath="/sales"
             />
         </>
     );

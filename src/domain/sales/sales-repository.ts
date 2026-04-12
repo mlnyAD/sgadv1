@@ -3,7 +3,7 @@
 import "server-only";
 
 import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerWriteClient } from "@/lib/supabase/server-write";
 import { getCurrentClient } from "@/domain/session/current-client";
 
 import type { SalesListItem } from "@/ui/sales/sales.types";
@@ -137,7 +137,7 @@ export async function createSales(
 
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   const { data: created, error } = await supabase
     .from("sales")
@@ -166,7 +166,7 @@ export async function updateSales(
 
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   const { error } = await supabase
     .from("sales")
@@ -185,7 +185,7 @@ export async function deleteSales(params: { salId: string }): Promise<void> {
 
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   const { error } = await supabase
     .from("sales")

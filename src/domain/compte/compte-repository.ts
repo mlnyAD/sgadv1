@@ -3,7 +3,7 @@
 import "server-only";
 
 import { createSupabaseServerReadClient } from "@/lib/supabase/server-read";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerWriteClient } from "@/lib/supabase/server-write";
 import { SELECT_COMPTE_VIEW } from "./compte.select";
 
 import type { CompteView } from "./compte-types";
@@ -41,7 +41,7 @@ export async function createCompte(
     throw new Error("Aucun client sélectionné");
   }
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
 
   const compteNom = String(payload.tro_cpt_nom ?? "").trim();
 
@@ -104,7 +104,7 @@ export async function updateCompte(compteId: string, payload: TroCompteUpdate): 
   const { current } = await getCurrentClient({ requireSelected: true, next: "/comptes" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
   const { error } = await supabase
     .from("tro_compte")
     .update(payload)
@@ -180,7 +180,7 @@ export async function softDeleteCompte(compteId: string): Promise<void> {
   const { current } = await getCurrentClient({ requireSelected: true, next: "/comptes" })
   if (!current?.cltId) throw new Error("Aucun client sélectionné");
 
-  const supabase = await createSupabaseAdminClient();
+  const supabase = await createSupabaseServerWriteClient();
   const { error } = await supabase
     .from("tro_compte")
     .update({ tro_cpt_actif: false } as Partial<TroCompteUpdate>)
