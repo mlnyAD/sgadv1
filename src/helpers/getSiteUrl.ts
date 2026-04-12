@@ -3,8 +3,7 @@
 import { env } from "@/lib/env";
 
 export function getSiteUrl() {
-  const explicit = env.SITE_URL;
-  if (explicit) return explicit.replace(/\/$/, "");
+  if (env.SITE_URL) return env.SITE_URL.replace(/\/$/, "");
 
   const vercelUrl = process.env.VERCEL_URL;
   if (vercelUrl) return `https://${vercelUrl}`;

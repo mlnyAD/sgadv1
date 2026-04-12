@@ -1,10 +1,10 @@
 
 
 // src/app/api/client/ensure/route.ts
-import { NextResponse } from "next/server";
-import { requireOperateur } from "@/lib/auth/require-operateur";
-import { listClientsForCurrentOperateur } from "@/features/session/current-operateur-client-action";
 import { getCurrentClient } from "@/domain/session/current-client";
+import { listClientsForCurrentOperateur } from "@/features/session/current-operateur-client-action";
+import { requireOperateur } from "@/lib/auth/require-operateur";
+import { NextResponse } from "next/server";
 
 const COOKIE_NAME = "current_clt_id";
 
