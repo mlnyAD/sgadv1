@@ -23,10 +23,8 @@ export function AboutVersionsAccordion() {
 				</AccordionTrigger>
 				<AccordionContent>
 					<div className="rounded-lg border bg-white dark:bg-black p-4 shadow-sm">
-						<p className="mt-2 text-sm font-medium">Version 1.17 du 12/04/2026	</p>
-						<p className="text-xs">1 - Mise à niveau sécurité (appels Supabase) </p>
-						<p className="text-xs">selon adminSys ou opérateur 					</p>
-						<p className="text-xs">2 - Ajout de la suppression des opérateurs 	</p>
+						<p className="mt-2 text-sm font-medium">Version 1.17.1 du 14/04/2026	</p>
+						<p className="text-xs">1 - Neutralisation server.ts en le transformant en simple alias vers server-read.</p>
 					</div>
 				</AccordionContent>
 			</AccordionItem>
@@ -34,6 +32,10 @@ export function AboutVersionsAccordion() {
 			<AccordionItem value="history">
 				<AccordionTrigger>Historique</AccordionTrigger>
 				<AccordionContent>
+					<p className="mt-2 text-sm font-medium">Version 1.17 du 12/04/2026	</p>
+					<p className="text-xs">1 - Mise à niveau sécurité (appels Supabase) </p>
+					<p className="text-xs">selon adminSys ou opérateur 					</p>
+					<p className="text-xs">2 - Ajout de la suppression des opérateurs 	</p>
 					<p className="mt-2 text-sm font-medium">Version 1.16 du 11/04/2026</p>
 					<p className="text-xs">1 - Mise en place filtres sur centres de coût </p>
 					<p className="text-xs">2 - Reprise dashboard et budget </p>
