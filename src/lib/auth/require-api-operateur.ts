@@ -6,11 +6,19 @@ import { createSupabaseServerReadClient } from "../supabase/server-read";
 import { SELECT_OPERATEUR_VIEW } from "@/domain/operateur/operateur.select";
 import type { OperateurRow } from "@/domain/_db/rows";
 
-export async function requireApiOperateur(opts?: { allowMustChangePassword?: boolean }): Promise<AuthenticatedOperateur> {
+export async function requireApiOperateur(
+  opts?: { allowMustChangePassword?: boolean }
+): Promise<AuthenticatedOperateur> {
   const supabase = await createSupabaseServerReadClient();
 
-  const { data: { user }, error } = await supabase.auth.getUser();
-  if (error || !user) throw new Error("UNAUTHORIZED");
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    throw new Error("UNAUTHORIZED");
+  }
 
   const { data, error: opError } = await supabase
     .from("vw_operateur_view")
@@ -24,7 +32,6 @@ export async function requireApiOperateur(opts?: { allowMustChangePassword?: boo
 
   if (op.oper_actif !== true) throw new Error("FORBIDDEN");
 
-  // ✅ must_change_pwd: boolean|null
   if (op.must_change_pwd === true && !opts?.allowMustChangePassword) {
     throw new Error("MUST_CHANGE_PASSWORD");
   }

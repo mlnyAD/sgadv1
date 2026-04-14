@@ -1,11 +1,6 @@
 
 
 // src/lib/supabase/server-read.ts
-
-// Client serveur pour lire la session et interroger Supabase
-// sans persister de cookies.
-// À utiliser dans les Server Components et helpers de lecture.
-
 import "server-only";
 
 import { cookies } from "next/headers";
@@ -25,9 +20,13 @@ export async function createSupabaseServerReadClient() {
           return cookieStore.getAll();
         },
         setAll() {
-          // Intentionnelle : ce client ne doit pas persister
-          // de cookies de session.
+          // lecture seule : aucun write cookie ici
         },
+      },
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+        detectSessionInUrl: false,
       },
     }
   );
