@@ -12,43 +12,49 @@ import { PanelLeft } from "lucide-react";
 import { OperateurContextProvider } from "@/contexts/OperateurContext";
 import { ClientContextProvider } from "@/contexts/ClientContext";
 
+type AppShellMode = "shared" | "app" | "admin";
+
 /* ------------------------------------------------------------------
  * AppShellInner : UI pure (sidebar + header + contenu)
  * ------------------------------------------------------------------ */
 
-function AppShellInner({ children }: { children: React.ReactNode }) {
-
+function AppShellInner({
+  children,
+  mode,
+}: {
+  children: React.ReactNode;
+  mode: AppShellMode;
+}) {
   const [collapsed, setCollapsed] = useState(false);
 
- // console.log("passage dans appShell ") 
- 
   return (
-    <SidebarProvider> 
-    
+    <SidebarProvider>
       <div className="flex h-screen w-full">
         {/* Sidebar */}
-        <AppSidebar collapsed={collapsed} />
+        <AppSidebar collapsed={collapsed} mode={mode} />
 
         {/* Zone principale */}
-        <SidebarInset className="flex flex-col flex-1 min-w-0">
+        <SidebarInset className="flex min-w-0 flex-1 flex-col">
           {/* HEADER */}
           <header className="flex h-16 items-center gap-2 border-b bg-background dark:bg-black">
             <div className="m-2 flex h-full w-full items-center gap-2">
-              <div
-                onClick={() => setCollapsed(prev => !prev)}
-                className="p-2 rounded cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800"
+              <button
+                type="button"
+                onClick={() => setCollapsed((prev) => !prev)}
+                className="rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-800"
+                aria-label="Ouvrir ou fermer le menu latéral"
               >
                 <PanelLeft className="h-6 w-6" />
-              </div>
+              </button>
 
               <Separator orientation="vertical" className="mr-2 h-4" />
-              <Header />
+              <Header mode={mode} />
             </div>
           </header>
 
           {/* CONTENU */}
           <div className="flex-1 overflow-auto bg-gray-100 p-4 dark:bg-black">
-            {children}
+            <div className="mx-auto min-w-0 max-w-7xl">{children}</div>
           </div>
         </SidebarInset>
       </div>
@@ -62,21 +68,20 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
 
 export default function AppShell({
   children,
+  mode = "shared",
 }: {
   children: React.ReactNode;
+  mode?: AppShellMode;
 }) {
-
-  //console.log("Passage dans AppShell")
+  const content = <AppShellInner mode={mode}>{children}</AppShellInner>;
 
   return (
     <OperateurContextProvider>
-      <ClientContextProvider>
-        <AppShellInner>
-          <div className="flex-1 min-w-0 overflow-auto bg-gray-100 p-4 dark:bg-black">
-            {children}
-          </div>
-        </AppShellInner>
-      </ClientContextProvider>
+      {mode === "app" ? (
+        <ClientContextProvider>{content}</ClientContextProvider>
+      ) : (
+        content
+      )}
     </OperateurContextProvider>
   );
 }

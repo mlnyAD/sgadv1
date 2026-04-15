@@ -23,8 +23,10 @@ export function AboutVersionsAccordion() {
 				</AccordionTrigger>
 				<AccordionContent>
 					<div className="rounded-lg border bg-white dark:bg-black p-4 shadow-sm">
-						<p className="mt-2 text-sm font-medium">Version 1.17.3 du 15/04/2026	</p>
-						<p className="text-xs">1 - Ajout table des versions pour la BD</p>
+						<p className="mt-2 text-sm font-medium">Version 1.17.4 du 15/04/2026	</p>
+						<p className="text-xs">1 - Debug accès BD côté applicatif</p>
+						<p className="text-xs">2 - Ajout About BD</p>
+						<p className="text-xs">3 - Ajout affihage profile</p>
 					</div>
 				</AccordionContent>
 			</AccordionItem>

@@ -1,23 +1,20 @@
 
 
+// src/app/(admin)/layout.tsx
 import AppShell from "@/app/AppShell";
 import Providers from "@/app/providers";
-import { requireOperateur } from "@/lib/auth/require-operateur";
-import { redirect } from "next/navigation";
+import { requireAdminAccess } from "@/lib/auth/guards";
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-    
-  const operateur = await requireOperateur();
-
-  //console.log("Passage dans Admlin layout op =", operateur)
-
-  if (!operateur.isAdminSys) {
-    redirect("/dashboard");
-  }
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  await requireAdminAccess();
 
   return (
     <Providers>
-      <AppShell>{children}</AppShell>
+      <AppShell mode="admin">{children}</AppShell>
     </Providers>
   );
 }

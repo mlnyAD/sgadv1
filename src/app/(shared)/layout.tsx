@@ -1,14 +1,20 @@
 
 
 // src/app/(shared)/layout.tsx
-import { requireOperateur } from "@/lib/auth/require-operateur";
+import AppShell from "@/app/AppShell";
+import Providers from "@/app/providers";
+import { requireSharedAccess } from "@/lib/auth/guards";
 
 export default async function SharedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await requireOperateur();
+  await requireSharedAccess();
 
-  return <>{children}</>;
+  return (
+    <Providers>
+      <AppShell mode="shared">{children}</AppShell>
+    </Providers>
+  );
 }
