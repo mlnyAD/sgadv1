@@ -37,7 +37,25 @@ export async function createClient(payload: ClientInsert): Promise<string> {
     .single();
 
   if (error || !data?.clt_id) {
-    throw new Error(error?.message ?? "Création client impossible");
+    console.error("createClient failed", {
+      payload,
+      code: error?.code,
+      message: error?.message,
+      details: error?.details,
+      hint: error?.hint,
+    });
+
+    throw new Error(
+      error
+        ? [
+            error.message,
+            error.details,
+            error.hint,
+          ]
+            .filter(Boolean)
+            .join(" | ")
+        : "Création client impossible"
+    );
   }
 
   return data.clt_id;
@@ -46,15 +64,48 @@ export async function createClient(payload: ClientInsert): Promise<string> {
 export async function updateClient(clientId: string, payload: ClientUpdate): Promise<void> {
   const supabase = await createSupabaseAdminClient();
 
-  const { error } = await supabase.from("client").update(payload).eq("clt_id", clientId);
-  if (error) throw new Error(error.message);
+  const { error } = await supabase
+    .from("client")
+    .update(payload)
+    .eq("clt_id", clientId);
+
+  if (error) {
+    console.error("updateClient failed", {
+      clientId,
+      payload,
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    });
+
+    throw new Error(
+      [error.message, error.details, error.hint].filter(Boolean).join(" | ")
+    );
+  }
 }
 
 export async function deleteClient(clientId: string): Promise<void> {
   const supabase = await createSupabaseAdminClient();
 
-  const { error } = await supabase.from("client").delete().eq("clt_id", clientId);
-  if (error) throw new Error(error.message);
+  const { error } = await supabase
+    .from("client")
+    .delete()
+    .eq("clt_id", clientId);
+
+  if (error) {
+    console.error("deleteClient failed", {
+      clientId,
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    });
+
+    throw new Error(
+      [error.message, error.details, error.hint].filter(Boolean).join(" | ")
+    );
+  }
 }
 
 export async function listClients(params: {

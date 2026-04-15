@@ -12,6 +12,11 @@ export function createSupabaseAdminClient() {
     throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY");
   }
 
+  console.log("Admin Supabase target", {
+    url: env.SUPABASE_URL,
+    hasServiceRoleKey: Boolean(env.SUPABASE_SERVICE_ROLE_KEY),
+  });
+
   return createClient(
     env.SUPABASE_URL,
     env.SUPABASE_SERVICE_ROLE_KEY,

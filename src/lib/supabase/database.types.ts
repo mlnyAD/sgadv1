@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_db_release: {
+        Row: {
+          created_at: string
+          dbr_comment: string
+          dbr_current: boolean
+          dbr_date: string
+          dbr_id: string
+          dbr_name: string
+          dbr_version: string
+        }
+        Insert: {
+          created_at?: string
+          dbr_comment: string
+          dbr_current?: boolean
+          dbr_date: string
+          dbr_id?: string
+          dbr_name: string
+          dbr_version: string
+        }
+        Update: {
+          created_at?: string
+          dbr_comment?: string
+          dbr_current?: boolean
+          dbr_date?: string
+          dbr_id?: string
+          dbr_name?: string
+          dbr_version?: string
+        }
+        Relationships: []
+      }
       budget: {
         Row: {
           bud_amount_ht_eur: number

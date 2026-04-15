@@ -59,7 +59,10 @@ export default function NavUser() {
 						<Link href="/wait">Mon profil</Link>
 					</DropdownMenuItem>
 					<DropdownMenuItem asChild>
-						<Link href="/about">About</Link>
+						<Link href="/about">About Applicatif</Link>
+					</DropdownMenuItem>
+					<DropdownMenuItem asChild>
+						<Link href="/about-db">About DB</Link>
 					</DropdownMenuItem>
 
 					{/* ✔ un seul enfant : button, pas form */}
