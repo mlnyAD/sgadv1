@@ -26,7 +26,7 @@ export async function getClientById(id: string): Promise<ClientView | null> {
 
   return mapClientRowToView(data);
 }
-
+/*
 export async function createClient(payload: ClientInsert): Promise<string> {
   const supabase = await createSupabaseAdminClient();
 
@@ -60,6 +60,43 @@ export async function createClient(payload: ClientInsert): Promise<string> {
 
   return data.clt_id;
 }
+  */
+export async function createClient(payload: ClientInsert): Promise<string> {
+  const supabase = await createSupabaseAdminClient();
+
+  console.log("createClient:start", { payload });
+
+  const { data, error } = await supabase
+    .from("client")
+    .insert(payload)
+    .select("clt_id")
+    .single();
+
+  console.log("createClient:after-insert", {
+    data,
+    error: error
+      ? {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+        }
+      : null,
+  });
+
+  if (error || !data?.clt_id) {
+    throw new Error(
+      error
+        ? [error.message, error.details, error.hint].filter(Boolean).join(" | ")
+        : "Création client impossible"
+    );
+  }
+
+  console.log("createClient:success", { clt_id: data.clt_id });
+
+  return data.clt_id;
+}
+
 
 export async function updateClient(clientId: string, payload: ClientUpdate): Promise<void> {
   const supabase = await createSupabaseAdminClient();
