@@ -28,7 +28,8 @@ import type { NavItem } from "./Types";
 import { useSidebar } from "@/components/ui/sidebar";
 
 interface NavMainProps {
-	isAdmin: boolean;
+  isAdmin: boolean;
+  mode: "shared" | "app" | "admin";
 }
 
 /**
@@ -156,7 +157,8 @@ function filterByRole(isAdmin: boolean): NavItem[] {
 	);
 }
 
-export default function NavMain({ isAdmin }: NavMainProps) {
+export default function NavMain({ isAdmin, mode }: NavMainProps) {
+	void mode;
 
 	//console.log("NavMain isAdmin = ", isAdmin);
 

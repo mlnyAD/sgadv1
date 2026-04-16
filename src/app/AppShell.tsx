@@ -2,12 +2,14 @@
 
 "use client";
 
-import { useState } from "react";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import AppSidebar from "@/components/sidebar/AppSidebar";
 import Header from "@/components/header/Header";
 import { Separator } from "@/components/ui/separator";
-import { PanelLeft } from "lucide-react";
 
 import { OperateurContextProvider } from "@/contexts/OperateurContext";
 import { ClientContextProvider } from "@/contexts/ClientContext";
@@ -25,30 +27,20 @@ function AppShellInner({
   children: React.ReactNode;
   mode: AppShellMode;
 }) {
-  const [collapsed, setCollapsed] = useState(false);
-
   return (
     <SidebarProvider>
       <div className="flex h-screen w-full">
         {/* Sidebar */}
-        <AppSidebar collapsed={collapsed} mode={mode} />
+        <AppSidebar collapsed={false} mode={mode} />
 
         {/* Zone principale */}
         <SidebarInset className="flex min-w-0 flex-1 flex-col">
           {/* HEADER */}
           <header className="flex h-16 items-center gap-2 border-b bg-background dark:bg-black">
             <div className="m-2 flex h-full w-full items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setCollapsed((prev) => !prev)}
-                className="rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-800"
-                aria-label="Ouvrir ou fermer le menu latéral"
-              >
-                <PanelLeft className="h-6 w-6" />
-              </button>
-
+              <SidebarTrigger className="rounded hover:bg-gray-200 dark:hover:bg-gray-800" />
               <Separator orientation="vertical" className="mr-2 h-4" />
-              <Header mode={mode} />
+              <Header />
             </div>
           </header>
 

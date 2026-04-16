@@ -19,7 +19,7 @@ export default function AppShell({ children }: AppShellProps) {
   return (
     <SidebarProvider>
       {/* Sidebar seulement si operateur chargé */}
-      {!loading && operateur ? <AppSidebar collapsed={false} /> : null}
+      {!loading && operateur ? <AppSidebar collapsed={false} mode="shared" /> : null}
 
       <SidebarInset>
         <Header />
