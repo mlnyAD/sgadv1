@@ -16,7 +16,7 @@ export function SalesRevenueTypeIdField({
   error,
 }: Props) {
   return (
-    <FormRow label="Famille" error={error}>
+    <FormRow label="Compte" error={error}>
       <AppCatalogSelect
         value={value}
         onChange={(value) => onChange(value as RevenueTypeId)}

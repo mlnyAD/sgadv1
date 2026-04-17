@@ -11,7 +11,7 @@ interface Props {
 
 export function SalesDealNumberField({ value, onChange, error }: Props) {
   return (
-    <FormRow label="Référence contrat/cde" error={error}>
+    <FormRow label="# Commande" error={error}>
       <AppInput
         value={value}
         onChange={(e) => onChange(e.target.value)}

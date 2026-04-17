@@ -12,7 +12,7 @@ interface Props {
 
 export function SalesSocieteField({ value, onChange, error, options }: Props) {
   return (
-    <FormRow label="Société" error={error}>
+    <FormRow label="Client" error={error}>
       <AppSelect
         value={value}
         onChange={onChange}

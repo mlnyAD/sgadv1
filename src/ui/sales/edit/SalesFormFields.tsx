@@ -29,13 +29,13 @@ import { toRevenueTypeId, type RevenueTypeId } from "@/domain/revenus/revenue-ty
 import { SalesDateValueField } from "../fields/SalesDateValueField";
 
 /* ------------------------------------------------------------------ */
-/* Validation schemas (1 par champ)                                    */
+/* Validation schemas (1 par champ)                                   */
 /* ------------------------------------------------------------------ */
 const idSchema = z.string().min(1, "Champ requis");
 const dateSchema = z
-	.string()
-	.min(1, "Champ requis")
-	.regex(/^\d{4}-\d{2}-\d{2}$/, "Format attendu : YYYY-MM-DD");
+  .string()
+  .min(1, "Champ requis")
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "Format attendu : YYYY-MM-DD");
 
 const designationSchema = z.string().trim().min(1, "Champ requis");
 const refSchema = z.string().trim().optional();
@@ -45,232 +45,299 @@ const revenueTypeIdSchema = z.number().int().min(1, "Champ requis");
 const paymentDelayDaysSchema = z.number().int().nonnegative();
 
 /* ------------------------------------------------------------------ */
-/* Utils                                                               */
+/* Utils                                                              */
 /* ------------------------------------------------------------------ */
 
 function getFieldError(
-	value: unknown,
-	schema: z.ZodTypeAny,
-	serverError?: string | null
+  value: unknown,
+  schema: z.ZodTypeAny,
+  serverError?: string | null
 ): string | null {
-	const parsed = schema.safeParse(value);
-	if (!parsed.success) return parsed.error.issues[0].message;
-	return serverError ?? null;
+  const parsed = schema.safeParse(value);
+  if (!parsed.success) return parsed.error.issues[0].message;
+  return serverError ?? null;
+}
+
+function roundMoney(value: number): number {
+  return Math.round(value * 100) / 100;
 }
 
 /* ------------------------------------------------------------------ */
-/* Props                                                               */
+/* Props                                                              */
 /* ------------------------------------------------------------------ */
 interface Props {
-	initialSales: SalesView | null;
-	errors: SalesFormErrors;
-	options: {
-		societes: SelectOption[];
-		exercices: SelectOption[];
-	};
-	onChange?: (data: SalesFormValues) => void;
+  initialSales: SalesView | null;
+  errors: SalesFormErrors;
+  options: {
+    societes: SelectOption[];
+    exercices: SelectOption[];
+  };
+  onChange?: (data: SalesFormValues) => void;
 }
 
 /* ------------------------------------------------------------------ */
-/* Component                                                           */
+/* Component                                                          */
 /* ------------------------------------------------------------------ */
 
 export function SalesFormFields({
-	initialSales,
-	errors,
-	onChange,
-	options,
+  initialSales,
+  errors,
+  onChange,
+  options,
 }: Props) {
+  const defaultExerciceId =
+    initialSales?.exerciceId ??
+    options.exercices[0]?.value ??
+    "";
 
-	//console.log("edit sales: list, sélection", options.societes, initialSales?.societeId)
+  // commun
+  const [socId, setSocId] = useState(initialSales?.societeId ?? "");
+  const [exerId, setExerId] = useState(defaultExerciceId);
 
-	// commun
-	const [socId, setSocId] = useState(initialSales?.societeId ?? "");
-	const [exerId, setExerId] = useState(initialSales?.exerciceId ?? "");
+  const [invoiceDate, setInvoiceDate] = useState<string>(
+    toDateInputValue(initialSales?.dateFacture)
+  );
+  const [salesValueDate, setSalesValueDate] = useState<string>(
+    toDateInputValue(initialSales?.dateValeur)
+  );
 
-	const [invoiceDate, setInvoiceDate] = useState<string>(
-		toDateInputValue(initialSales?.dateFacture)
-	);
-	const [salesValueDate, setSalesValueDate] = useState<string>(
-		toDateInputValue(initialSales?.dateValeur)
-	);
+  const [reference, setReference] = useState(initialSales?.reference ?? "");
+  const [designation, setDesignation] = useState(initialSales?.designation ?? "");
 
-	const [reference, setReference] = useState(initialSales?.reference ?? "");
-	const [designation, setDesignation] = useState(initialSales?.designation ?? "");
+  const [amountHt, setAmountHt] = useState<number>(initialSales?.montantHt ?? 0);
+  const [amountTax, setAmountTax] = useState<number>(initialSales?.montantTax ?? 0);
+  const [amountTtc, setAmountTtc] = useState<number>(initialSales?.montantTtc ?? 0);
 
-	const [amountHt, setAmountHt] = useState<number>(initialSales?.montantHt ?? 0);
-	const [amountTax, setAmountTax] = useState<number>(initialSales?.montantTax ?? 0);
-	const [amountTtc, setAmountTtc] = useState<number>(initialSales?.montantTtc ?? 0);
+  const [comments, setComments] = useState(initialSales?.commentaires ?? "");
 
-	const [comments, setComments] = useState(initialSales?.commentaires ?? "");
+  const [dealName, setDealName] = useState(initialSales?.dealName ?? "");
+  const [dealNumber, setDealNumber] = useState(initialSales?.dealNumber ?? "");
+  const [paymentDelayDays, setPaymentDelayDays] = useState<number>(
+    initialSales?.paymentDelayDays ?? 60
+  );
 
-	const [dealName, setDealName] = useState(initialSales?.dealName ?? "");
-	const [dealNumber, setDealNumber] = useState(initialSales?.dealNumber ?? "");
-	const [paymentDelayDays, setPaymentDelayDays] = useState<number>(
-		initialSales?.paymentDelayDays ?? 60
-	);
+  const [revenueTypeId, setRevenueTypeId] = useState<RevenueTypeId>(
+    initialSales?.revenueTypeId == null
+      ? 1
+      : toRevenueTypeId(initialSales.revenueTypeId) ?? 1
+  );
 
-	const [revenueTypeId, setRevenueTypeId] = useState<RevenueTypeId>(
-		initialSales?.revenueTypeId == null
-			? 1
-			: toRevenueTypeId(initialSales.revenueTypeId) ?? 1
-	);
-	// errors
-	const socIdError = getFieldError(socId, idSchema, errors?.fields?.socId);
-	const exerIdError = getFieldError(exerId, idSchema, errors?.fields?.exerId);
+  /* ---------------------------------------------------------------- */
+  /* Auto-calcul ergonomique en création uniquement                   */
+  /* ---------------------------------------------------------------- */
 
-	const invoiceDateError = getFieldError(
-		invoiceDate,
-		dateSchema,
-		errors?.fields?.invoiceDate
-	);
+  useEffect(() => {
+    if (initialSales) return;
 
-	const salesValueDateError = getFieldError(
-		salesValueDate,
-		dateSchema,
-		errors?.fields?.bankValueDate
-	);
+    const ht = Number(amountHt || 0);
+    const defaultTax = roundMoney(ht * 0.2);
 
-	const referenceError = getFieldError(reference, refSchema, errors?.fields?.reference);
-	const designationError = getFieldError(
-		designation,
-		designationSchema,
-		errors?.fields?.designation
-	);
+    setAmountTax(defaultTax);
+    setAmountTtc(roundMoney(ht + defaultTax));
+  }, [amountHt, initialSales]);
 
-	const amountHtError = getFieldError(amountHt, moneySchema, errors?.fields?.amountHt);
-	const amountTaxError = getFieldError(amountTax, moneySchema, errors?.fields?.amountTax);
-	const amountTtcError = getFieldError(amountTtc, moneySchema, errors?.fields?.amountTtc);
+  useEffect(() => {
+    if (initialSales) return;
 
-	const commentsError = getFieldError(comments, commentsSchema, errors?.fields?.comments);
+    const ht = Number(amountHt || 0);
+    const tax = Number(amountTax || 0);
 
-	const dealNumberError = getFieldError(dealNumber, commentsSchema, errors?.fields?.dealNumber);
-	const dealNameError = getFieldError(dealName, commentsSchema, errors?.fields?.dealName);
-	const paymentDelayDaysError = getFieldError(paymentDelayDays, paymentDelayDaysSchema, errors?.fields?.paymentDelayDays);
-	const revenueTypeIdError = getFieldError(revenueTypeId, revenueTypeIdSchema, errors?.fields?.revenueTypeId);
+    setAmountTtc(roundMoney(ht + tax));
+  }, [amountHt, amountTax, initialSales]);
 
-	useEffect(() => {
-		onChange?.({
-			socId,
-			exerId,
+  // errors
+  const socIdError = getFieldError(socId, idSchema, errors?.fields?.socId);
+  const exerIdError = getFieldError(exerId, idSchema, errors?.fields?.exerId);
 
-			invoiceDate,
-			dueDate: null,
-			paymentDate: null,
-		    bankValueDate: salesValueDate ? salesValueDate : null,
+  const invoiceDateError = getFieldError(
+    invoiceDate,
+    dateSchema,
+    errors?.fields?.invoiceDate
+  );
 
-			reference: reference ? reference : null,
-			designation,
+  const salesValueDateError = getFieldError(
+    salesValueDate,
+    dateSchema,
+    errors?.fields?.bankValueDate
+  );
 
-			amountHt,
-			amountTax,
-			amountTtc,
+  const referenceError = getFieldError(reference, refSchema, errors?.fields?.reference);
+  const designationError = getFieldError(
+    designation,
+    designationSchema,
+    errors?.fields?.designation
+  );
 
-			comments: comments ? comments : null,
-			opbOperationId: null,
+  const amountHtError = getFieldError(amountHt, moneySchema, errors?.fields?.amountHt);
+  const amountTaxError = getFieldError(amountTax, moneySchema, errors?.fields?.amountTax);
+  const amountTtcError = getFieldError(amountTtc, moneySchema, errors?.fields?.amountTtc);
 
-			// sales (extension)
-			dealNumber: dealNumber ? dealNumber : null,
-			dealName: dealName ? dealName : null,
-			revenueTypeId,
-			paymentDelayDays,
-		});
-	}, [
-		socId,
-		exerId,
-		invoiceDate,
-		salesValueDate,
-		reference,
-		designation,
-		amountHt,
-		amountTax,
-		amountTtc,
-		comments,
+  const commentsError = getFieldError(comments, commentsSchema, errors?.fields?.comments);
 
-		// compléments
-		dealNumber,
-		dealName,
-		revenueTypeId,
-		paymentDelayDays,
+  const dealNumberError = getFieldError(
+    dealNumber,
+    commentsSchema,
+    errors?.fields?.dealNumber
+  );
+  const dealNameError = getFieldError(
+    dealName,
+    commentsSchema,
+    errors?.fields?.dealName
+  );
+  const paymentDelayDaysError = getFieldError(
+    paymentDelayDays,
+    paymentDelayDaysSchema,
+    errors?.fields?.paymentDelayDays
+  );
+  const revenueTypeIdError = getFieldError(
+    revenueTypeId,
+    revenueTypeIdSchema,
+    errors?.fields?.revenueTypeId
+  );
 
-		onChange,
-	]);
+  useEffect(() => {
+    onChange?.({
+      socId,
+      exerId,
 
-	//console.log("edit sales: list, sélection", options.societes, socId)
+      invoiceDate,
+      dueDate: null,
+      paymentDate: null,
+      bankValueDate: salesValueDate ? salesValueDate : null,
 
-	return (
-		<>
-			<div className="grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-0">
-				<SalesSocieteField value={socId} onChange={setSocId} error={socIdError} options={options.societes} />
-				<SalesExerciceField value={exerId} onChange={setExerId} error={exerIdError} options={options.exercices} />
+      reference: reference ? reference : null,
+      designation,
 
-				<SalesDateField
-					value={invoiceDate}
-					onChange={setInvoiceDate}
-					error={invoiceDateError}
-				/>
+      amountHt,
+      amountTax,
+      amountTtc,
 
-				<SalesDateValueField
-					value={salesValueDate}
-					onChange={setSalesValueDate}
-					error={salesValueDateError}
-				/>
+      comments: comments ? comments : null,
+      opbOperationId: null,
 
-				<SalesReferenceField
-					value={reference}
-					onChange={setReference}
-					error={referenceError}
-				/>
+      // sales (extension)
+      dealNumber: dealNumber ? dealNumber : null,
+      dealName: dealName ? dealName : null,
+      revenueTypeId,
+      paymentDelayDays,
+    });
+  }, [
+    socId,
+    exerId,
+    invoiceDate,
+    salesValueDate,
+    reference,
+    designation,
+    amountHt,
+    amountTax,
+    amountTtc,
+    comments,
+    dealNumber,
+    dealName,
+    revenueTypeId,
+    paymentDelayDays,
+    onChange,
+  ]);
 
-				<SalesDesignationField
-					value={designation}
-					onChange={setDesignation}
-					error={designationError}
-				/>
+  return (
+    <>
+      <div className="grid grid-cols-1 gap-x-10 gap-y-0 lg:grid-cols-2">
+        <SalesSocieteField
+          value={socId}
+          onChange={setSocId}
+          error={socIdError}
+          options={options.societes}
+        />
 
-				<SalesAmountHtField value={amountHt} onChange={setAmountHt} error={amountHtError} />
-				<SalesAmountTaxField value={amountTax} onChange={setAmountTax} error={amountTaxError} />
-				<SalesAmountTtcField value={amountTtc} onChange={setAmountTtc} error={amountTtcError} />
+        <SalesExerciceField
+          value={exerId}
+          onChange={setExerId}
+          error={exerIdError}
+          options={options.exercices}
+        />
 
-				<SalesCommentsField
-					value={comments}
-					onChange={setComments}
-					error={commentsError}
-				/>
+        <SalesDateField
+          value={invoiceDate}
+          onChange={setInvoiceDate}
+          error={invoiceDateError}
+        />
 
-				<SalesDealNameField
-					value={dealName}
-					onChange={setDealName}
-					error={dealNameError}
-				/>
+        <SalesDateValueField
+          value={salesValueDate}
+          onChange={setSalesValueDate}
+          error={salesValueDateError}
+        />
 
-				<SalesDealNumberField
-					value={dealNumber}
-					onChange={setDealNumber}
-					error={dealNumberError}
-				/>
+        <SalesReferenceField
+          value={reference}
+          onChange={setReference}
+          error={referenceError}
+        />
 
-				<SalesPaymentDelayDaysField
-					value={paymentDelayDays}
-					onChange={setPaymentDelayDays}
-					error={paymentDelayDaysError}
-				/>
+        <SalesDesignationField
+          value={designation}
+          onChange={setDesignation}
+          error={designationError}
+        />
 
-				<SalesRevenueTypeIdField
-					value={revenueTypeId}
-					onChange={setRevenueTypeId}
-					error={revenueTypeIdError}
-				/>
-				{errors.global?.length ? (
-					<div className="rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700">
-						<ul className="list-disc pl-5">
-							{errors.global.map((msg, i) => (
-								<li key={i}>{msg}</li>
-							))}
-						</ul>
-					</div>
-				) : null}
-			</div>
-		</>
-	);
+        <SalesAmountHtField
+          value={amountHt}
+          onChange={setAmountHt}
+          error={amountHtError}
+        />
+
+        <SalesAmountTaxField
+          value={amountTax}
+          onChange={setAmountTax}
+          error={amountTaxError}
+        />
+
+        <SalesAmountTtcField
+          value={amountTtc}
+          onChange={setAmountTtc}
+          error={amountTtcError}
+        />
+
+        <SalesCommentsField
+          value={comments}
+          onChange={setComments}
+          error={commentsError}
+        />
+
+        <SalesDealNameField
+          value={dealName}
+          onChange={setDealName}
+          error={dealNameError}
+        />
+
+        <SalesDealNumberField
+          value={dealNumber}
+          onChange={setDealNumber}
+          error={dealNumberError}
+        />
+
+        <SalesPaymentDelayDaysField
+          value={paymentDelayDays}
+          onChange={setPaymentDelayDays}
+          error={paymentDelayDaysError}
+        />
+
+        <SalesRevenueTypeIdField
+          value={revenueTypeId}
+          onChange={setRevenueTypeId}
+          error={revenueTypeIdError}
+        />
+
+        {errors.global?.length ? (
+          <div className="rounded border border-red-300 bg-red-50 p-3 text-sm text-red-700">
+            <ul className="list-disc pl-5">
+              {errors.global.map((msg, i) => (
+                <li key={i}>{msg}</li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+      </div>
+    </>
+  );
 }

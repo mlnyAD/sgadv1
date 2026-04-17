@@ -2,38 +2,31 @@
 
 "use client";
 
-interface Props {
-  actif: boolean | null;
-  onChange: (actif: boolean | null) => void;
+import type { ChangeEvent } from "react";
+
+export type SocieteRoleFilter = "" | "client" | "fournisseur" | "both";
+
+interface SocieteFiltersProps {
+  role: SocieteRoleFilter;
+  onChange: (next: SocieteRoleFilter) => void;
 }
 
-export function SocieteFilters({
-  actif,
-  onChange,
-}: Props) {
-  return (
-    <div className="flex items-center gap-2">
-      <label className="text-sm font-medium">
-        Sociétés
-      </label>
+export function SocieteFilters({ role, onChange }: SocieteFiltersProps) {
+  function handleChange(e: ChangeEvent<HTMLSelectElement>) {
+    onChange(e.target.value as SocieteRoleFilter);
+  }
 
+  return (
+    <div className="mb-4 flex items-center gap-3">
       <select
-        className="h-9 rounded-md border px-2 text-sm"
-        value={
-          actif === null
-            ? "all"
-            : actif
-            ? "actif"
-            : "inactif"
-        }
-        onChange={(e) => {
-          const v = e.target.value;
-          onChange(v === "all" ? null : v === "actif");
-        }}
+        className="h-9 min-w-56 rounded-md border px-3 text-sm"
+        value={role}
+        onChange={handleChange}
       >
-        <option value="all">Tous</option>
-        <option value="actif">Actifs</option>
-        <option value="inactif">Inactifs</option>
+        <option value="">Toutes les sociétés</option>
+        <option value="client">Clients</option>
+        <option value="fournisseur">Fournisseurs</option>
+        <option value="both">Clients et fournisseurs</option>
       </select>
     </div>
   );

@@ -37,3 +37,4 @@ export type PurchaseView = {
   paidByCltAmount: number;
   paidByThirdPartyAmount: number;
 };
+

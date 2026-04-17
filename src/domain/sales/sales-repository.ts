@@ -18,7 +18,7 @@ import { mapSalesRowToView } from "./sales-mapper";
 import type { SalesView } from "./sales-types";
 
 /* ================================================================== */
-/* READ                                                                */
+/* READ                                                               */
 /* ================================================================== */
 
 export async function listSales(params: {
@@ -28,8 +28,10 @@ export async function listSales(params: {
   search?: string;
   exerId?: string;
   socId?: string;
+  revenueTypeId?: string;
+  paidStatus?: string;
 }): Promise<{ data: SalesListItem[]; total: number }> {
-  const { cltId, page, pageSize, search, exerId, socId } = params;
+  const { cltId, page, pageSize, search, exerId, socId, revenueTypeId, paidStatus } = params;
 
   const supabase = await createSupabaseServerReadClient();
 
@@ -37,17 +39,21 @@ export async function listSales(params: {
     .from("vw_sales_view")
     .select(
       [
-        "sal_id",
-        "exer_code",
-        "soc_nom",
-        "sal_invoice_date",
-        "sal_designation",
-        "sal_amount_ht",
-        "sal_amount_tax",
-        "sal_amount_ttc",
-        "sal_payment_date",
-        "sal_bank_value_date",
-        "sal_reference",
+"sal_id",
+"exer_id",
+"soc_id",
+"sal_revenue_type_id",
+"exer_code",
+"soc_nom",
+"sal_invoice_date",
+"sal_designation",
+"sal_amount_ht",
+"sal_amount_tax",
+"sal_amount_ttc",
+"sal_payment_date",
+"sal_bank_value_date",
+"sal_reference",
+"sal_comments",
       ].join(", "),
       { count: "exact" }
     )
@@ -60,8 +66,20 @@ export async function listSales(params: {
     );
   }
 
-  if (exerId) query = query.eq("exer_id", exerId);
-  if (socId) query = query.eq("soc_id", socId);
+ if (exerId) query = query.eq("exer_id", exerId);
+if (socId) query = query.eq("soc_id", socId);
+
+if (revenueTypeId) {
+  query = query.eq("sal_revenue_type_id", Number(revenueTypeId));
+}
+
+if (paidStatus === "paid") {
+  query = query.not("sal_bank_value_date", "is", null);
+}
+
+if (paidStatus === "unpaid") {
+  query = query.is("sal_bank_value_date", null);
+}
 
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
@@ -71,6 +89,9 @@ export async function listSales(params: {
 
   type SalesListRow = {
     sal_id: string;
+    exer_id: string | null;
+    soc_id: string | null;
+    sal_revenue_type_id: number | null;
     exer_code: string | null;
     soc_nom: string | null;
     sal_invoice_date: string;
@@ -81,6 +102,7 @@ export async function listSales(params: {
     sal_payment_date: string | null;
     sal_bank_value_date: string | null;
     sal_reference: string | null;
+    sal_comments: string | null;
   };
 
   const rows = (data ?? []) as unknown as SalesListRow[];
@@ -89,6 +111,9 @@ export async function listSales(params: {
     data: rows.map(
       (r): SalesListItem => ({
         id: r.sal_id,
+        exerciceId: r.exer_id ?? null,
+        societeId: r.soc_id ?? null,
+        revenueTypeId: r.sal_revenue_type_id ?? null,
         exerciceCode: r.exer_code ?? null,
         societeNom: r.soc_nom ?? null,
         dateFacture: r.sal_invoice_date,
@@ -99,6 +124,7 @@ export async function listSales(params: {
         datePaiement: r.sal_payment_date ?? null,
         dateValeur: r.sal_bank_value_date ?? null,
         reference: r.sal_reference ?? null,
+        comments: r.sal_comments ?? null,
       })
     ),
     total: count ?? 0,
@@ -124,7 +150,7 @@ export async function getSalesById(params: {
 }
 
 /* ================================================================== */
-/* WRITE                                                               */
+/* WRITE                                                              */
 /* ================================================================== */
 
 export async function createSales(

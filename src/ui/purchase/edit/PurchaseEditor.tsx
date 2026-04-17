@@ -52,7 +52,7 @@ export function PurchaseEditor(props: {
   return (
     <>
       <TransactionHeader
-        title={initialPurchase ? "Modifier l'achat'" : "Nouvel achat"}
+        title={initialPurchase ? "Modifier l'achat" : "Nouvel achat"}
         subtitle="Saisie d'une facture d'achat"
       />
 

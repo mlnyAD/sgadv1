@@ -23,90 +23,107 @@ import type { PurchaseView } from "./purchase-types";
 /* ================================================================== */
 
 export async function listPurchases(params: {
-	cltId: string;
-	page: number;
-	pageSize: number;
-	search?: string;
-	exerId?: string;
-	socId?: string;
-	ccId?: string;
+  cltId: string;
+  page: number;
+  pageSize: number;
+  search?: string;
+  exerId?: string;
+  socId?: string;
+  ccId?: string;
 }): Promise<{ data: PurchaseListItem[]; total: number }> {
-	const { cltId, page, pageSize, search, exerId, socId, ccId } = params;
+  const { cltId, page, pageSize, search, exerId, socId, ccId } = params;
 
-	const supabase = await createSupabaseServerReadClient();
+  const supabase = await createSupabaseServerReadClient();
 
-	let query = supabase
-		.from("vw_purchase_view")
-		.select(
-			[
-				"pur_id",
-				"exer_code",
-				"soc_nom",
-				"pur_invoice_date",
-				"pur_designation",
-				"pur_amount_ht",
-				"pur_amount_tax",
-				"pur_amount_ttc",
-				"pur_payment_date",
-				"pur_bank_value_date",
-				"pur_reference",
-				"cc_code",
-			].join(", "),
-			{ count: "exact" }
-		)
-		.eq("clt_id", cltId)
-		.order("pur_invoice_date", { ascending: false });
+  let query = supabase
+    .from("vw_purchase_view")
+    .select(
+      [
+        "pur_id",
+        "exer_id",
+        "soc_id",
+        "cc_id",
+        "exer_code",
+        "soc_nom",
+        "pur_invoice_date",
+        "pur_designation",
+        "pur_amount_ht",
+        "pur_amount_tax",
+        "pur_amount_ttc",
+        "pur_payment_date",
+        "pur_bank_value_date",
+        "pur_reference",
+        "cc_code",
+        "pur_paid_by_clt_amount",
+        "pur_paid_by_third_party_amount",
+        "pur_comments",
+      ].join(", "),
+      { count: "exact" }
+    )
+    .eq("clt_id", cltId)
+    .order("pur_invoice_date", { ascending: false });
 
-	if (search) {
-		// minimal: match designation ou reference
-		query = query.or(`pur_designation.ilike.%${search}%,pur_reference.ilike.%${search}%`);
-	}
-	if (exerId) query = query.eq("exer_id", exerId);
-	if (socId) query = query.eq("soc_id", socId);
-	if (ccId) query = query.eq("cc_id", ccId);
+  if (search) {
+    query = query.or(`pur_designation.ilike.%${search}%,pur_reference.ilike.%${search}%`);
+  }
+  if (exerId) query = query.eq("exer_id", exerId);
+  if (socId) query = query.eq("soc_id", socId);
+  if (ccId) query = query.eq("cc_id", ccId);
 
-	const from = (page - 1) * pageSize;
-	const to = from + pageSize - 1;
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
 
-	const { data, error, count } = await query.range(from, to);
-	if (error) throw new Error(error.message);
+  const { data, error, count } = await query.range(from, to);
+  if (error) throw new Error(error.message);
 
-	type PurchaseListRow = {
-		pur_id: string;
-		exer_code: string | null;
-		soc_nom: string | null;
-		pur_invoice_date: string; // ou Date selon ton mapping
-		pur_designation: string | null;
-		pur_amount_ht: number | null;
-		pur_amount_tax: number | null;
-		pur_amount_ttc: number | null;
-		pur_payment_date: string | null;
-		pur_bank_value_date: string | null;
-		pur_reference: string | null;
-		cc_code: string | null;
-	};
+  type PurchaseListRow = {
+    pur_id: string;
+    exer_id: string | null;
+    soc_id: string | null;
+    cc_id: string | null;
+    exer_code: string | null;
+    soc_nom: string | null;
+    pur_invoice_date: string;
+    pur_designation: string | null;
+    pur_amount_ht: number | null;
+    pur_amount_tax: number | null;
+    pur_amount_ttc: number | null;
+    pur_payment_date: string | null;
+    pur_bank_value_date: string | null;
+    pur_reference: string | null;
+    cc_code: string | null;
+    pur_paid_by_clt_amount: number | null;
+    pur_paid_by_third_party_amount: number | null;
+    pur_comments: string | null;
+  };
 
-	const rows = (data ?? []) as unknown as PurchaseListRow[];
+  const rows = (data ?? []) as unknown as PurchaseListRow[];
 
-	return {
-		data: rows.map(
-			(r): PurchaseListItem => ({
-				id: r.pur_id,
-				exerciceCode: r.exer_code ?? null,
-				societeNom: r.soc_nom ?? null,
-				dateFacture: r.pur_invoice_date,
-				designation: r.pur_designation ?? "",
-				montantHt: r.pur_amount_ht ?? 0,
-				montantTax: r.pur_amount_tax ?? 0,
-				montantTtc: r.pur_amount_ttc ?? 0,
-				datePaiement: r.pur_payment_date ?? null,
-				dateValeur: r.pur_bank_value_date ?? null,
-				reference: r.pur_reference ?? null,
-				centreCoutCode: r.cc_code ?? null,
-			})
-		),
-		total: count ?? 0,
-	};
+  return {
+    data: rows.map(
+      (r): PurchaseListItem => ({
+        id: r.pur_id,
+        exerciceId: r.exer_id ?? null,
+        societeId: r.soc_id ?? null,
+        centreCoutId: r.cc_id ?? null,
+        exerciceCode: r.exer_code ?? null,
+        societeNom: r.soc_nom ?? null,
+        dateFacture: r.pur_invoice_date,
+        designation: r.pur_designation ?? "",
+        montantHt: r.pur_amount_ht ?? 0,
+        montantTax: r.pur_amount_tax ?? 0,
+        montantTtc: r.pur_amount_ttc ?? 0,
+        datePaiement: r.pur_payment_date ?? null,
+        dateValeur: r.pur_bank_value_date ?? null,
+        reference: r.pur_reference ?? null,
+        centreCoutCode: r.cc_code ?? null,
+        paidByCltAmount: r.pur_paid_by_clt_amount ?? 0,
+        paidByThirdPartyAmount: r.pur_paid_by_third_party_amount ?? 0,
+        comments: r.pur_comments ?? null,
+      })
+    ),
+    total: count ?? 0,
+  };
 }
 
 export async function getPurchaseById(params: {

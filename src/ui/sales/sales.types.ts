@@ -5,6 +5,10 @@
 export interface SalesListItem {
   id: string;
 
+  exerciceId: string | null;
+  societeId: string | null;
+  revenueTypeId: number | null;
+
   exerciceCode: string | null;
   societeNom: string | null;
 
@@ -20,4 +24,5 @@ export interface SalesListItem {
 
   reference: string | null;
 
+  comments: string | null;
 }

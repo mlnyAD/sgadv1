@@ -11,7 +11,7 @@ interface Props {
 
 export function SalesReferenceField({ value, onChange, error }: Props) {
   return (
-    <FormRow label="Référence" error={error}>
+    <FormRow label="# Facture" error={error}>
       <AppInput
         value={value}
         onChange={(e) => onChange(e.target.value)}

@@ -2,22 +2,30 @@
 
 // src/ui/purchase/purchase.types.ts
 
-export interface PurchaseListItem {
+export type PurchaseListItem = {
   id: string;
+
+  exerciceId: string | null;
+  societeId: string | null;
+  centreCoutId: string | null;
 
   exerciceCode: string | null;
   societeNom: string | null;
+  centreCoutCode: string | null;
 
   dateFacture: string;
+  datePaiement: string | null;
+  dateValeur: string | null;
+
   designation: string;
+  reference: string | null;
 
   montantHt: number;
   montantTax: number;
   montantTtc: number;
 
-  datePaiement: string | null;
-  dateValeur: string | null;
+  paidByCltAmount: number;
+  paidByThirdPartyAmount: number;
 
-  reference: string | null;
-  centreCoutCode: string | null;
-}
+  comments: string | null;
+};

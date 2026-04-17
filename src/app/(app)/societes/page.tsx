@@ -1,48 +1,69 @@
-import { listSocietes } from "@/domain/societe/societe-repository";
-import type { SocieteView } from "@/domain/societe/societe-types";
-import { SocieteToolbar } from "@/ui/societe/list/SocieteToolbar";
-import { SocieteList } from "@/ui/societe/list/SocieteList";
-import { getCurrentClient } from "@/domain/session/current-client";
-import { notFound } from "next/navigation";
 
-interface SocietesProps {
-	searchParams: {
-		page?: string;
-		pageSize?: string;
-		search?: string;
-		client?: string;
-		fournisseur?: string;
-	};
+
+import { notFound } from "next/navigation";
+import { getCurrentClient } from "@/domain/session/current-client";
+import { listSocietes } from "@/domain/societe/societe-repository";
+import { SocieteList } from "@/ui/societe/list/SocieteList";
+import { SocieteToolbar } from "@/ui/societe/list/SocieteToolbar";
+
+interface Props {
+  searchParams: Promise<{
+    page?: string;
+    pageSize?: string;
+    search?: string;
+    role?: string;
+  }>;
 }
 
-export default async function SocietesPage({ searchParams }: SocietesProps) {
+export default async function SocietePage({ searchParams }: Props) {
+  const { current } = await getCurrentClient({
+    requireSelected: true,
+    next: "/societes",
+  });
 
-  const { current } = await getCurrentClient({ requireSelected: true, next: "/societes" })
-  if (!current) notFound();
-  if (!current.cltId) notFound();
+  if (!current?.cltId) notFound();
 
   const cltId = current.cltId;
+  const query = await searchParams;
 
+  const page = Number(query.page ?? "1");
+  const pageSize = Number(query.pageSize ?? "10");
+  const search = typeof query.search === "string" ? query.search : undefined;
+  const role = typeof query.role === "string" ? query.role : "";
 
-	const query = await searchParams;
+  let client: boolean | undefined = undefined;
+  let fournisseur: boolean | undefined = undefined;
 
-	const page = Number(query.page ?? "1");
-	const pageSize = Number(query.pageSize ?? "10");
-	const client = typeof query.client === "string" ? query.client === "true" : undefined;
-	const fournisseur = typeof query.fournisseur === "string" ? query.fournisseur === "true" : undefined;
-	const search = typeof query.search === "string" ? query.search : undefined;
+  if (role === "client") {
+    client = true;
+  } else if (role === "fournisseur") {
+    fournisseur = true;
+  } else if (role === "both") {
+    client = true;
+    fournisseur = true;
+  }
 
-	const result = await listSocietes({ cltId, page, pageSize, search, client, fournisseur });
+  const { data, total } = await listSocietes({
+    cltId,
+    page,
+    pageSize,
+    search,
+    client,
+    fournisseur,
+  });
 
-	const data: SocieteView[] = result.data;
-	const total = result.total;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
-	const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  return (
+    <>
+      <SocieteToolbar />
 
-	return (
-		<>
-			<SocieteToolbar />
-			<SocieteList societes={data} page={page} pageSize={pageSize} totalPages={totalPages} />
-		</>
-	);
+      <SocieteList
+        societes={data}
+        page={page}
+        pageSize={pageSize}
+        totalPages={totalPages}
+      />
+    </>
+  );
 }

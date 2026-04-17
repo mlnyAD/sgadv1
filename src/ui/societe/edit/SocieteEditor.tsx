@@ -43,11 +43,11 @@ export function SocieteEditor({
   return (
     <>
       <TransactionHeader
-        title={initialSociete ? "Modifier la societe" : "Nouvelle societe"}
+        title={initialSociete ? "Modifier la société" : "Nouvelle société"}
         subtitle={
           initialSociete
-            ? "Modification des informations d'une societe"
-            : "Création d’une nouvelle societe"
+            ? "Modification des informations d'une société"
+            : "Création d’une nouvelle société"
         }
       />
 

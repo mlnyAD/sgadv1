@@ -11,7 +11,7 @@ interface Props {
 
 export function PurchaseDateValueField({ value, onChange, error }: Props) {
   return (
-    <FormRow label="Date valeur" error={error}>
+    <FormRow label="Date banque" error={error}>
       <AppDateInput
         value={value}
         onChange={onChange}
