@@ -25,12 +25,14 @@ type BudgetRow = {
 
 export async function loadPurchasesBlock(
   supabase: SupabaseClient,
+  cltId: string,
   exerId: string
 ) {
   // 1) Mapping centre -> famille
   const { data: ccRows, error: ccErr } = await supabase
     .from("vw_centre_cout_view")
-    .select("cc_id, famille_id");
+    .select("cc_id, famille_id")
+    .eq("clt_id", cltId);
 
   if (ccErr) throw ccErr;
 
@@ -46,6 +48,7 @@ export async function loadPurchasesBlock(
   const { data: purRows, error: purErr } = await supabase
     .from("vw_purchase_view")
     .select("cc_id, pur_amount_ht")
+    .eq("clt_id", cltId)
     .eq("exer_id", exerId);
 
   if (purErr) throw purErr;
@@ -68,6 +71,7 @@ export async function loadPurchasesBlock(
   const { data: budRows, error: budErr } = await supabase
     .from("vw_budget_purchase_lines")
     .select("famille_id, budget_ht_eur")
+    .eq("clt_id", cltId)
     .eq("exer_id", exerId);
 
   if (budErr) throw budErr;
@@ -86,8 +90,7 @@ export async function loadPurchasesBlock(
     );
   }
 
-  // 4) Tableau final : toutes les familles, même sans données
-const rows = CENTRE_COUT_FAMILLES.map((famille) => ({
+  const rows = CENTRE_COUT_FAMILLES.map((famille) => ({
     familleId: famille.id,
     label: famille.libelle,
     budgetEur: Math.round(budgetByFamille.get(famille.id) ?? 0),

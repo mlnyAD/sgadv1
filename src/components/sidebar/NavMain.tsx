@@ -16,6 +16,7 @@ import {
 	Network,
 	Landmark,
 	FileDown,
+	LayoutDashboard,
 } from "lucide-react";
 
 import {
@@ -28,8 +29,8 @@ import type { NavItem } from "./Types";
 import { useSidebar } from "@/components/ui/sidebar";
 
 interface NavMainProps {
-  isAdmin: boolean;
-  mode: "shared" | "app" | "admin";
+	isAdmin: boolean;
+	mode: "shared" | "app" | "admin";
 }
 
 /**
@@ -60,6 +61,12 @@ const ITEMS: NavItem[] = [
 	},
 
 	// --- Accessible à tous ---
+	{
+		id: "dashboard",
+		title: "Dashboard",
+		href: "/dashboard",
+		icon: LayoutDashboard,
+	},
 	{
 		id: "facture_fournisseur",
 		title: "Factures fournisseurs",
@@ -120,13 +127,13 @@ const ITEMS: NavItem[] = [
 		href: "/centres-cout",
 		icon: Network,
 	},
-/*	{
-		id: "operation_bancaire",
-		title: "Opérations bancaires",
-		href: "/wait",
-		icon: Settings2,
-	},
-*/
+	/*	{
+			id: "operation_bancaire",
+			title: "Opérations bancaires",
+			href: "/wait",
+			icon: Settings2,
+		},
+	*/
 	{
 		id: "compte",
 		title: "Comptes bancaires",
@@ -139,13 +146,13 @@ const ITEMS: NavItem[] = [
 		href: "/exports",
 		icon: FileDown,
 	},
-/*	{
-		id: "todo",
-		title: "ToDo Liste",
-		href: "/wait",
-		icon: ListTodo,
-	},
-*/
+	/*	{
+			id: "todo",
+			title: "ToDo Liste",
+			href: "/wait",
+			icon: ListTodo,
+		},
+	*/
 ];
 
 /**

@@ -14,36 +14,30 @@ import { chargerBlocTresoDashboard } from "@/features/treso/chargerBlocTresoDash
 import { loadTvaBlock } from "./blocks/tva/tva.data";
 
 export async function getDashboardData(): Promise<DashboardData> {
-	const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
 
-	// Exercice courant (vw_exercice_view)
-	const exer = await loadCurrentExercise(supabase);
+const { current } = await getCurrentClient({
+  requireSelected: true,
+  next: "/dashboard",
+});
+const cltId = current?.cltId;
+if (!cltId) throw new Error("Client courant introuvable.");
 
-	// Ventes (vw_sales_view + vw_budget_sales_lines)
-	const sales = await loadSalesBlock(supabase, exer.exerId);
+const exer = await loadCurrentExercise(supabase, cltId);
 
-	const purchases = await loadPurchasesBlock(supabase, exer.exerId);
+const sales = await loadSalesBlock(supabase, cltId, exer.exerId);
+const purchases = await loadPurchasesBlock(supabase, cltId, exer.exerId);
+const receivables = await loadReceivablesBlock(supabase, cltId, exer.exerId);
 
-	const receivables = await loadReceivablesBlock(supabase, exer.exerId);
+const treasury = await chargerBlocTresoDashboard(supabase, cltId, exer.exerId);
+const tva = await loadTvaBlock(supabase, cltId, exer.exerId);
 
-	const { current } = await getCurrentClient({requireSelected: true, next: "/dashboard", });
-	const cltId = current?.cltId;
-	if (!cltId) throw new Error("Client courant introuvable.");
-
-	// (recommandé) garde-fou : exercice doit correspondre au client courant
-	// si tu as clt_id dans exer, compare ici
-
-	const treasury = await chargerBlocTresoDashboard(supabase, cltId, exer.exerId);
-
-	const tva = await loadTvaBlock(supabase, cltId, exer.exerId);
-
-	// TODO: remplacer ensuite par les vrais loaders purchases/receivables
-	return {
-		exer,
-		sales,
-		purchases,
-		receivables,
-		treasury,
-		tva,
-	};
+  return {
+    exer,
+    sales,
+    purchases,
+    receivables,
+    treasury,
+    tva,
+  };
 }

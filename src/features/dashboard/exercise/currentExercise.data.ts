@@ -4,12 +4,16 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-export async function loadCurrentExercise(supabase: SupabaseClient) {
+export async function loadCurrentExercise(
+  supabase: SupabaseClient,
+  cltId: string,
+) {
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 
   const { data, error } = await supabase
     .from("vw_exercice_view")
     .select("exer_id, exer_code, exer_debut, exer_fin")
+    .eq("clt_id", cltId)
     .lte("exer_debut", today)
     .gte("exer_fin", today)
     .order("exer_debut", { ascending: false })

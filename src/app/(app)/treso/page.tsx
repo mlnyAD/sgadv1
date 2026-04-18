@@ -14,7 +14,7 @@ export default async function Page(props: {
   searchParams?: Promise<{ exerId?: string }>;
 }) {
   const supabase = await createSupabaseServerClient();
-  const { current } = await getCurrentClient({ requireSelected: true, next: "/treso" })
+  const { current } = await getCurrentClient({ requireSelected: true, next: "/treso" });
   const cltId = current?.cltId;
   if (!cltId) throw new Error("Client courant introuvable.");
 
@@ -25,7 +25,7 @@ export default async function Page(props: {
 
   const exer = exerIdParam
     ? await getExerciseById(supabase, exerIdParam)
-    : await loadCurrentExercise(supabase);
+    : await loadCurrentExercise(supabase, cltId);
 
   // garde-fou simple
   if ("cltId" in exer && exer.cltId && exer.cltId !== cltId) {
@@ -40,12 +40,12 @@ export default async function Page(props: {
   });
 
   return (
-<TresoTransactionScreen
-  cltId={cltId}
-  exerId={exer.exerId}
-  exercices={exercices}
-  selectedExerId={exer.exerId}
-  data={tx}
-/>
+    <TresoTransactionScreen
+      cltId={cltId}
+      exerId={exer.exerId}
+      exercices={exercices}
+      selectedExerId={exer.exerId}
+      data={tx}
+    />
   );
 }

@@ -5,22 +5,23 @@ import type { DashboardReceivables } from "@/features/dashboard/dashboard.types"
 
 type SalesRow = {
   sal_amount_ht: number | null;
-  sal_due_date: string | null;      // ISO date string
-  sal_payment_date: string | null;  // ISO date string
+  sal_due_date: string | null;
+  sal_payment_date: string | null;
 };
 
 function todayIsoDate() {
-  // suffisant ici : comparaison lexicographique OK si format YYYY-MM-DD
   return new Date().toISOString().slice(0, 10);
 }
 
 export async function loadReceivablesBlock(
   supabase: SupabaseClient,
+  cltId: string,
   exerId: string
 ): Promise<DashboardReceivables> {
   const { data, error } = await supabase
     .from("vw_sales_view")
     .select("sal_amount_ht, sal_due_date, sal_payment_date")
+    .eq("clt_id", cltId)
     .eq("exer_id", exerId);
 
   if (error) throw error;
@@ -43,8 +44,7 @@ export async function loadReceivablesBlock(
       continue;
     }
 
-    // unpaid
-    const due = r.sal_due_date; // may be null
+    const due = r.sal_due_date;
     if (!due || due >= today) dueNotLate += amount;
     else dueLate += amount;
   }
