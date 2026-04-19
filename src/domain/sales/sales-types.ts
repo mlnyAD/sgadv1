@@ -18,7 +18,6 @@ export interface SalesView {
 
   dateFacture: string;
   dateEcheance: string | null;
-  datePaiement: string | null;
   dateValeur: string | null;
 
   reference: string | null;

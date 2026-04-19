@@ -84,7 +84,6 @@ export function mapSalesRowToView(row: SalesRow): SalesView {
 
     dateFacture: reqStr(row.sal_invoice_date, "sal_invoice_date", "vw_sales_view"),
     dateEcheance: row.sal_due_date ?? null,
-    datePaiement: row.sal_payment_date ?? null,
     dateValeur: row.sal_bank_value_date ?? null,
 
     reference: row.sal_reference ?? null,

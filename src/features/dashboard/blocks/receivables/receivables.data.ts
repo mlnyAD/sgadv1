@@ -6,7 +6,7 @@ import type { DashboardReceivables } from "@/features/dashboard/dashboard.types"
 type SalesRow = {
   sal_amount_ht: number | null;
   sal_due_date: string | null;
-  sal_payment_date: string | null;
+  sal_bank_value_date: string | null;
 };
 
 function todayIsoDate() {
@@ -20,7 +20,7 @@ export async function loadReceivablesBlock(
 ): Promise<DashboardReceivables> {
   const { data, error } = await supabase
     .from("vw_sales_view")
-    .select("sal_amount_ht, sal_due_date, sal_payment_date")
+    .select("sal_amount_ht, sal_due_date, sal_bank_value_date")
     .eq("clt_id", cltId)
     .eq("exer_id", exerId);
 
@@ -38,7 +38,7 @@ export async function loadReceivablesBlock(
     const amount = r.sal_amount_ht ?? 0;
     emittedHt += amount;
 
-    const isPaid = !!r.sal_payment_date;
+    const isPaid = !!r.sal_bank_value_date;
     if (isPaid) {
       paid += amount;
       continue;

@@ -12,13 +12,7 @@ export function InvoicesCardView(props: { model: InvoicesCardModel }) {
   const hasLate = m.dueLate > 0;
 
   return (
-    <Card
-      className={`rounded-2xl lg:col-span-1 ${
-        hasLate
-          ? "bg-red-50 border-red-200"
-          : "bg-slate-50/40"
-      }`}
-    >
+    <Card className="rounded-2xl lg:col-span-1 bg-slate-50/40">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">Factures émises</CardTitle>
         <CardDescription>HT, paiement, retard</CardDescription>
@@ -32,28 +26,20 @@ export function InvoicesCardView(props: { model: InvoicesCardModel }) {
           value={`${eur(m.dueNotLate)} €`}
         />
 
-        {/* Ligne En retard */}
         <div className="flex items-center justify-between gap-4">
-          <div className={hasLate ? "text-red-700 font-medium" : "text-muted-foreground"}>
-            En retard
+          <div className={hasLate ? "text-red-600 font-medium" : "text-muted-foreground"}>
+            En retard de paiement
           </div>
           <div
             className={`tabular-nums ${
               hasLate
-                ? "text-red-700 font-semibold"
+                ? "text-red-600 font-semibold"
                 : "font-medium"
             }`}
           >
             {eur(m.dueLate)} €
           </div>
         </div>
-
-        {/* Badge discret si retard */}
-        {hasLate && (
-          <div className="text-xs text-red-700">
-            ⚠ Retard de paiement
-          </div>
-        )}
       </CardContent>
     </Card>
   );

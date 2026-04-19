@@ -19,7 +19,6 @@ export interface SalesListItem {
   montantTax: number;
   montantTtc: number;
 
-  datePaiement: string | null;
   dateValeur: string | null;
 
   reference: string | null;

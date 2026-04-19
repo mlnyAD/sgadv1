@@ -17,6 +17,21 @@ import { SELECT_SALES_VIEW } from "./sales.select";
 import { mapSalesRowToView } from "./sales-mapper";
 import type { SalesView } from "./sales-types";
 
+/* Calcul de la date limite de paiement */
+
+function computeSalesDueDate(
+  invoiceDate: string | null | undefined,
+  paymentDelayDays: number | null | undefined
+): string | null {
+  if (!invoiceDate) return null;
+
+  const delay = paymentDelayDays ?? 0;
+  const date = new Date(invoiceDate);
+  date.setDate(date.getDate() + delay);
+
+  return date.toISOString().slice(0, 10);
+}
+
 /* ================================================================== */
 /* READ                                                               */
 /* ================================================================== */
@@ -121,7 +136,6 @@ if (paidStatus === "unpaid") {
         montantHt: r.sal_amount_ht ?? 0,
         montantTax: r.sal_amount_tax ?? 0,
         montantTtc: r.sal_amount_ttc ?? 0,
-        datePaiement: r.sal_payment_date ?? null,
         dateValeur: r.sal_bank_value_date ?? null,
         reference: r.sal_reference ?? null,
         comments: r.sal_comments ?? null,
@@ -165,11 +179,17 @@ export async function createSales(
 
   const supabase = await createSupabaseServerWriteClient();
 
+  const sal_due_date = computeSalesDueDate(
+    payload.sal_invoice_date,
+    payload.sal_payment_delay_days
+  );
+
   const { data: created, error } = await supabase
     .from("sales")
     .insert({
       ...payload,
       clt_id: current.cltId,
+      sal_due_date,
     })
     .select("sal_id")
     .maybeSingle();
@@ -194,9 +214,31 @@ export async function updateSales(
 
   const supabase = await createSupabaseServerWriteClient();
 
+  const { data: existing, error: readError } = await supabase
+    .from("sales")
+    .select("sal_invoice_date, sal_payment_delay_days")
+    .eq("sal_id", salId)
+    .eq("clt_id", current.cltId)
+    .maybeSingle();
+
+  if (readError || !existing) {
+    throw new Error(readError?.message ?? "Vente introuvable");
+  }
+
+  const invoiceDate =
+    payload.sal_invoice_date ?? existing.sal_invoice_date;
+
+  const paymentDelayDays =
+    payload.sal_payment_delay_days ?? existing.sal_payment_delay_days;
+
+  const sal_due_date = computeSalesDueDate(invoiceDate, paymentDelayDays);
+
   const { error } = await supabase
     .from("sales")
-    .update(payload)
+    .update({
+      ...payload,
+      sal_due_date,
+    })
     .eq("sal_id", salId)
     .eq("clt_id", current.cltId);
 
