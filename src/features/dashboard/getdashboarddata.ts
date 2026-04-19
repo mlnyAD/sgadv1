@@ -1,7 +1,5 @@
 
 
-// src/features/dashboard/getdashboarddata.ts
-
 import type { DashboardData } from "@/features/dashboard/dashboard.types";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -13,24 +11,39 @@ import { getCurrentClient } from "@/domain/session/current-client";
 import { chargerBlocTresoDashboard } from "@/features/treso/chargerBlocTresoDashboard";
 import { loadTvaBlock } from "./blocks/tva/tva.data";
 
-export async function getDashboardData(): Promise<DashboardData> {
+export async function getDashboardData(): Promise<DashboardData | null> {
   const supabase = await createSupabaseServerClient();
 
-const { current } = await getCurrentClient({
-  requireSelected: true,
-  next: "/dashboard",
-});
-const cltId = current?.cltId;
-if (!cltId) throw new Error("Client courant introuvable.");
+  const { current } = await getCurrentClient({
+    requireSelected: true,
+    next: "/dashboard",
+  });
 
-const exer = await loadCurrentExercise(supabase, cltId);
+  const cltId = current?.cltId;
+  if (!cltId) {
+    throw new Error("Client courant introuvable.");
+  }
 
-const sales = await loadSalesBlock(supabase, cltId, exer.exerId);
-const purchases = await loadPurchasesBlock(supabase, cltId, exer.exerId);
-const receivables = await loadReceivablesBlock(supabase, cltId, exer.exerId);
+  let exer;
+  try {
+    exer = await loadCurrentExercise(supabase, cltId);
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Erreur exercice courant";
 
-const treasury = await chargerBlocTresoDashboard(supabase, cltId, exer.exerId);
-const tva = await loadTvaBlock(supabase, cltId, exer.exerId);
+    if (message.includes("Aucun exercice courant")) {
+      return null;
+    }
+
+    throw error;
+  }
+
+  const sales = await loadSalesBlock(supabase, cltId, exer.exerId);
+  const purchases = await loadPurchasesBlock(supabase, cltId, exer.exerId);
+  const receivables = await loadReceivablesBlock(supabase, cltId, exer.exerId);
+
+  const treasury = await chargerBlocTresoDashboard(supabase, cltId, exer.exerId);
+  const tva = await loadTvaBlock(supabase, cltId, exer.exerId);
 
   return {
     exer,

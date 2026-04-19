@@ -16,20 +16,20 @@ type GetCurrentClientOptions = {
 export async function getCurrentClient(options?: GetCurrentClientOptions) {
   const allowed = await listClientsForCurrentOperateur();
 
-  if (allowed.length === 0) {
-    if (options?.requireSelected) {
-      const safeNext =
-        options.next && options.next.startsWith("/")
-          ? options.next
-          : "/dashboard";
+if (allowed.length === 0) {
+  if (options?.requireSelected) {
+    const safeNext =
+      options.next && options.next.startsWith("/")
+        ? options.next
+        : "/dashboard";
 
-      redirect(`/select-client?next=${encodeURIComponent(safeNext)}`);
-    }
-
-    return { current: null, allowed: [], multi: false };
+    redirect(`/select-client?error=no-client&next=${encodeURIComponent(safeNext)}`);
   }
 
-  const cookieStore = await cookies();
+  return { current: null, allowed: [], multi: false };
+}
+
+const cookieStore = await cookies();
   const c = cookieStore.get(COOKIE_NAME)?.value;
 
   const allowedClients = allowed.map((x) => ({

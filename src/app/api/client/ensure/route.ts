@@ -21,20 +21,22 @@ export async function GET(request: Request) {
 
   const allowed = await listClientsForCurrentOperateur();
   if (allowed.length === 0) {
-    return NextResponse.redirect(new URL("/logout", request.url));
+    return NextResponse.redirect(
+      new URL("/select-client?error=no-client", request.url)
+    );
   }
 
-  // cookie valide ?
   const cur = await getCurrentClient();
   if (cur.current) {
     return NextResponse.redirect(new URL(next, request.url));
   }
 
-  // mono-client : auto-select + redirect
   if (allowed.length === 1) {
     const cltId = allowed[0].clt_id;
     if (!cltId) {
-      return NextResponse.redirect(new URL("/logout", request.url));
+      return NextResponse.redirect(
+        new URL("/select-client?error=no-client", request.url)
+      );
     }
 
     const res = NextResponse.redirect(new URL(next, request.url));
@@ -46,7 +48,7 @@ export async function GET(request: Request) {
     });
     return res;
   }
-  // multi : selection
+
   return NextResponse.redirect(
     new URL(`/select-client?next=${encodeURIComponent(next)}`, request.url)
   );
