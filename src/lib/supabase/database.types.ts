@@ -509,7 +509,6 @@ export type Database = {
           sal_id: string
           sal_invoice_date: string
           sal_lmod: string
-          sal_payment_date: string | null
           sal_payment_delay_days: number | null
           sal_reference: string | null
           sal_revenue_type_id: number
@@ -534,7 +533,6 @@ export type Database = {
           sal_id?: string
           sal_invoice_date: string
           sal_lmod?: string
-          sal_payment_date?: string | null
           sal_payment_delay_days?: number | null
           sal_reference?: string | null
           sal_revenue_type_id: number
@@ -559,7 +557,6 @@ export type Database = {
           sal_id?: string
           sal_invoice_date?: string
           sal_lmod?: string
-          sal_payment_date?: string | null
           sal_payment_delay_days?: number | null
           sal_reference?: string | null
           sal_revenue_type_id?: number
@@ -1133,7 +1130,6 @@ export type Database = {
           sal_id: string | null
           sal_invoice_date: string | null
           sal_lmod: string | null
-          sal_payment_date: string | null
           sal_payment_delay_days: number | null
           sal_reference: string | null
           sal_revenue_type_id: number | null

@@ -16,7 +16,6 @@ export function mapSalesFormToSalesInsert(
 
     sal_invoice_date: form.invoiceDate,
     sal_due_date: form.dueDate,
-    sal_payment_date: form.paymentDate,
     sal_bank_value_date: form.bankValueDate,
 
     sal_reference: form.reference,
@@ -45,7 +44,6 @@ export function mapSalesFormToSalesUpdate(
 
     sal_invoice_date: form.invoiceDate,
     sal_due_date: form.dueDate,
-    sal_payment_date: form.paymentDate,
     sal_bank_value_date: form.bankValueDate,
 
     sal_reference: form.reference,

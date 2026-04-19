@@ -65,7 +65,6 @@ export async function listSales(params: {
 "sal_amount_ht",
 "sal_amount_tax",
 "sal_amount_ttc",
-"sal_payment_date",
 "sal_bank_value_date",
 "sal_reference",
 "sal_comments",
@@ -114,7 +113,6 @@ if (paidStatus === "unpaid") {
     sal_amount_ht: number | null;
     sal_amount_tax: number | null;
     sal_amount_ttc: number | null;
-    sal_payment_date: string | null;
     sal_bank_value_date: string | null;
     sal_reference: string | null;
     sal_comments: string | null;

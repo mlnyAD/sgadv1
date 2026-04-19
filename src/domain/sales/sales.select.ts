@@ -11,7 +11,6 @@ export const SALES_VIEW_FIELDS = [
 
   "sal_invoice_date",
   "sal_due_date",
-  "sal_payment_date",
   "sal_bank_value_date",
 
   "sal_reference",
