@@ -119,7 +119,7 @@ export function GenericListTable<T>({
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border overflow-hidden">
+      <div className="w-full min-w-0 rounded-lg border overflow-x-auto">
         <DataTable
           columns={columns}
           data={filteredData}

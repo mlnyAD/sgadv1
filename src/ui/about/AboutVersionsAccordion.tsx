@@ -23,8 +23,8 @@ export function AboutVersionsAccordion() {
 				</AccordionTrigger>
 				<AccordionContent>
 					<div className="rounded-lg border bg-white dark:bg-black p-4 shadow-sm">
-						<p className="mt-2 text-sm font-medium">Version 1.21.1 du 19/04/2026	</p>
-						<p className="text-xs">1 - Reprise de la base de données pour la date de paiement des factures émises</p>
+						<p className="mt-2 text-sm font-medium">Version 1.21.2 du 22/04/2026	</p>
+						<p className="text-xs">1 - Reprise de l'IHM afin que les listes prennent toute la largeur de l'écran</p>
 					</div>
 				</AccordionContent>
 			</AccordionItem>
@@ -32,6 +32,8 @@ export function AboutVersionsAccordion() {
 			<AccordionItem value="history">
 				<AccordionTrigger>Historique</AccordionTrigger>
 				<AccordionContent>
+						<p className="mt-2 text-sm font-medium">Version 1.21.1 du 19/04/2026	</p>
+						<p className="text-xs">1 - Reprise de la base de données pour la date de paiement des factures émises</p>
 						<p className="mt-2 text-sm font-medium">Version 1.21 du 19/04/2026	</p>
 						<p className="text-xs">1 - Correction de la gestion date paiment facture</p>
 						<p className="text-xs">2 - Correction de l'affichage dans le dashboard'</p>

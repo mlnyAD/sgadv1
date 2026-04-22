@@ -1,4 +1,4 @@
 
 
 export const formControlClassName =
-  "h-9 w-full rounded-md border px-3 text-sm bg-green-50";
+  "w-full min-w-0 h-9 rounded-md border px-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary";
