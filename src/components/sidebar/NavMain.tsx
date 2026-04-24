@@ -17,6 +17,7 @@ import {
 	Landmark,
 	FileDown,
 	LayoutDashboard,
+	WalletCards,
 } from "lucide-react";
 
 import {
@@ -139,6 +140,12 @@ const ITEMS: NavItem[] = [
 		title: "Comptes bancaires",
 		href: "/comptes",
 		icon: Landmark,
+	},
+	{
+		id: "rapport",
+		title: "Rapport financier",
+		href: "/rapport-financier",
+		icon: WalletCards,
 	},
 	{
 		id: "export",
