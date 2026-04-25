@@ -8,7 +8,7 @@ import { RapportTable } from "../RapportTable";
 function eur(value: number): string {
   return new Intl.NumberFormat("fr-FR", {
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 2,
   }).format(value) + " €";
 }
 
